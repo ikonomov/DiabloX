@@ -777,7 +777,7 @@ char *SDL_GetBasePath()
 	}
 #endif
 #if defined(__3DS__)
-	retval = SDL_strdup("file:sdmc:/3ds/devilutionx/");
+	retval = SDL_strdup("file:sdmc:/3ds/diablox/");
 #elif defined(__amigaos__)
 	retval = SDL_strdup("PROGDIR:");
 #else
@@ -848,7 +848,7 @@ char *SDL_GetPrefPath(const char *org, const char *app)
 	size_t len = 0;
 
 #if defined(__3DS__)
-	retval = SDL_strdup("sdmc:/3ds/devilutionx/");
+	retval = SDL_strdup("sdmc:/3ds/diablox/");
 	return retval;
 #elif defined(__amigaos__)
 	retval = SDL_strdup("PROGDIR:");

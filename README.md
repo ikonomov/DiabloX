@@ -18,7 +18,7 @@ More detailed instructions can be found by following the [Installation Instructi
 
 # Test builds
 
-If you want to help test the latest state of the next version you can fetch the build artifact from one of the build server:
+If you want to help test the latest state of the next version you can fetch the build artifact from one of the build servers:
 
 *Note: You must be logged into GitHub to download the attachments!*
 

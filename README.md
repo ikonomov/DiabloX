@@ -47,53 +47,18 @@ If you want to help test the latest state of the next version you can fetch the 
    * Characters:
       * The required experience points for each clvl have been increased by 100%.
       * Regenerate 1% of max mana per second.
-         * Character maximum stats:
-      * Warrior's strength: 150 [250]
-      * Rogue's dexterity: 150 [250]
-      * Sorcerer's magic: 150 [250]
-   * The 1/2 bow damage modifier and slower arrow travel speed applied to all classes except rogues has been removed.
-   * The 1/2 spell damage modifier in player versus player has been removed.
-   * Warriors:
-      * Character damage with two-handed melee weapons has been increased to (strength+vitality)·clvl/100 [strength·clvl/100].
-      * Gain fastest hit recovery and bonus points to armor equal to clvl when not using shields with one-handed or two-handed melee weapons.
-      * Receive reduction to repair costs above 100 gold equal to 10·clvl.
-   * Rogues:
-      * Character damage with staves has been increased to (strength+dexterity+vitality)·clvl/200 [(strength+dexterity)·clvl/200].
-      * Gain fastest hit recovery and bonus points to armor equal to clvl when not using shields with one-handed weapons or staves.
-      * Spellcasting speed has been changed to 0.55 [0.60] seconds.
-   * Sorcerers:
-      * Character damage with staves has been increased to (strength+vitality)·clvl/100 [strength·clvl/100].
-      * Gain fastest hit recovery and bonus points to armor equal to clvl/2 when using staves.
-      * Receive reduction to recharge costs above 100 gold equal to 10·clvl.
+      * Maximum stats:
+         * Warrior's strength: 200 [250]
+         * Rogue's dexterity: 200 [250]
+         * Sorcerer's magic: 200 [250]
+      * +100% dexterity modifier to armor class formula when using one-handed melee weapons and no shield.
+      * +50% dexterity modifier to armor class formula when using two-handed melee weapons.
+      * +50% strength modifier to damage formula when using two-handed melee weapons.
       * Sorcerer starts the game equipped with two Potions of Healing [Mana].
-   * Monks:
-      * Gain resistance bonus equal to clvl.
-      * Gain To Hit bonus equal to clvl when bare-handed.
-      * Bonus points to armor has been increased to 3·clvl [2·clvl] when wearing light or no armor.
-      * Gain fast block when bare-handed.
-      * Search skill has been changed to Identify.
-      * Spellcasting speed has been changed to 0.60 [0.65] seconds.
-   * Attack speed has been changed to (seconds per hit):
-      * Warrior equipped with a staff: 0.50 [0.55]
-      * Rogue:
-         * swords, clubs and unarmed: 0.45 [0.50]
-         * staves: 0.45 [0.55]
-      * Sorcerer:
-         * swords, clubs, staves and unarmed: 0.50 [0.60]
-         * axes and bows: 0.70 [0.80]
-         * unarmed equipped with a shield: 0.50 [0.45]
-      * Monk:
-         * swords and clubs: 0.50 [0.60]
-         * bows: 0.60 [0.70]
-         * unarmed clvl 1-10: 0.4 [0.35]
-         * unarmed clvl 11-25: 0.35 [0.35]
-         * unarmed clvl 26-50: 0.3 [0.35]
-         * unarmed equipped with a shield: 0.45 [0.35]
-   * Block bonuses have been reduced to:
-      * Warrior: 20 [30]
-      * Rogue: 10 [20]
-      * Sorcerer: 0 [10]
-      * Monk: 15 [25]
+      * Block bonuses have been reduced to:
+         * Warrior: 20 [30]
+         * Rogue: 10 [20]
+         * Sorcerer: 0 [10]
    * Monsters:
       * Health and damage has been increased by 50%.
       * The number per dlvl has been increased by 50% with a maximum of 250 [200].
@@ -103,11 +68,20 @@ If you want to help test the latest state of the next version you can fetch the 
       * Monsters have bonus points to health of 50/100 [1] single/multi player in Nightmare and 100/200 [3] in Hell difficulty.
    * Shrines:
       * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
-      * Abandoned, Creepy, Eerie and Quiet increase stats by 1 [2].
+      * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
+      * Hidden increases durability of items to a maximum of 250 [255].
    * Items:
       * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
-      * Spectral Elixir increases stats by 1 [3].
+      * Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
       * Potions cost two times more gold.
+      * Base armor values have been set to their maximum except:
+         * Kite Shield: 12 [8-15]
+         * Gothic Shield: 14 [14-18]
+         * Tower Shield: 15 [12-20]
+         * Field Plate: 40 [40-45]
+         * Plate Mail: 45 [42-50]
+         * Gothic Plate: 50 [50-60]
+         * Full Plate Mail: 55 [60-75]
       * qlvl for Elixir of Strength, Magic and Dexterity: 20 [15]
       * affix qlvl:
          * moon: 13 [11]
@@ -151,51 +125,22 @@ If you want to help test the latest state of the next version you can fetch the 
          * blood: 24 [19]
          * vampires: 24 [19]
          * amber: 14 [12]
-         * jade: 23
-         * obsidian: 35
-         * emerald: 43
-         
-         * ages: 24
-
-
-         * swiftness: 18
-         * speed: 25
-
-         * harmony: 24
-         
-         * swiftness: 15 [10]
-         * speed: 25 [19]
-         * the ages: 24 [25]
-         * Obsidian: 25 [24]
-         * Sharp: 5 [1]
-         * Warrior's: 7 [10]
-         * Soldier's: 10 [15]
-         * Lord's: 13 [19]
-         * Knight's: 17 [23]
-         * Master's: 21 [28]
-         * Champion's: 24 [40]
-         * Wyrm's: 29 [35]
-         * Hydra's: 31 [60]
-         * Weird: 27 [35]
-         * Ruthless: 27 [35]
-      * Crimson affix (31-40) has been renamed to Russet.
-      * The description of the speed affix has been renamed to fastest [faster].
-      * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (of balance, of stability and of harmony) has been removed.
+         * jade: 23 [18]
+         * obsidian: 35 [24]
+         * emerald: 43 [31]
+         * swiftness: 18 [10]
+         * harmony: 24 [20]
+         * ages: 24 [25]
       * Removed affixes:
-         * +200% damage vs. demons in the description of Deadly Hunter (unused)
-         * Fine (weapons)
-         * readiness (unused)
-         * haste
-         * Holy and Godly from shields
-      * Affixes of all magical and unique items with a range of values have been set to their maximum except:
-         * Sharp (+% To Hit): 10 [1-5]
-         * Warrior's (+% Damage Done): 50 [51-65]
-         * Soldier's (+% Damage Done): 65 [66-80]
-         * Lord's (+% Damage Done): 80 [81-95]
-         * Knight's (+% Damage Done): 95 [96-110]
-         * Master's (+% Damage Done): 110 [111-125]
-         * Champion's (+% Damage Done): 125 [126-150]
-         * King's (+% Damage Done): 150 [151-175]
+         * readiness (no functionality)
+         * speed (same functionality as haste)
+      * Renamed affixes:
+         * [fine] to stout (armor)
+         * [crimson] to russet (31-40)
+         * [haste] to speed
+      * All affixes with a range of values have been set to their maximum.
+      * Damage versus demons affix changed to +50% [+200%].
+      * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (of balance, of stability and of harmony) has been removed.
       * unique item qlvl:
          * Bloodslayer: 10 [3]
          * The Mangler: 9 [2]
@@ -212,12 +157,6 @@ If you want to help test the latest state of the next version you can fetch the 
          * Immolator: 7 [4]
          * Gonnagal’s Dirk: 5 [1]
          * Shadowhawk: 12 [8]
-      * Base armor values have been set to their maximum except:
-         * Kite Shield: 12 [8-15]
-         * Gothic Shield: 14 [14-18]
-         * Tower Shield: 16 [12-20]
-         * Gothic Plate: 55 [50-60]
-         * Full Plate Mail: 60 [60-75]
       * Staff charges have been set to their maximum values.
       * Long War Bow has been restored to its original Diablo graphic.
    * Spells:
@@ -228,6 +167,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * Damage reduction from Mana Shield has been removed.
       * Apocalypse only works on monsters within the line of sight.
       * Spell information inside the spell book has been modified with more accurate values.
+      * The 1/2 spell damage modifier in player versus player has been removed.
       * The mana cost:
          * Town Portal initial: 53 [35], minimum: 36 [18]
          * Phasing initial: 16 [12], minimum: 8 [4]
@@ -265,33 +205,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * Quick Spells: F1-F8 [F5-F8]
          * Pause: Pause [Pause or P]
          * unbound: Quick Load, increase/decrease gamma
-   * Hellfire has been modified to function like Diablo:
-      * Diablo and Na-Krul have been assigned mlvl 30.
-      * One of the four drops from Na-Krul, book of Apocalypse, has been changed to a random book with qlvl of 8 or higher.
-      * Traps.
-      * Stores:
-         * Wirt's price modifier (50% more expensive).
-         * Maximum prices for items sold in town is 140,000 (135,000 at Wirt).
-         * Wirt's inventory is not influenced by the character's class, stats or items already carried.
-         * Griswold and Wirt do not sell staves.
-         * Griswold's inventory is not influenced by the character's stats or items already carried.
-         * Number of items in Griswold's inventory.
-         * Number of items in Pepin's inventory.
-         * Number of items in Adria's inventory.
-         * Adria sells books at random.
-      * Disabled blocking elemental attacks while having higher than 0% resistances.
-      * Range of magma ball and spit attack.
-      * Blocking does not deflect missiles.
-      * Speed of arrows while using fast bows.
-      * Damages target’s armor affix.
-      * Removed (added by Hellfire):
-         * affixes
-         * unique items except quest items
-         * spells, staves and scrolls
-         * oils and runes
-         * shrines
-      * Elixir of Magic and Vitality do not restore mana or life.
-      * Sorcerer starts the game equipped with Short Staff of Charged Bolt [Mana].
+
    * Diablo has been modified to function like Hellfire:
       * Sorcerer's mana cost for spells is 1/2 without going below the minimum.
       * Monsters health regeneration is not affected by having fire arrows equipped.

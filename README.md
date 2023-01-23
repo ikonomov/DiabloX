@@ -35,9 +35,8 @@ If you want to help test the latest state of the next version you can fetch the 
 [![Xbox One/Series](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_one.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_one.yml?query=branch%3Amaster)
 
 # Multiplayer:
-   * ZeroTier does not need port forwarding (or an extra application).
+   * ZeroTier does not need port forwarding or an extra application.
    * TCP/IP requires the host to expose port 6112.
-   * All games are encrypted and password protected.
 
 # Saved Games and configuration file location:
 `C:\Users\[username]\AppData\Roaming\ikonomov\DiabloX`

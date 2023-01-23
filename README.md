@@ -19,7 +19,7 @@ More detailed instructions can be found by following the [Installation Instructi
 
 If you want to help test the latest state of the next version you can fetch the build artifact from one of the build servers:
 
-*Note: You must be logged into GitHub to download the attachments!*
+*Note: You must be logged into GitHub to download the attachments.*
 
 [![Linux x86](https://github.com/ikonomov/DiabloX/actions/workflows/Linux_x86.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Linux_x86.yml?query=branch%3Amaster)
 [![Linux x86-64 SDL1](https://github.com/ikonomov/DiabloX/actions/workflows/Linux_x86_64_SDL1.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Linux_x86_64_SDL1.yml?query=branch%3Amaster)

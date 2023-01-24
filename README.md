@@ -87,11 +87,11 @@ If you want to help test the latest state of the next version you can fetch the 
       * crimson (31-40) to russet
       * haste to speed
 <details>
-  <summary>qlvl (click to expand)</summary>
+  <summary>Qlvl (click to expand)</summary>
 
-   * qlvl:
+   * Qlvl:
       * Elixir of Strength, Magic and Dexterity: 20 [15]
-      * affix
+      * Affix
          * moon: 13 [11]
          * stars: 24 [17]
          * heavens: 35 [25]
@@ -138,7 +138,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * speed: 25 [haste: 27]
          * harmony: 24 [20]
          * ages: 24 [25]
-      * unique item:
+      * Unique item:
          * Bloodslayer: 10 [3]
          * The Mangler: 9 [2]
          * Wicked Axe: 12 [5]

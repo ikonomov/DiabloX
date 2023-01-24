@@ -9,7 +9,7 @@ msbuild /p:PlatformToolset=v143;TargetPlatformVersion=10.0.22000.0;TargetPlatfor
 
 cmake -DUWP_LIB=1 -DUWP_SDL2_DIR="%CD%/SDL" -DCMAKE_BUILD_TYPE=x64-Release ..
 
-msbuild /p:Configuration=Release;Platform=x64 /m DevilutionX.sln
+msbuild /p:Configuration=Release;Platform=x64 /m DiabloX.sln
 
 powershell "Get-Content ..\uwp-project\Package.appxmanifest.template | %% {$_ -replace '__PROJECT_VERSION__',$(& {git describe --tags --abbrev=0})} | Out-File -FilePath ..\uwp-project\Package.appxmanifest -encoding ASCII"
 

@@ -50,88 +50,88 @@ If you want to help test the latest state of the next version you can fetch the 
    * +100% dexterity modifier to armor class formula when using melee weapons and no shield.\
    * +50% strength modifier to damage formula when using two-handed melee weapons.\
    * Sorcerer starts the game equipped with two Potions of Healing [Mana].\
-<details>
-  <summary>Block bonuses have been reduced to:</summary>
-
-Warrior: 20 [30]
-Rogue: 10 [20]
-Sorcerer: 0 [10]
-</details>
+   * Block bonuses have been reduced to:
+      * Warrior: 20 [30]
+      * Rogue: 10 [20]
+      * Sorcerer: 0 [10]
 #### Monsters:
-      * Health and damage has been increased by 50%.
-      * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
-      * Number per dlvl has been increased by 50% with a maximum of 250 [200].
-      * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
-      * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
-      * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
-   * #### Shrines:
-      * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
-      * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
-      * Hidden increases durability of items to a maximum of 250 [255].
-   * #### Items:
-      * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
-      * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
-      * Potions cost 100% more gold.
-      * Base armor values have been set to their maximum except:
-         * Field Plate: 40 [40-45]
-         * Plate Mail: 45 [42-50]
-         * Gothic Plate: 48 [50-60]
-         * Full Plate Mail: 50 [60-75]
-      * qlvl for Elixir of Strength, Magic and Dexterity: 20 [15]
-      * Removed affixes:
-         * readiness (has no effect)
-         * speed (same functionality as haste)
-      * Renamed affixes:
-         * fine (armor) to stout
-         * crimson (31-40) to russet
-         * haste to speed
-      * affix qlvl:
-         * moon: 13 [11]
-         * stars: 24 [17]
-         * heavens: 35 [25]
-         * zodiac: 46 [30]
-         * whale: 46 [60]
-         * snake: 12 [9]
-         * serpent: 22 [15]
-         * drake: 35 [21]
-         * dragon: 43 [27]
-         * wyrm: 46 [35]
-         * hydra: 50 [60]
-         * godly: 44 [60]
-         * steel: 8 [6]
-         * silver: 12 [9]
-         * gold: 17 [12]
-         * platinum: 22 [16]
-         * mithril: 28 [20]
-         * meteoric: 35 [23]
-         * weird: 43 [35]
-         * strange: 50 [60]
-         * master: 29 [28]
-         * champion: 36 [40]
-         * king: 44 [28]
-         * jagged: 1 [4]
-         * deadly: 4 [6]
-         * heavy: 8 [9]
-         * brutal: 17 [16]
-         * massive: 22 [20]
-         * savage: 28 [23]
-         * merciless: 43 [60]
-         * slaying: 13 [15]
-         * gore: 20 [25]
-         * carnage: 27 [35]
-         * slaughter: 35 [60]
-         * osmosis: 30 [50]
-         * thunder: 50 [60]
-         * blood: 24 [19]
-         * vampires: 24 [19]
-         * amber: 14 [12]
-         * jade: 23 [18]
-         * obsidian: 35 [24]
-         * emerald: 43 [31]
-         * swiftness: 18 [10]
-         * speed: 25 [haste: 27]
-         * harmony: 24 [20]
-         * ages: 24 [25]
+   * Health and damage has been increased by 50%.
+   * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
+   * Number per dlvl has been increased by 50% with a maximum of 250 [200].
+   * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
+   * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
+   * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
+#### Shrines:
+   * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
+   * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
+   * Hidden increases durability of items to a maximum of 250 [255].
+#### Items:
+   * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
+   * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
+   * Potions cost 100% more gold.
+   * Base armor values have been set to their maximum except:
+      * Field Plate: 40 [40-45]
+      * Plate Mail: 45 [42-50]
+      * Gothic Plate: 48 [50-60]
+      * Full Plate Mail: 50 [60-75]
+   * qlvl for Elixir of Strength, Magic and Dexterity: 20 [15]
+   * Removed affixes:
+      * readiness (has no effect)
+      * speed (same functionality as haste)
+   * Renamed affixes:
+      * fine (armor) to stout
+      * crimson (31-40) to russet
+      * haste to speed
+<details>
+  <summary>affix qlvl (click to expand)</summary>
+
+   * moon: 13 [11]
+   * stars: 24 [17]
+   * heavens: 35 [25]
+   * zodiac: 46 [30]
+   * whale: 46 [60]
+   * snake: 12 [9]
+   * serpent: 22 [15]
+   * drake: 35 [21]
+   * dragon: 43 [27]
+   * wyrm: 46 [35]
+   * hydra: 50 [60]
+   * godly: 44 [60]
+   * steel: 8 [6]
+   * silver: 12 [9]
+   * gold: 17 [12]
+   * platinum: 22 [16]
+   * mithril: 28 [20]
+   * meteoric: 35 [23]
+   * weird: 43 [35]
+   * strange: 50 [60]
+   * master: 29 [28]
+   * champion: 36 [40]
+   * king: 44 [28]
+   * jagged: 1 [4]
+   * deadly: 4 [6]
+   * heavy: 8 [9]
+   * brutal: 17 [16]
+   * massive: 22 [20]
+   * savage: 28 [23]
+   * merciless: 43 [60]
+   * slaying: 13 [15]
+   * gore: 20 [25]
+   * carnage: 27 [35]
+   * slaughter: 35 [60]
+   * osmosis: 30 [50]
+   * thunder: 50 [60]
+   * blood: 24 [19]
+   * vampires: 24 [19]
+   * amber: 14 [12]
+   * jade: 23 [18]
+   * obsidian: 35 [24]
+   * emerald: 43 [31]
+   * swiftness: 18 [10]
+   * speed: 25 [haste: 27]
+   * harmony: 24 [20]
+   * ages: 24 [25]
+</details>
       * unique item qlvl:
          * Bloodslayer: 10 [3]
          * The Mangler: 9 [2]

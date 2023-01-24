@@ -48,19 +48,19 @@ jobs:
         cd build &&
         rm -rf Payload diablox.ipa &&
         mkdir Payload &&
-        mv devilutionx.app Payload &&
+        mv diablox.app Payload &&
         zip -r diablox.ipa Payload
 
     - name: Upload-Package
       if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v2
       with:
-        name: devilutionx.ipa
-        path: build/devilutionx.ipa
+        name: diablox.ipa
+        path: build/diablox.ipa
 
     - name: Update Release
       if: ${{ github.event_name == 'release' && !env.ACT }}
       uses: svenstaro/upload-release-action@v2
       with:
-        file: build/devilutionx.ipa
+        file: build/diablox.ipa
         overwrite: true

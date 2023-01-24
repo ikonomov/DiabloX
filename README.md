@@ -175,7 +175,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
       * The application ID for Discord has been changed to DiabloX.
       * Textbox for item labels and chat messages has been made transparent.
-      * The game difficulty info has been moved from the automap to the hotkey `V` version info pop-up message.
+      * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
       * Speed settings have been removed.
       * The diablo.ini has been optimized for consistent gameplay including:
          * disabled friendly damage from spells and ranged attacks to other players

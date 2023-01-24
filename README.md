@@ -60,11 +60,11 @@ If you want to help test the latest state of the next version you can fetch the 
          * Sorcerer: 0 [10]
    * Monsters:
       * Health and damage has been increased by 50%.
+      * Monsters have bonus points to health of 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
       * Number per dlvl has been increased by 50% with a maximum of 250 [200].
       * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
       * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
       * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
-      * Monsters have bonus points to health of 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of these bonus points for single player.
    * Shrines:
       * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
       * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].

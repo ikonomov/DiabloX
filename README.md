@@ -42,13 +42,13 @@ If you want to help test the latest state of the next version you can fetch the 
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Sorcerer starts the game equipped with two Potions of Healing [Mana].
 
-  </details>
+   * </details>
 <details open>
   <summary>Block bonuses have been reduced to:</summary>
 
->    * Warrior: 20 [30]
->    * Rogue: 10 [20]
->    * Sorcerer: 0 [10]
+   * Warrior: 20 [30]
+   * Rogue: 10 [20]
+   * Sorcerer: 0 [10]
   </details>
 
 #### Monsters:

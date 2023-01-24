@@ -51,8 +51,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * Warrior's strength: 200 [250]
          * Rogue's dexterity: 200 [250]
          * Sorcerer's magic: 200 [250]
-      * +100% dexterity modifier to armor class formula when using one-handed melee weapons and no shield.
-      * +50% dexterity modifier to armor class formula when using two-handed melee weapons.
+      * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
       * +50% strength modifier to damage formula when using two-handed melee weapons.
       * Sorcerer starts the game equipped with two Potions of Healing [Mana].
       * Block bonuses have been reduced to:
@@ -61,18 +60,18 @@ If you want to help test the latest state of the next version you can fetch the 
          * Sorcerer: 0 [10]
    * Monsters:
       * Health and damage has been increased by 50%.
-      * The number per dlvl has been increased by 50% with a maximum of 250 [200].
+      * Number per dlvl has been increased by 50% with a maximum of 250 [200].
       * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
       * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
-      * Diablo has more health, fastest hit recovery and resistance to Holy Bolt.
-      * Monsters have bonus points to health of 50/100 [1] single/multi player in Nightmare and 100/200 [3] in Hell difficulty.
+      * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
+      * Monsters have bonus points to health of 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of these bonus points for single player.
    * Shrines:
       * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
       * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
       * Hidden increases durability of items to a maximum of 250 [255].
    * Items:
       * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
-      * Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
+      * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
       * Potions cost two times more gold.
       * Base armor values have been set to their maximum except:
          * Kite Shield: 12 [8-15]
@@ -130,15 +129,15 @@ If you want to help test the latest state of the next version you can fetch the 
          * harmony: 24 [20]
          * ages: 24 [25]
       * Removed affixes:
-         * readiness (no functionality)
+         * readiness (no effect)
          * speed (same functionality as haste)
       * Renamed affixes:
          * [fine] to stout (armor)
          * [crimson] to russet (31-40)
          * [haste] to speed
       * All affixes with a range of values have been set to their maximum.
-      * Damage versus demons affix changed to +50% [+200%].
-      * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (of balance, of stability and of harmony) has been removed.
+      * Damage versus demons affix: +50% [+200%]
+      * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
       * unique item qlvl:
          * Bloodslayer: 10 [3]
          * The Mangler: 9 [2]
@@ -158,32 +157,30 @@ If you want to help test the latest state of the next version you can fetch the 
       * Staff charges have been set to their maximum values.
       * Long War Bow has been restored to its original Diablo graphic.
    * Spells:
-      * Apocalypse damage min: (1+clvl)/2 [clvl], max: (1+clvl)·3/2 [6·clvl]
-      * Elemental, Fireball, Flash, Nova damage: 1/4 of the original
-      * Lightning duration: (slvl/2+4)/20 [(slvl/2+6)/20] seconds
-      * Chain Lightning damage min: 1 [2], max: 2+clvl/5 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
+      * Fire Wall damage: 1/2 of the original
+      * Apocalypse damage: 1/3 of the original
+      * Elemental, Fireball, Flash damage: 1/4 of the original
+      * Chain Lightning damage: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
       * Damage reduction from Mana Shield has been removed.
       * Apocalypse only works on monsters within the line of sight.
       * Spell information inside the spell book has been modified with more accurate values.
       * The 1/2 spell damage modifier in player versus player has been removed.
       * The mana cost:
-         * Town Portal initial: 53 [35], minimum: 36 [18]
-         * Phasing initial: 16 [12], minimum: 8 [4]
-         * Teleport initial: 50 [35], minimum: 30 [15]
-         * Stone Curse initial: 120 [60], minimum: 80 [40], decrease per level: 6 [3]
-      * Stone Curse:
-         * Does not affect unique monsters.
-         * Magic requirement for scrolls: 57 [33]
-         * Magic requirement for staves and reading slvl 1 books: 87 [51]
-         * Staff charges: 12 [8-16]
+         * Town Portal initial: 53 [35]; minimum: 36 [18]
+         * Phasing initial: 16 [12]; minimum: 8 [4]
+         * Teleport initial: 50 [35]; minimum: 30 [15]
+         * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
+         * Fire Wall initial: 100 [28]; minimum: 60 [16]; decrease per slvl: 6 [2]
+      * Stone Curse does not affect unique monsters.
    * Interface:
+      * Lock-on target feature has been disabled.
       * Holding down left or right mouse buttons simulate multiple attacks.
       * The gold pile size has been increased to 20,000 [5,000].
       * Game name has been changed to DiabloX with a version coresponding to the latest DevilutionX release.
       * GameID has been changed to a unique identifier to prevent issues when joining multi player games with different builds.
+      * Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
       * The application ID for Discord has been changed to DiabloX.
-      * Adjusted textbox transparency for item labels and chat messages.
-      * Lock-on target feature has been disabled.
+      * Textbox transparency for item labels and chat messages has been increased.
       * The game difficulty info has been moved from the automap to the hotkey `V` version info pop-up message.
       * Speed settings have been removed.
       * The diablo.ini has been optimized for consistent gameplay including:
@@ -191,7 +188,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * disabled run in town
          * disabled Adria refilling mana
          * disabled not randomized quests
-         * all shrines are enabled
+         * enabled all shrines
          * disabled quick cast
          * disabled auto refilling belt
          * disabled auto pickup except for gold (configurable for gold)
@@ -203,13 +200,6 @@ If you want to help test the latest state of the next version you can fetch the 
          * Quick Spells: F1-F8 [F5-F8]
          * Pause: Pause [Pause or P]
          * unbound: Quick Load, increase/decrease gamma
-
-   * Diablo has been modified to function like Hellfire:
-      * Sorcerer's mana cost for spells is 1/2 without going below the minimum.
-      * Monsters health regeneration is not affected by having fire arrows equipped.
-      * Scavengers' health regeneration when eating.
-      * Monsters pause after killing a character.
-   * The "hidden" unofficial features from Hellfire have been removed.
 
 # Credits
 

@@ -46,9 +46,9 @@ If you want to help test the latest state of the next version you can fetch the 
 <details open>
   <summary>Block bonuses have been reduced to:</summary>
 
-   * Warrior: 20 [30]
-   * Rogue: 10 [20]
-   * Sorcerer: 0 [10]
+>    * Warrior: 20 [30]
+>    * Rogue: 10 [20]
+>    * Sorcerer: 0 [10]
   </details>
 
 #### Monsters:

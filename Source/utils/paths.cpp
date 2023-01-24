@@ -53,7 +53,7 @@ std::string FromSDL(char *s)
 const std::string &NxdkGetPrefPath()
 {
 	static const std::string Path = []() {
-		const char *path = "E:\\UDATA\\diablox\\";
+		const char *path = "E:\\UDATA\\devilutionx\\";
 		if (CreateDirectoryA(path, nullptr) == FALSE && ::GetLastError() != ERROR_ALREADY_EXISTS) {
 			DirErrorDlg(path);
 		}

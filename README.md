@@ -71,11 +71,15 @@ If you want to help test the latest state of the next version you can fetch the 
    * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
    * Staff charges have been set to their maximum values.
    * Long War Bow has been restored to its original Diablo graphic.
-   * Base armor values have been set to their maximum except:
-      * Field Plate: 40 [40-45]
-      * Plate Mail: 45 [42-50]
-      * Gothic Plate: 48 [50-60]
-      * Full Plate Mail: 50 [60-75]
+<details open>
+  <summary>Base armor values have been set to their maximum except:</summary>
+
+   * ###### Field Plate: 40 [40-45]
+   * ###### Plate Mail: 45 [42-50]
+   * ###### Gothic Plate: 48 [50-60]
+   * ###### Full Plate Mail: 50 [60-75]
+  </details>
+
    * Removed affixes:
       * readiness (has no effect)
       * speed (same functionality as haste)

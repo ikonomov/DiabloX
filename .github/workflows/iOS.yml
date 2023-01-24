@@ -46,21 +46,21 @@ jobs:
       run: >
         cmake --build build -j $(sysctl -n hw.physicalcpu) --config Release &&
         cd build &&
-        rm -rf Payload diablox.ipa &&
+        rm -rf Payload devilutionx.ipa &&
         mkdir Payload &&
-        mv diablox.app Payload &&
-        zip -r diablox.ipa Payload
+        mv devilutionx.app Payload &&
+        zip -r devilutionx.ipa Payload
 
     - name: Upload-Package
       if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v2
       with:
-        name: diablox.ipa
-        path: build/diablox.ipa
+        name: devilutionx.ipa
+        path: build/devilutionx.ipa
 
     - name: Update Release
       if: ${{ github.event_name == 'release' && !env.ACT }}
       uses: svenstaro/upload-release-action@v2
       with:
-        file: build/diablox.ipa
+        file: build/devilutionx.ipa
         overwrite: true

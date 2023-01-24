@@ -62,9 +62,9 @@ if(NOT VERSION_SUFFIX)
   set(VERSION_SUFFIX "debug")
 endif()
 if(VERSION_NUM MATCHES untagged)
-  project(DiabloX LANGUAGES C CXX)
+  project(DevilutionX LANGUAGES C CXX)
 else()
-  project(DiabloX
+  project(DevilutionX
     VERSION ${VERSION_NUM}
     LANGUAGES C CXX)
 endif()

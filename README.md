@@ -36,15 +36,33 @@ If you want to help test the latest state of the next version you can fetch the 
 ## Changes in DiabloX from DevilutionX:
 *original values listed in [square brackets]*
 #### Characters:
-   * The required experience points for each clvl have been increased by 100%.\
-   * Regenerate 1% of max mana per second.\
-   * +100% dexterity modifier to armor class formula when using melee weapons and no shield.\
-   * +50% strength modifier to damage formula when using two-handed melee weapons.\
-   * Sorcerer starts the game equipped with two Potions of Healing [Mana].\
-   * Block bonuses have been reduced to:
-      * Warrior: 20 [30]
-      * Rogue: 10 [20]
-      * Sorcerer: 0 [10]
+<details open>
+  <summary>The required experience points for each clvl have been increased by 100%.</summary>
+
+  </details>
+<details open>
+  <summary>Regenerate 1% of max mana per second.</summary>
+
+  </details>
+<details open>
+  <summary>+100% dexterity modifier to armor class formula when using melee weapons and no shield.</summary>
+
+  </details>
+<details open>
+  <summary>+50% strength modifier to damage formula when using two-handed melee weapons.</summary>
+
+  </details>
+<details open>
+  <summary>Sorcerer starts the game equipped with two Potions of Healing [Mana].</summary>
+
+  </details>
+<details open>
+  <summary>Block bonuses have been reduced to:</summary>
+
+   * Warrior: 20 [30]
+   * Rogue: 10 [20]
+   * Sorcerer: 0 [10]
+  </details>
 #### Monsters:
    * Health and damage has been increased by 50%.
    * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
@@ -146,11 +164,6 @@ If you want to help test the latest state of the next version you can fetch the 
          * Gonnagal’s Dirk: 5 [1]
          * Shadowhawk: 12 [8]
 </details>
-
-<details open>
-  <summary>test</summary>
-
-  </details>
 
 #### Spells:
    * Fire Wall damage: 1/2 of the original

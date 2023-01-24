@@ -75,6 +75,13 @@ If you want to help test the latest state of the next version you can fetch the 
          * Gothic Plate: 48 [50-60]
          * Full Plate Mail: 50 [60-75]
       * qlvl for Elixir of Strength, Magic and Dexterity: 20 [15]
+      * Removed affixes:
+         * readiness (no effect)
+         * speed (same functionality as haste)
+      * Renamed affixes:
+         * fine (armor) to stout
+         * crimson (31-40) to russet
+         * haste to speed
       * affix qlvl:
          * moon: 13 [11]
          * stars: 24 [17]
@@ -119,15 +126,9 @@ If you want to help test the latest state of the next version you can fetch the 
          * obsidian: 35 [24]
          * emerald: 43 [31]
          * swiftness: 18 [10]
+         * speed: 25 [19]
          * harmony: 24 [20]
          * ages: 24 [25]
-      * Removed affixes:
-         * readiness (no effect)
-         * speed (same functionality as haste)
-      * Renamed affixes:
-         * [fine] to stout (armor)
-         * [crimson] to russet (31-40)
-         * [haste] to speed
       * All affixes with a range of values have been set to their maximum.
       * Damage versus demons affix: +50% [+200%]
       * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.

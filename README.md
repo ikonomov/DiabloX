@@ -191,7 +191,7 @@ If you want to help test the latest state of the next version you can fetch the 
 <details>
   <summary>DevilutionX options (click to expand)</summary>
   
-   * 
+   *  
       * disabled friendly damage from spells and ranged attacks to other players
       * disabled run in town
       * disabled Adria refilling mana

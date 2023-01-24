@@ -77,7 +77,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * fine (armor) to stout
       * crimson (31-40) to russet
       * haste to speed
-<details open>
+<details>
   <summary>Qlvl (click to expand)</summary>
 
    * Qlvl:
@@ -146,6 +146,11 @@ If you want to help test the latest state of the next version you can fetch the 
          * Gonnagal’s Dirk: 5 [1]
          * Shadowhawk: 12 [8]
 </details>
+
+<details open>
+  <summary>test</summary>
+
+  </details>
 
 #### Spells:
    * Fire Wall damage: 1/2 of the original

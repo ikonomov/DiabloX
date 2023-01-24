@@ -174,7 +174,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * GameID has been changed to a unique identifier to prevent issues when joining multi player games with different builds.
       * Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
       * The application ID for Discord has been changed to DiabloX.
-      * Textbox transparency for item labels and chat messages has been increased.
+      * Textbox for item labels and chat messages has been made transparent.
       * The game difficulty info has been moved from the automap to the hotkey `V` version info pop-up message.
       * Speed settings have been removed.
       * The diablo.ini has been optimized for consistent gameplay including:

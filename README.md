@@ -34,7 +34,7 @@ If you want to help test the latest state of the next version you can fetch the 
 ## [Summary of Changes in DevilutionX from Diablo](https://github.com/ikonomov/DiabloX/wiki/Summary-of-Changes-in-DevilutionX-from-Diablo)
 
 ## Changes in DiabloX from DevilutionX:
-*original values are listed in [square brackets]*
+*The original values are listed in [square brackets].*
 #### Characters:
    * The required experience points for each clvl have been increased by 100%.
    * Regenerate 1% of max mana per second.

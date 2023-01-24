@@ -47,10 +47,6 @@ If you want to help test the latest state of the next version you can fetch the 
    * Characters:
       * The required experience points for each clvl have been increased by 100%.
       * Regenerate 1% of max mana per second.
-      * Maximum stats:
-         * Warrior's strength: 200 [250]
-         * Rogue's dexterity: 200 [250]
-         * Sorcerer's magic: 200 [250]
       * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
       * +50% strength modifier to damage formula when using two-handed melee weapons.
       * Sorcerer starts the game equipped with two Potions of Healing [Mana].
@@ -74,13 +70,10 @@ If you want to help test the latest state of the next version you can fetch the 
       * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
       * Potions cost two times more gold.
       * Base armor values have been set to their maximum except:
-         * Kite Shield: 12 [8-15]
-         * Gothic Shield: 14 [14-18]
-         * Tower Shield: 15 [12-20]
          * Field Plate: 40 [40-45]
          * Plate Mail: 45 [42-50]
-         * Gothic Plate: 50 [50-60]
-         * Full Plate Mail: 55 [60-75]
+         * Gothic Plate: 48 [50-60]
+         * Full Plate Mail: 50 [60-75]
       * qlvl for Elixir of Strength, Magic and Dexterity: 20 [15]
       * affix qlvl:
          * moon: 13 [11]

@@ -63,6 +63,7 @@ If you want to help test the latest state of the next version you can fetch the 
    * Rogue: 10 [20]
    * Sorcerer: 0 [10]
   </details>
+
 #### Monsters:
    * Health and damage has been increased by 50%.
    * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.

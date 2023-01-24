@@ -84,7 +84,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * haste to speed
       * affix qlvl:
          * moon: 13 [11]
-            * stars: 24 [17]
+         * stars: 24 [17]
          * heavens: 35 [25]
          * zodiac: 46 [30]
          * whale: 46 [60]

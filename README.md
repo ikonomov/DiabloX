@@ -189,9 +189,6 @@ If you want to help test the latest state of the next version you can fetch the 
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [Pause or P]
       * unbound: Quick Load, increase/decrease gamma
-<details>
-  <summary>DevilutionX Settings (click to expand)</summary>
-  
    * DevilutionX settings:
       * disabled friendly damage from spells and ranged attacks to other players
       * disabled run in town
@@ -203,7 +200,6 @@ If you want to help test the latest state of the next version you can fetch the 
       * disabled auto pickup except for gold (configurable for gold)
       * disabled auto equip except for weapons and shields (configurable for weapons and shields)
       * enabled zoom on start by default with a resolution of 1284x963
-</details>
 
 ## Credits
 

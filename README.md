@@ -76,7 +76,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * Full Plate Mail: 50 [60-75]
       * qlvl for Elixir of Strength, Magic and Dexterity: 20 [15]
       * Removed affixes:
-         * readiness (no effect)
+         * readiness (has no effect)
          * speed (same functionality as haste)
       * Renamed affixes:
          * fine (armor) to stout

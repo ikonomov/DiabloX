@@ -46,10 +46,10 @@ jobs:
       run: >
         cmake --build build -j $(sysctl -n hw.physicalcpu) --config Release &&
         cd build &&
-        rm -rf Payload devilutionx.ipa &&
+        rm -rf Payload diablox.ipa &&
         mkdir Payload &&
         mv devilutionx.app Payload &&
-        zip -r devilutionx.ipa Payload
+        zip -r diablox.ipa Payload
 
     - name: Upload-Package
       if: ${{ !env.ACT }}

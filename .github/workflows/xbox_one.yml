@@ -40,14 +40,14 @@ jobs:
       run: >
         New-Item -Path build\uwp-project -Name pkg -ItemType Directory -Force &&
         Get-Childitem -Path build\uwp-project\AppxPackages, build\uwp-project\Release
-        -Include Microsoft.VCLibs.x64.*.appx, devilutionX_*_x64.appx -File -Recurse |
+        -Include Microsoft.VCLibs.x64.*.appx, diablox_*_x64.appx -File -Recurse |
         Copy-Item -Destination build\uwp-project\pkg\
 
     - name: Upload-Package
       if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v3
       with:
-        name: devilutionx-xbox-one-series
+        name: diablox-xbox-one-series
         if-no-files-found: error
         path: |
           build/uwp-project/pkg/
@@ -55,11 +55,11 @@ jobs:
     - name: Package Release
       if: ${{ github.event_name == 'release' && !env.ACT }}
       working-directory: ${{github.workspace}}/build/uwp-project/pkg/
-      run: 7z a -r ../../../devilutionx-xbox-one-series.zip .
+      run: 7z a -r ../../../diablox-xbox-one-series.zip .
 
     - name: Update Release
       if: ${{ github.event_name == 'release' && !env.ACT }}
       uses: svenstaro/upload-release-action@v2
       with:
-        file: devilutionx-xbox-one-series.zip
+        file: diablox-xbox-one-series.zip
         overwrite: true

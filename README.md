@@ -5,7 +5,7 @@
 
 DiabloX is a mod for Diablo 1 and a fork of [DevilutionX](https://github.com/diasurgical/devilutionX) with modifications to its code listed below.  The purpose of the changes is to increase the challenge by rebalancing various aspects of the game.
 
-# How to Install
+### How to Install
 
 Note: You'll need access to the data from the original game. If you don't have an original CD then you can [buy Diablo from GoG.com](https://www.gog.com/game/diablo). Alternately you can use `spawn.mpq` from the [shareware](https://github.com/diasurgical/devilutionx-assets/releases/download/v2/spawn.mpq) version, in place of `DIABDAT.MPQ`, to play the shareware portion of the game.
 
@@ -15,7 +15,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 
 More detailed instructions can be found by following the [Installation Instructions](./docs/installing.md) for DevilutionX.  
 
-# Test builds
+### Test builds
 
 If you want to help test the latest state of the next version you can fetch the build artifact from one of the build servers:
 
@@ -33,28 +33,28 @@ If you want to help test the latest state of the next version you can fetch the 
 [![Original Xbox](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_nxdk.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_nxdk.yml?query=branch%3Amaster)
 [![Xbox One/Series](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_one.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_one.yml?query=branch%3Amaster)
 
-# Multiplayer:
+### Multiplayer:
    * ZeroTier does not need port forwarding or an extra application.
    * TCP/IP requires the host to expose port 6112.
 
-# Saved Games and configuration file location:
+### Saved Games and configuration file location:
 `C:\Users\[username]\AppData\Roaming\ikonomov\DiabloX`
 
-# [Summary of Changes in DevilutionX from Diablo](https://github.com/ikonomov/DiabloX/wiki/Summary-of-Changes-in-DevilutionX-from-Diablo)
+### [Summary of Changes in DevilutionX from Diablo](https://github.com/ikonomov/DiabloX/wiki/Summary-of-Changes-in-DevilutionX-from-Diablo)
 
-# Changes in DiabloX from DevilutionX:
+### Changes in DiabloX from DevilutionX:
 *original values listed in [square brackets]*
-   * Characters:
-      * The required experience points for each clvl have been increased by 100%.
-      * Regenerate 1% of max mana per second.
-      * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
-      * +50% strength modifier to damage formula when using two-handed melee weapons.
-      * Sorcerer starts the game equipped with two Potions of Healing [Mana].
-      * Block bonuses have been reduced to:
-         * Warrior: 20 [30]
-         * Rogue: 10 [20]
-         * Sorcerer: 0 [10]
-   * Monsters:
+ * Characters:
+  * The required experience points for each clvl have been increased by 100%.
+  * Regenerate 1% of max mana per second.
+  * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
+  * +50% strength modifier to damage formula when using two-handed melee weapons.
+  * Sorcerer starts the game equipped with two Potions of Healing [Mana].
+  * Block bonuses have been reduced to:
+   * Warrior: 20 [30]
+   * Rogue: 10 [20]
+   * Sorcerer: 0 [10]
+ * Monsters:
       * Health and damage has been increased by 50%.
       * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
       * Number per dlvl has been increased by 50% with a maximum of 250 [200].

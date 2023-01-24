@@ -129,9 +129,6 @@ If you want to help test the latest state of the next version you can fetch the 
          * speed: 25 [haste: 27]
          * harmony: 24 [20]
          * ages: 24 [25]
-      * All affixes with a range of values have been set to their maximum.
-      * Damage versus demons affix: +50% [+200%]
-      * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
       * unique item qlvl:
          * Bloodslayer: 10 [3]
          * The Mangler: 9 [2]
@@ -148,6 +145,9 @@ If you want to help test the latest state of the next version you can fetch the 
          * Immolator: 7 [4]
          * Gonnagal’s Dirk: 5 [1]
          * Shadowhawk: 12 [8]
+      * All affixes with a range of values have been set to their maximum.
+      * Damage versus demons affix: +50% [+200%]
+      * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
       * Staff charges have been set to their maximum values.
       * Long War Bow has been restored to its original Diablo graphic.
    * #### Spells:

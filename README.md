@@ -21,17 +21,8 @@ If you want to help test the latest state of the next version you can fetch the 
 
 *Note: You must be logged into GitHub to download the attachments.*
 
-[![Linux x86](https://github.com/ikonomov/DiabloX/actions/workflows/Linux_x86.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Linux_x86.yml?query=branch%3Amaster)
-[![Linux x86-64 SDL1](https://github.com/ikonomov/DiabloX/actions/workflows/Linux_x86_64_SDL1.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Linux_x86_64_SDL1.yml?query=branch%3Amaster)
-[![MacOSX](https://github.com/ikonomov/DiabloX/actions/workflows/MacOSX.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/MacOSX.yml?query=branch%3Amaster)
-[![Windows x64](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MSVC_x64.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MSVC_x64.yml?query=branch%3Amaster)
 [![Windows MinGW x64](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x64.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x64.yml?query=branch%3Amaster)
 [![Windows MinGW x86](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x86.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x86.yml?query=branch%3Amaster)
-[![Android](https://github.com/ikonomov/DiabloX/actions/workflows/Android.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Android.yml?query=branch%3Amaster)
-[![iOS](https://github.com/ikonomov/DiabloX/actions/workflows/iOS.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/iOS.yml?query=branch%3Amaster)
-[![PS4](https://github.com/ikonomov/DiabloX/actions/workflows/PS4.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/PS4.yml?query=branch%3Amaster)
-[![Original Xbox](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_nxdk.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_nxdk.yml?query=branch%3Amaster)
-[![Xbox One/Series](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_one.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_one.yml?query=branch%3Amaster)
 
 ## Multiplayer:
    * ZeroTier does not need port forwarding or an extra application.

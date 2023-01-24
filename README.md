@@ -68,7 +68,7 @@ If you want to help test the latest state of the next version you can fetch the 
    * Items:
       * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
       * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
-      * Potions cost two times more gold.
+      * Potions cost 100% more gold.
       * Base armor values have been set to their maximum except:
          * Field Plate: 40 [40-45]
          * Plate Mail: 45 [42-50]

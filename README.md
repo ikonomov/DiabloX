@@ -77,7 +77,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * fine (armor) to stout
       * crimson (31-40) to russet
       * haste to speed
-<details>
+<details open>
   <summary>Qlvl (click to expand)</summary>
 
    * Qlvl:

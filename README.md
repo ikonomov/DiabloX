@@ -182,23 +182,26 @@ If you want to help test the latest state of the next version you can fetch the 
    * Textbox for item labels and chat messages has been made transparent.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
    * Speed settings have been removed.
-   * The diablo.ini has been optimized for consistent gameplay including:
-      * disabled friendly damage from spells and ranged attacks to other players
-      * disabled run in town
-      * disabled Adria refilling mana
-      * disabled not randomized quests
-      * enabled all shrines
-      * disabled quick cast
-      * disabled auto refilling belt
-      * disabled auto pickup except for gold (configurable for gold)
-      * disabled auto equip except for weapons and shields (configurable for weapons and shields)
-      * enabled zoom on start by default with a resolution of 1284x963
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
       * Help: H [F1]
       * Quick Save: G [F2]
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [Pause or P]
       * unbound: Quick Load, increase/decrease gamma
+<details>
+  <summary>DevilutionX options (click to expand)</summary>
+  
+   * disabled friendly damage from spells and ranged attacks to other players
+   * disabled run in town
+   * disabled Adria refilling mana
+   * disabled not randomized quests
+   * enabled all shrines
+   * disabled quick cast
+   * disabled auto refilling belt
+   * disabled auto pickup except for gold (configurable for gold)
+   * disabled auto equip except for weapons and shields (configurable for weapons and shields)
+   * enabled zoom on start by default with a resolution of 1284x963
+</details>
 
 ## Credits
 

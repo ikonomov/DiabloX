@@ -5,7 +5,7 @@
 
 DiabloX is a mod for Diablo 1 and a fork of [DevilutionX](https://github.com/diasurgical/devilutionX) with modifications to its code listed below.  The purpose of the changes is to increase the challenge by rebalancing various aspects of the game.
 
-### How to Install
+## How to Install
 
 Note: You'll need access to the data from the original game. If you don't have an original CD then you can [buy Diablo from GoG.com](https://www.gog.com/game/diablo). Alternately you can use `spawn.mpq` from the [shareware](https://github.com/diasurgical/devilutionx-assets/releases/download/v2/spawn.mpq) version, in place of `DIABDAT.MPQ`, to play the shareware portion of the game.
 
@@ -15,7 +15,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 
 More detailed instructions can be found by following the [Installation Instructions](./docs/installing.md) for DevilutionX.  
 
-### Test builds
+## Test builds
 
 If you want to help test the latest state of the next version you can fetch the build artifact from one of the build servers:
 
@@ -33,18 +33,18 @@ If you want to help test the latest state of the next version you can fetch the 
 [![Original Xbox](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_nxdk.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_nxdk.yml?query=branch%3Amaster)
 [![Xbox One/Series](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_one.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/xbox_one.yml?query=branch%3Amaster)
 
-### Multiplayer:
+## Multiplayer:
    * ZeroTier does not need port forwarding or an extra application.
    * TCP/IP requires the host to expose port 6112.
 
-### Saved Games and configuration file location:
+## Saved Games and configuration file location:
 `C:\Users\[username]\AppData\Roaming\ikonomov\DiabloX`
 
-### [Summary of Changes in DevilutionX from Diablo](https://github.com/ikonomov/DiabloX/wiki/Summary-of-Changes-in-DevilutionX-from-Diablo)
+## [Summary of Changes in DevilutionX from Diablo](https://github.com/ikonomov/DiabloX/wiki/Summary-of-Changes-in-DevilutionX-from-Diablo)
 
-### Changes in DiabloX from DevilutionX:
+## Changes in DiabloX from DevilutionX:
 *original values listed in [square brackets]*
-   * ##### Characters:
+   * #### Characters:
       * The required experience points for each clvl have been increased by 100%.
       * Regenerate 1% of max mana per second.
       * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
@@ -54,18 +54,18 @@ If you want to help test the latest state of the next version you can fetch the 
          * Warrior: 20 [30]
          * Rogue: 10 [20]
          * Sorcerer: 0 [10]
-   * ##### Monsters:
+   * #### Monsters:
       * Health and damage has been increased by 50%.
       * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
       * Number per dlvl has been increased by 50% with a maximum of 250 [200].
       * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
       * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
       * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
-   * ##### Shrines:
+   * #### Shrines:
       * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
       * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
       * Hidden increases durability of items to a maximum of 250 [255].
-   * ##### Items:
+   * #### Items:
       * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
       * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
       * Potions cost 100% more gold.
@@ -150,7 +150,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * Shadowhawk: 12 [8]
       * Staff charges have been set to their maximum values.
       * Long War Bow has been restored to its original Diablo graphic.
-   * ##### Spells:
+   * #### Spells:
       * Fire Wall damage: 1/2 of the original
       * Apocalypse damage: 1/3 of the original
       * Elemental, Fireball, Flash damage: 1/4 of the original
@@ -166,7 +166,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
          * Fire Wall initial: 100 [28]; minimum: 60 [16]; decrease per slvl: 6 [2]
       * Stone Curse does not affect unique monsters.
-   * ##### Interface:
+   * #### Interface:
       * Lock-on target feature has been disabled.
       * Holding down left or right mouse buttons simulate multiple attacks.
       * The gold pile size has been increased to 20,000 [5,000].
@@ -195,12 +195,12 @@ If you want to help test the latest state of the next version you can fetch the 
          * Pause: Pause [Pause or P]
          * unbound: Quick Load, increase/decrease gamma
 
-### Credits
+## Credits
 
 - [DevilutionX](https://github.com/diasurgical/devilutionX#credits)
 - [DiabloX](https://github.com/ikonomov/DiabloX/graphs/contributors)
 
-### Legal
+## Legal
 
 DiabloX is made publicly available and released under the Sustainable Use License (see [LICENSE](LICENSE.md))
 

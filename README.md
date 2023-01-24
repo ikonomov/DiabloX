@@ -74,10 +74,10 @@ If you want to help test the latest state of the next version you can fetch the 
 <details open>
   <summary>Base armor values have been set to their maximum except:</summary>
 
-   * ###### Field Plate: 40 [40-45]
-   * ###### Plate Mail: 45 [42-50]
-   * ###### Gothic Plate: 48 [50-60]
-   * ###### Full Plate Mail: 50 [60-75]
+   * Field Plate: 40 [40-45]
+   * Plate Mail: 45 [42-50]
+   * Gothic Plate: 48 [50-60]
+   * Full Plate Mail: 50 [60-75]
   </details>
 
    * Removed affixes:

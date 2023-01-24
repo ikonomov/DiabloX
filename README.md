@@ -74,7 +74,6 @@ If you want to help test the latest state of the next version you can fetch the 
       * Plate Mail: 45 [42-50]
       * Gothic Plate: 48 [50-60]
       * Full Plate Mail: 50 [60-75]
-   * qlvl for Elixir of Strength, Magic and Dexterity: 20 [15]
    * Removed affixes:
       * readiness (has no effect)
       * speed (same functionality as haste)
@@ -83,125 +82,127 @@ If you want to help test the latest state of the next version you can fetch the 
       * crimson (31-40) to russet
       * haste to speed
 <details>
-  <summary>affix qlvl (click to expand)</summary>
+  <summary>qlvl (click to expand)</summary>
 
-   * moon: 13 [11]
-   * stars: 24 [17]
-   * heavens: 35 [25]
-   * zodiac: 46 [30]
-   * whale: 46 [60]
-   * snake: 12 [9]
-   * serpent: 22 [15]
-   * drake: 35 [21]
-   * dragon: 43 [27]
-   * wyrm: 46 [35]
-   * hydra: 50 [60]
-   * godly: 44 [60]
-   * steel: 8 [6]
-   * silver: 12 [9]
-   * gold: 17 [12]
-   * platinum: 22 [16]
-   * mithril: 28 [20]
-   * meteoric: 35 [23]
-   * weird: 43 [35]
-   * strange: 50 [60]
-   * master: 29 [28]
-   * champion: 36 [40]
-   * king: 44 [28]
-   * jagged: 1 [4]
-   * deadly: 4 [6]
-   * heavy: 8 [9]
-   * brutal: 17 [16]
-   * massive: 22 [20]
-   * savage: 28 [23]
-   * merciless: 43 [60]
-   * slaying: 13 [15]
-   * gore: 20 [25]
-   * carnage: 27 [35]
-   * slaughter: 35 [60]
-   * osmosis: 30 [50]
-   * thunder: 50 [60]
-   * blood: 24 [19]
-   * vampires: 24 [19]
-   * amber: 14 [12]
-   * jade: 23 [18]
-   * obsidian: 35 [24]
-   * emerald: 43 [31]
-   * swiftness: 18 [10]
-   * speed: 25 [haste: 27]
-   * harmony: 24 [20]
-   * ages: 24 [25]
+   * Elixir of Strength, Magic and Dexterity: 20 [15]
+   * affix
+      * moon: 13 [11]
+      * stars: 24 [17]
+      * heavens: 35 [25]
+      * zodiac: 46 [30]
+      * whale: 46 [60]
+      * snake: 12 [9]
+      * serpent: 22 [15]
+      * drake: 35 [21]
+      * dragon: 43 [27]
+      * wyrm: 46 [35]
+      * hydra: 50 [60]
+      * godly: 44 [60]
+      * steel: 8 [6]
+      * silver: 12 [9]
+      * gold: 17 [12]
+      * platinum: 22 [16]
+      * mithril: 28 [20]
+      * meteoric: 35 [23]
+      * weird: 43 [35]
+      * strange: 50 [60]
+      * master: 29 [28]
+      * champion: 36 [40]
+      * king: 44 [28]
+      * jagged: 1 [4]
+      * deadly: 4 [6]
+      * heavy: 8 [9]
+      * brutal: 17 [16]
+      * massive: 22 [20]
+      * savage: 28 [23]
+      * merciless: 43 [60]
+      * slaying: 13 [15]
+      * gore: 20 [25]
+      * carnage: 27 [35]
+      * slaughter: 35 [60]
+      * osmosis: 30 [50]
+      * thunder: 50 [60]
+      * blood: 24 [19]
+      * vampires: 24 [19]
+      * amber: 14 [12]
+      * jade: 23 [18]
+      * obsidian: 35 [24]
+      * emerald: 43 [31]
+      * swiftness: 18 [10]
+      * speed: 25 [haste: 27]
+      * harmony: 24 [20]
+      * ages: 24 [25]
+   * unique item:
+      * Bloodslayer: 10 [3]
+      * The Mangler: 9 [2]
+      * Wicked Axe: 12 [5]
+      * The Blackoak Bow: 8 [5]
+      * Deadly Hunter: 10 [3]
+      * Civerb’s Cudgel: 10 [1]
+      * Lightforge: 14 [1]
+      * Helm of Spirits: 14 [1]
+      * The Bleeder: 9 [2]
+      * Bramble: 7 [1]
+      * Constricting Ring: 15 [5]
+      * Split Skull Shield: 4 [1]
+      * Immolator: 7 [4]
+      * Gonnagal’s Dirk: 5 [1]
+      * Shadowhawk: 12 [8]
 </details>
-      * unique item qlvl:
-         * Bloodslayer: 10 [3]
-         * The Mangler: 9 [2]
-         * Wicked Axe: 12 [5]
-         * The Blackoak Bow: 8 [5]
-         * Deadly Hunter: 10 [3]
-         * Civerb’s Cudgel: 10 [1]
-         * Lightforge: 14 [1]
-         * Helm of Spirits: 14 [1]
-         * The Bleeder: 9 [2]
-         * Bramble: 7 [1]
-         * Constricting Ring: 15 [5]
-         * Split Skull Shield: 4 [1]
-         * Immolator: 7 [4]
-         * Gonnagal’s Dirk: 5 [1]
-         * Shadowhawk: 12 [8]
-      * All affixes with a range of values have been set to their maximum.
-      * Damage versus demons affix: +50% [+200%]
-      * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
-      * Staff charges have been set to their maximum values.
-      * Long War Bow has been restored to its original Diablo graphic.
-   * #### Spells:
-      * Fire Wall damage: 1/2 of the original
-      * Apocalypse damage: 1/3 of the original
-      * Elemental, Fireball, Flash damage: 1/4 of the original
-      * Chain Lightning damage: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
-      * Damage reduction from Mana Shield has been removed.
-      * Apocalypse only works on monsters within the line of sight.
-      * Spell information inside the spell book has been modified with more accurate values.
-      * The 1/2 spell damage modifier in player versus player has been removed.
-      * Mana cost:
-         * Town Portal initial: 53 [35]; minimum: 36 [18]
-         * Phasing initial: 16 [12]; minimum: 8 [4]
-         * Teleport initial: 50 [35]; minimum: 30 [15]
-         * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
-         * Fire Wall initial: 100 [28]; minimum: 60 [16]; decrease per slvl: 6 [2]
-      * Stone Curse does not affect unique monsters.
-   * #### Interface:
-      * Lock-on target feature has been disabled.
-      * Holding down left or right mouse buttons simulate multiple attacks.
-      * The gold pile size has been increased to 20,000 [5,000].
-      * Game name has been changed to DiabloX with a version coresponding to the latest DevilutionX release.
-      * GameID has been changed to a unique identifier to prevent issues when joining multi player games with different builds.
-      * Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
-      * The application ID for Discord has been changed to DiabloX.
-      * Textbox for item labels and chat messages has been made transparent.
-      * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
-      * Speed settings have been removed.
-      * The diablo.ini has been optimized for consistent gameplay including:
-         * disabled friendly damage from spells and ranged attacks to other players
-         * disabled run in town
-         * disabled Adria refilling mana
-         * disabled not randomized quests
-         * enabled all shrines
-         * disabled quick cast
-         * disabled auto refilling belt
-         * disabled auto pickup except for gold (configurable for gold)
-         * disabled auto equip except for weapons and shields (configurable for weapons and shields)
-         * enabled zoom on start by default with a resolution of 1284x963
-      * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
-         * Help: H [F1]
-         * Quick Save: G [F2]
-         * Quick Spells: F1-F8 [F5-F8]
-         * Pause: Pause [Pause or P]
-         * unbound: Quick Load, increase/decrease gamma
+   * All affixes with a range of values have been set to their maximum.
+   * Damage versus demons affix: +50% [+200%]
+   * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
+   * Staff charges have been set to their maximum values.
+   * Long War Bow has been restored to its original Diablo graphic.
+#### Spells:
+   * Fire Wall damage: 1/2 of the original
+   * Apocalypse damage: 1/3 of the original
+   * Elemental, Fireball, Flash damage: 1/4 of the original
+   * Chain Lightning damage: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
+   * Damage reduction from Mana Shield has been removed.
+   * Apocalypse only works on monsters within the line of sight.
+   * Spell information inside the spell book has been modified with more accurate values.
+   * The 1/2 spell damage modifier in player versus player has been removed.
+   * Mana cost:
+      * Town Portal initial: 53 [35]; minimum: 36 [18]
+      * Phasing initial: 16 [12]; minimum: 8 [4]
+      * Teleport initial: 50 [35]; minimum: 30 [15]
+      * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
+      * Fire Wall initial: 100 [28]; minimum: 60 [16]; decrease per slvl: 6 [2]
+   * Stone Curse does not affect unique monsters.
+#### Interface:
+   * Lock-on target feature has been disabled.
+   * Holding down left or right mouse buttons simulate multiple attacks.
+   * The gold pile size has been increased to 20,000 [5,000].
+   * Game name has been changed to DiabloX with a version coresponding to the latest DevilutionX release.
+   * GameID has been changed to a unique identifier to prevent issues when joining multi player games with different builds.
+   * Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
+   * The application ID for Discord has been changed to DiabloX.
+   * Textbox for item labels and chat messages has been made transparent.
+   * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
+   * Speed settings have been removed.
+   * The diablo.ini has been optimized for consistent gameplay including:
+      * disabled friendly damage from spells and ranged attacks to other players
+      * disabled run in town
+      * disabled Adria refilling mana
+      * disabled not randomized quests
+      * enabled all shrines
+      * disabled quick cast
+      * disabled auto refilling belt
+      * disabled auto pickup except for gold (configurable for gold)
+      * disabled auto equip except for weapons and shields (configurable for weapons and shields)
+      * enabled zoom on start by default with a resolution of 1284x963
+   * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
+      * Help: H [F1]
+      * Quick Save: G [F2]
+      * Quick Spells: F1-F8 [F5-F8]
+      * Pause: Pause [Pause or P]
+      * unbound: Quick Load, increase/decrease gamma
 
 ## Credits
 
-- [DevilutionX](https://github.com/diasurgical/devilutionX#credits)
-- [DiabloX](https://github.com/ikonomov/DiabloX/graphs/contributors)
+   * [DevilutionX](https://github.com/diasurgical/devilutionX#credits)
+   * [DiabloX](https://github.com/ikonomov/DiabloX/graphs/contributors)
 
 ## Legal
 

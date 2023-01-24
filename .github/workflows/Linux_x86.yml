@@ -50,12 +50,12 @@ jobs:
       if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v2
       with:
-        name: diablox_linux_x86.tar.xz
-        path: diablox.tar.xz
+        name: devilutionx_linux_x86.tar.xz
+        path: devilutionx.tar.xz
 
     - name: Upload-AppImage
       if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v2
       with:
-        name: diablox_linux_x86.appimage
-        path: diablox.appimage
+        name: devilutionx_linux_x86.appimage
+        path: devilutionx.appimage

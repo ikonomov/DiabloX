@@ -284,7 +284,7 @@ include(Dependencies)
 
 add_subdirectory(Source)
 
-set(BIN_TARGET diablox)
+set(BIN_TARGET devilutionx)
 if(NINTENDO_3DS)
   set(BIN_TARGET ${BIN_TARGET}.elf)
 endif()

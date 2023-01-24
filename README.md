@@ -126,7 +126,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * obsidian: 35 [24]
          * emerald: 43 [31]
          * swiftness: 18 [10]
-         * speed: 25 [19]
+         * speed: 25 [27]
          * harmony: 24 [20]
          * ages: 24 [25]
       * All affixes with a range of values have been set to their maximum.

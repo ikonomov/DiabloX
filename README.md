@@ -149,6 +149,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * Gonnagal’s Dirk: 5 [1]
       * Shadowhawk: 12 [8]
 </details>
+
    * All affixes with a range of values have been set to their maximum.
    * Damage versus demons affix: +50% [+200%]
    * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.

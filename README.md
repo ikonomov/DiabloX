@@ -159,7 +159,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * Apocalypse only works on monsters within the line of sight.
       * Spell information inside the spell book has been modified with more accurate values.
       * The 1/2 spell damage modifier in player versus player has been removed.
-      * The mana cost:
+      * Mana cost:
          * Town Portal initial: 53 [35]; minimum: 36 [18]
          * Phasing initial: 16 [12]; minimum: 8 [4]
          * Teleport initial: 50 [35]; minimum: 30 [15]

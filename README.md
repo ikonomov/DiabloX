@@ -191,16 +191,16 @@ If you want to help test the latest state of the next version you can fetch the 
 <details>
   <summary>DevilutionX options (click to expand)</summary>
   
-   * disabled friendly damage from spells and ranged attacks to other players
-   * disabled run in town
-   * disabled Adria refilling mana
-   * disabled not randomized quests
-   * enabled all shrines
-   * disabled quick cast
-   * disabled auto refilling belt
-   * disabled auto pickup except for gold (configurable for gold)
-   * disabled auto equip except for weapons and shields (configurable for weapons and shields)
-   * enabled zoom on start by default with a resolution of 1284x963
+      * disabled friendly damage from spells and ranged attacks to other players
+      * disabled run in town
+      * disabled Adria refilling mana
+      * disabled not randomized quests
+      * enabled all shrines
+      * disabled quick cast
+      * disabled auto refilling belt
+      * disabled auto pickup except for gold (configurable for gold)
+      * disabled auto equip except for weapons and shields (configurable for weapons and shields)
+      * enabled zoom on start by default with a resolution of 1284x963
 </details>
 
 ## Credits

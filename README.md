@@ -54,8 +54,8 @@ If you want to help test the latest state of the next version you can fetch the 
       * Apocalypse: 1/3 of the original
       * Elemental, Fireball, Flash: 1/4 of the original
       * Chain Lightning: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
-      * The 1/2 modifier in player versus player has been removed.
-      * Information inside the spell book has been modified with more accurate values.
+   * The 1/2 spell damage modifier in player versus player has been removed.
+   * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
    * Mana cost:
       * Town Portal initial: 53 [35]; minimum: 36 [18]

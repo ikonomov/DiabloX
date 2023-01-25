@@ -89,7 +89,7 @@ If you want to help test the latest state of the next version you can fetch the 
 <details>
   <summary>Qlvl (click to expand)</summary>
 
-   * Qlvl:
+   * :
       * Elixir of Strength, Magic and Dexterity: 20 [15]
       * Affix
          * moon: 13 [11]

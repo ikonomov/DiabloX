@@ -188,7 +188,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * disabled friendly damage from spells and ranged attacks to other players
       * disabled run in town
       * disabled Adria refilling mana
-      * disabled not randomized quests
+      * enabled randomized quests
       * enabled all shrines
       * disabled quick cast
       * disabled auto refilling belt

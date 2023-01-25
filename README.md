@@ -181,6 +181,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * Pause: Pause [Pause or P]
       * unbound: Quick Load, increase/decrease gamma
    * DevilutionX settings:
+      * disabled support for Spawned Diablo and Diablo: Hellfire.
       * disabled friendly damage from spells and ranged attacks to other players
       * disabled run in town
       * disabled Adria refilling mana

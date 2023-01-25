@@ -171,7 +171,7 @@ If you want to help test the latest state of the next version you can fetch the 
    * Lock-on target feature has been disabled.
    * Holding down left or right mouse buttons simulate multiple attacks.
    * The gold pile size has been increased to 20,000 [5,000].
-   * Game name has been changed to DiabloX with a version coresponding to the latest DevilutionX release.
+   * Game name has been changed to DiabloX.
    * GameID has been changed to a unique identifier to prevent issues when joining multi player games with different builds.
    * Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
    * The application ID for Discord has been changed to DiabloX.

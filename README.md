@@ -76,8 +76,6 @@ If you want to help test the latest state of the next version you can fetch the 
       * Kite Shield: 12 [8-15]
       * Gothic Shield: 14 [14-18]
       * Tower Shield: 15 [12-20]
-      * Field Plate: 45 [40-45]
-      * Plate Mail: 50 [42-50]
       * Gothic Plate: 55 [50-60]
       * Full Plate Mail: 60 [60-75]
    * Removed affixes:

@@ -68,7 +68,7 @@ If you want to help test the latest state of the next version you can fetch the 
    * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
    * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
    * Potions cost 100% more gold.
-   * All affixes with a range of values have been set to their maximum.
+   * Affixes with a range of values have been set to their maximum.
    * Damage versus demons affix: +50% [+200%]
    * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
    * Staff charges have been set to their maximum values.
@@ -164,20 +164,19 @@ If you want to help test the latest state of the next version you can fetch the 
    * Damage has been increased by 50%.
    * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
    * Number per dlvl has been increased by 50% with a maximum of 250 [200].
-   * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
+   * Ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Interface:
-   * Lock-on target feature has been disabled.
+   * The Lock-on target feature has been disabled.
    * Holding down left or right mouse buttons simulate multiple attacks.
-   * The gold pile size has been increased to 20,000 [5,000].
-   * Game name has been changed to DiabloX.
-   * GameID has been changed to a unique identifier to prevent issues when joining multi player games with different builds.
+   * Gold pile size has been increased to 20,000 [5,000].
+   * The game name and application ID for Discord have been changed to DiabloX.
+   * The GameID has been changed to a unique identifier to prevent issues when joining multi player games with different builds.
    * Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
-   * The application ID for Discord has been changed to DiabloX.
-   * Textbox for item labels and chat messages has been made transparent.
+   * The textbox for item labels and chat messages has been made transparent.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
-   * Speed settings have been removed.
+   * The speed settings have been removed.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
       * Help: H [F1]
       * Quick Save: G [F2]

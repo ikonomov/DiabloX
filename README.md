@@ -39,7 +39,7 @@ If you want to help test the latest state of the next version you can fetch the 
    * Regenerate 1% of max mana per second.
    * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
-   * Sorcerer starts the game equipped with two Potions of Healing [Mana].
+   * Sorcerer starts the game equipped with two Potions of Healing instead of two Potions of Mana.
    * Maximum stats:
       * Warrior's strength: 150 [250]
       * Rogue's dexterity: 150 [250]

@@ -40,12 +40,16 @@ If you want to help test the latest state of the next version you can fetch the 
    * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Sorcerer starts the game equipped with two Potions of Healing [Mana].
+   * Maximum stats:
+      * Warrior's strength: 150 [250]
+      * Rogue's dexterity: 150 [250]
+      * Sorcerer's magic: 150 [250]
    * Block bonuses:
       * Warrior: 20 [30]
       * Rogue: 10 [20]
       * Sorcerer: 0 [10]
 #### Monsters:
-   * Health and damage has been increased by 50%.
+   * Damage has been increased by 50%.
    * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
    * Number per dlvl has been increased by 50% with a maximum of 250 [200].
    * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
@@ -65,10 +69,13 @@ If you want to help test the latest state of the next version you can fetch the 
    * Staff charges have been set to their maximum values.
    * Long War Bow has been restored to its original Diablo graphic.
    * Base armor values have been set to their maximum except:
-      * Field Plate: 40 [40-45]
-      * Plate Mail: 45 [42-50]
-      * Gothic Plate: 48 [50-60]
-      * Full Plate Mail: 50 [60-75]
+      * Kite Shield: 12 [8-15]
+      * Gothic Shield: 14 [14-18]
+      * Tower Shield: 15 [12-20]
+      * Field Plate: 45 [40-45]
+      * Plate Mail: 50 [42-50]
+      * Gothic Plate: 55 [50-60]
+      * Full Plate Mail: 60 [60-75]
    * Removed affixes:
       * readiness (has no effect)
       * speed (same functionality as haste)

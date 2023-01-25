@@ -7,7 +7,7 @@ DiabloX is a mod for Diablo 1 and a fork of [DevilutionX](https://github.com/dia
 
 ## How to Install
 
-Note: You'll need access to the data from the original game. If you don't have an original CD then you can [buy Diablo from GoG.com](https://www.gog.com/game/diablo). Alternately you can use `spawn.mpq` from the [shareware](https://github.com/diasurgical/devilutionx-assets/releases/download/v2/spawn.mpq) version, in place of `DIABDAT.MPQ`, to play the shareware portion of the game.
+Note: You'll need access to the data from the original game. If you don't have an original CD then you can [buy Diablo from GoG.com](https://www.gog.com/game/diablo).
 
 - Download the latest [DiabloX release](https://github.com/ikonomov/DiabloX/releases) and extract the contents to a location of your choosing.
 

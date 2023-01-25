@@ -48,17 +48,21 @@ If you want to help test the latest state of the next version you can fetch the 
       * Warrior: 20 [30]
       * Rogue: 10 [20]
       * Sorcerer: 0 [10]
-#### Monsters:
-   * Damage has been increased by 50%.
-   * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
-   * Number per dlvl has been increased by 50% with a maximum of 250 [200].
-   * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
-   * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
-   * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
-#### Shrines:
-   * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
-   * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
-   * Hidden increases durability of items to a maximum of 250 [255].
+#### Spells:
+   * Fire Wall damage: 1/2 of the original
+   * Apocalypse damage: 1/3 of the original
+   * Elemental, Fireball, Flash damage: 1/4 of the original
+   * Chain Lightning damage: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
+   * Apocalypse only works on monsters within the line of sight.
+   * Spell information inside the spell book has been modified with more accurate values.
+   * The 1/2 spell damage modifier in player versus player has been removed.
+   * Mana cost:
+      * Town Portal initial: 53 [35]; minimum: 36 [18]
+      * Phasing initial: 16 [12]; minimum: 8 [4]
+      * Teleport initial: 50 [35]; minimum: 30 [15]
+      * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
+      * Fire Wall initial: 100 [28]; minimum: 60 [16]; decrease per slvl: 6 [2]
+   * Stone Curse does not affect unique monsters.
 #### Items:
    * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
    * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
@@ -153,22 +157,17 @@ If you want to help test the latest state of the next version you can fetch the 
          * Shadowhawk: 12 [8]
 </details>
 
-#### Spells:
-   * Fire Wall damage: 1/2 of the original
-   * Apocalypse damage: 1/3 of the original
-   * Elemental, Fireball, Flash damage: 1/4 of the original
-   * Chain Lightning damage: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
-   * Damage reduction from Mana Shield has been removed.
-   * Apocalypse only works on monsters within the line of sight.
-   * Spell information inside the spell book has been modified with more accurate values.
-   * The 1/2 spell damage modifier in player versus player has been removed.
-   * Mana cost:
-      * Town Portal initial: 53 [35]; minimum: 36 [18]
-      * Phasing initial: 16 [12]; minimum: 8 [4]
-      * Teleport initial: 50 [35]; minimum: 30 [15]
-      * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
-      * Fire Wall initial: 100 [28]; minimum: 60 [16]; decrease per slvl: 6 [2]
-   * Stone Curse does not affect unique monsters.
+#### Shrines:
+   * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
+   * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
+   * Hidden increases durability of items to a maximum of 250 [255].
+#### Monsters:
+   * Damage has been increased by 50%.
+   * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player and 1/2 of the bonus points for single player.
+   * Number per dlvl has been increased by 50% with a maximum of 250 [200].
+   * The ilvl for item drops has been increased by 8 in nightmare and 16 in hell.
+   * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
+   * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Interface:
    * Lock-on target feature has been disabled.
    * Holding down left or right mouse buttons simulate multiple attacks.

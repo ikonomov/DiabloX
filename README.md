@@ -57,28 +57,29 @@ If you want to help test the latest state of the next version you can fetch the 
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
+   * Stone Curse does not affect unique monsters.
    * Mana cost:
       * Town Portal initial: 53 [35]; minimum: 36 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]
       * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
       * Fire Wall initial: 100 [28]; minimum: 60 [16]; decrease per slvl: 6 [2]
-   * Stone Curse does not affect unique monsters.
 #### Items:
+   * Potions cost 100% more gold.
+   * Long War Bow has been restored to its original Diablo graphic.
    * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
    * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
-   * Potions cost 100% more gold.
-   * Affixes with a range of values have been set to their maximum.
-   * Damage versus demons affix: +50% [+200%]
    * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
-   * Staff charges have been set to their maximum values.
-   * Long War Bow has been restored to its original Diablo graphic.
-   * Base armor values have been set to their maximum except:
-      * Kite Shield: 12 [8-15]
-      * Gothic Shield: 14 [14-18]
-      * Tower Shield: 15 [12-20]
-      * Gothic Plate: 55 [50-60]
-      * Full Plate Mail: 60 [60-75]
+   * Damage versus demons affix: +50% [+200%].
+   * Set to maximum values:
+      * Affixes with a range of values.
+      * Staff charges.
+      * Base armor except:
+         * Kite Shield: 12 [8-15]
+         * Gothic Shield: 14 [14-18]
+         * Tower Shield: 15 [12-20]
+         * Gothic Plate: 55 [50-60]
+         * Full Plate Mail: 60 [60-75]
    * Removed affixes:
       * readiness (has no effect)
       * speed (same functionality as haste)
@@ -172,8 +173,7 @@ If you want to help test the latest state of the next version you can fetch the 
    * Holding down left or right mouse buttons simulate multiple attacks.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.
-   * The GameID has been changed to a unique identifier to prevent issues when joining multi player games with different builds.
-   * Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
+   * GameID, Stash and character names have been assigned unique names and identifiers to prevent issues with different builds.
    * The textbox for item labels and chat messages has been made transparent.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
    * The speed settings have been removed.

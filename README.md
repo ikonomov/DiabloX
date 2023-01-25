@@ -49,13 +49,14 @@ If you want to help test the latest state of the next version you can fetch the 
       * Rogue: 10 [20]
       * Sorcerer: 0 [10]
 #### Spells:
-   * Fire Wall damage: 1/2 of the original
-   * Apocalypse damage: 1/3 of the original
-   * Elemental, Fireball, Flash damage: 1/4 of the original
-   * Chain Lightning damage: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
+   * Damage:
+      * Fire Wall: 1/2 of the original
+      * Apocalypse: 1/3 of the original
+      * Elemental, Fireball, Flash: 1/4 of the original
+      * Chain Lightning: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
+      * The 1/2 modifier in player versus player has been removed.
+      * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
-   * Spell information inside the spell book has been modified with more accurate values.
-   * The 1/2 spell damage modifier in player versus player has been removed.
    * Mana cost:
       * Town Portal initial: 53 [35]; minimum: 36 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]

@@ -3,7 +3,7 @@ include(GoogleTest)
 add_library(libdevilutionx_so SHARED)
 set_target_properties(libdevilutionx_so PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(libdevilutionx_so PUBLIC libdevilutionx)
-target_include_directories(libdevilutionx_so INTERFACE "${DevilutionX_SOURCE_DIR}/Source")
+target_include_directories(libdevilutionx_so INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 set_target_properties(libdevilutionx_so PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_library(test_main STATIC main.cpp)

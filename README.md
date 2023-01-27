@@ -80,13 +80,9 @@ If you want to help test the latest state of the next version you can fetch the 
          * Tower Shield: 15 [12-20]
          * Gothic Plate: 55 [50-60]
          * Full Plate Mail: 60 [60-75]
-   * Removed affixes:
-      * readiness (has no effect)
-      * speed (same functionality as haste)
    * Renamed affixes:
       * fine (armor) to stout
       * crimson (31-40) to russet
-      * haste to speed
 <details>
   <summary>Qlvl (click to expand)</summary>
 
@@ -135,8 +131,10 @@ If you want to help test the latest state of the next version you can fetch the 
          * jade: 23 [18]
          * obsidian: 35 [24]
          * emerald: 43 [31]
+         * readiness: 6 [1]
          * swiftness: 18 [10]
-         * speed: 25 [haste: 27]
+         * speed: 28 [19]
+         * haste: 36 [27]
          * harmony: 24 [20]
          * ages: 24 [25]
       * Unique item:

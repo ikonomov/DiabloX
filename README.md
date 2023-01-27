@@ -131,10 +131,10 @@ If you want to help test the latest state of the next version you can fetch the 
          * jade: 23 [18]
          * obsidian: 35 [24]
          * emerald: 43 [31]
-         * readiness: 6 [1]
+         * readiness: 5 [1]
          * swiftness: 18 [10]
-         * speed: 28 [19]
-         * haste: 36 [27]
+         * speed: 24 [19]
+         * haste: 35 [27]
          * harmony: 24 [20]
          * ages: 24 [25]
       * Unique item:

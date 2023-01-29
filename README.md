@@ -50,10 +50,10 @@ If you want to help test the latest state of the next version you can fetch the 
       * Sorcerer: 0 [10]
 #### Spells:
    * Damage:
-      * Fire Wall: 1/2 of the original
-      * Apocalypse: 1/3 of the original
-      * Elemental, Fireball, Flash: 1/4 of the original
-      * Chain Lightning: min: 1 [2], max: (3+clvl)/2 [2+clvl]; creates 1+(slvl+5)/3 number of bolts that use the slvl and duration of Lightning
+      * Fire Wall, Flash, Elemental, Fireball: 1/2 of the original
+      * Lightning, Chain Lightning: min: 1 [2], max: (3+clvl)/2 [2+clvl]
+      * Chain Lightning: creates 3+slvl/3 number of bolts
+   * Maximum base slvl: 10 [15].
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
@@ -88,6 +88,7 @@ If you want to help test the latest state of the next version you can fetch the 
 
    * Qlvl:
       * Elixir of Strength, Magic and Dexterity: 20 [15]
+      * Staves and books increased according to the formula qlvl·3-2
       * Affix
          * moon: 13 [11]
          * stars: 24 [17]

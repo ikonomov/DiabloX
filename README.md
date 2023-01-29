@@ -50,10 +50,10 @@ If you want to help test the latest state of the next version you can fetch the 
       * Sorcerer: 0 [10]
 #### Spells:
    * Damage:
-      * Fire Wall, Flash, Elemental, Fireball: 1/2 of the original
       * Lightning, Chain Lightning: min: 1 [2], max: (3+clvl)/2 [2+clvl]
-      * Chain Lightning: creates 3+slvl/3 number of bolts
-   * Maximum base slvl: 10 [15].
+      * Chain Lightning: creates 1+(slvl+5)/3 number of bolts
+      * Fire Wall: 1/2 of the original
+      * Flash, Elemental, Fireball: 1/3 of the original
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
@@ -88,32 +88,6 @@ If you want to help test the latest state of the next version you can fetch the 
 
    * Qlvl:
       * Elixir of Strength, Magic and Dexterity: 20 [15]
-      * Spell:
-         * Apocalypse staff: 21 [15]
-         * Blood Star book: 29 [14]; staff: 18 [13]
-         * Bone Spirit book: 19 [9]; staff: 10 [7]
-         * Chain Lightning book: 17 [8]; staff: 10 [7]
-         * Charged Bolt book: 1 [1]; staff: 1 [1]
-         * Elemental book: 17 [8]; staff: 8 [6]
-         * Fireball book: 17 [8]; staff: 10 [7]
-         * Firebolt book: 1 [1]; staff: 1 [1]
-         * Fire Wall book: 6 [3]; staff: 3 [2]
-         * Flame Wave book: 19 [9]; staff: 11 [8]
-         * Flash book: 11 [5]; staff: 6 [4]
-         * Golem book: 23 [11]; staff: 13 [9]
-         * Guardian book: 19 [9]; staff: 11 [8]
-         * Healing book: 1 [1]; staff: 1 [1]
-         * Heal Other book: 1 [1]; staff: 1 [1]
-         * Holy Bolt book: 1 [1]; staff: 1 [1]
-         * Inferno book: 6 [3]; staff: 1 [1]
-         * Lightning book: 8 [4]; staff: 4 [3]
-         * Mana Shield book: 13 [6]; staff: 7 [5]
-         * Nova staff: 14 [10]
-         * Phasing book: 15 [7]; staff: 8 [6]
-         * Stone Curse book: 13 [6]; staff: 7 [5]
-         * Telekinesis book: 4 [2]; staff: 3 [2]
-         * Teleport book: 29 [14]; staff: 17 [12]
-         * Town Portal book: 6 [3]; staff: 4 [3]
       * Affix
          * moon: 13 [11]
          * stars: 24 [17]

@@ -88,6 +88,7 @@ If you want to help test the latest state of the next version you can fetch the 
 
    * Qlvl:
       * Elixir of Strength, Magic and Dexterity: 20 [15]
+      * Apocalypse staff: 17 [15]
       * Affix
          * moon: 13 [11]
          * stars: 24 [17]

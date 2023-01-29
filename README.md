@@ -63,7 +63,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]
       * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
-      * Fire Wall initial: 100 [28]; minimum: 60 [16]; decrease per slvl: 6 [2]
+      * Fire Wall initial: 60 [28]; minimum: 40 [16]; decrease per slvl: 3 [2]
 #### Items:
    * Potions cost 100% more gold.
    * Long War Bow has been restored to its original Diablo graphic.

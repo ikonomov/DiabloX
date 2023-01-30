@@ -131,7 +131,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * jade: 23 [18]
          * obsidian: 36 [24]
          * emerald: 43 [31]
-         * swiftness: 17 [10]
+         * swiftness: 16 [10]
          * speed: 24 [19]
          * haste: 37 [27]
          * harmony: 24 [20]

@@ -360,7 +360,7 @@ void ChangeOffset(Player &player)
 	PmChangeLightOff(player);
 }
 
-void StartAttack(Player &player, Direction d)
+void StartAttack(Player &player, Direction d, bool includesFirstFrame)
 {
 	if (player._pInvincible && player._pHitPoints == 0 && &player == MyPlayer) {
 		SyncPlrKill(player, -1);
@@ -368,14 +368,30 @@ void StartAttack(Player &player, Direction d)
 	}
 
 	int8_t skippedAnimationFrames = 0;
-	if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FasterAttack)) {
-		// The combination of Faster and Fast Attack doesn't result in more skipped skipped frames, cause the secound frame skip of Faster Attack is not triggered.
-		skippedAnimationFrames = 2;
-	} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastAttack)) {
-		skippedAnimationFrames = 1;
-	} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastestAttack)) {
-		// Fastest Attack is skipped if Fast or Faster Attack is also specified, cause both skip the frame that triggers fastest attack skipping
-		skippedAnimationFrames = 2;
+	if (includesFirstFrame) {
+		if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastestAttack) && HasAnyOf(player._pIFlags, ItemSpecialEffect::QuickAttack | ItemSpecialEffect::FastAttack)) {
+			// Combining Fastest Attack with any other attack speed modifier skips over the fourth frame, reducing the effectiveness of Fastest Attack.
+			// Faster Attack makes up for this by also skipping the sixth frame so this case only applies when using Quick or Fast Attack modifiers.
+			skippedAnimationFrames = 3;
+		} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastestAttack)) {
+			skippedAnimationFrames = 4;
+		} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FasterAttack)) {
+			skippedAnimationFrames = 3;
+		} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastAttack)) {
+			skippedAnimationFrames = 2;
+		} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::QuickAttack)) {
+			skippedAnimationFrames = 1;
+		}
+	} else {
+		if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FasterAttack)) {
+			// The combination of Faster and Fast Attack doesn't result in more skipped frames, because the second frame skip of Faster Attack is not triggered.
+			skippedAnimationFrames = 2;
+		} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastAttack)) {
+			skippedAnimationFrames = 1;
+		} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastestAttack)) {
+			// Fastest Attack is skipped if Fast or Faster Attack is also specified, because both skip the frame that triggers Fastest Attack skipping.
+			skippedAnimationFrames = 2;
+		}
 	}
 
 	auto animationFlags = AnimationDistributionFlags::ProcessAnimationPending;
@@ -387,7 +403,7 @@ void StartAttack(Player &player, Direction d)
 	SetPlayerOld(player);
 }
 
-void StartRangeAttack(Player &player, Direction d, WorldTileCoord cx, WorldTileCoord cy)
+void StartRangeAttack(Player &player, Direction d, WorldTileCoord cx, WorldTileCoord cy, bool includesFirstFrame)
 {
 	if (player._pInvincible && player._pHitPoints == 0 && &player == MyPlayer) {
 		SyncPlrKill(player, -1);
@@ -396,6 +412,9 @@ void StartRangeAttack(Player &player, Direction d, WorldTileCoord cx, WorldTileC
 
 	int8_t skippedAnimationFrames = 0;
 	if (!gbIsHellfire) {
+		if (includesFirstFrame && HasAnyOf(player._pIFlags, ItemSpecialEffect::QuickAttack | ItemSpecialEffect::FastAttack)) {
+			skippedAnimationFrames += 1;
+		}
 		if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastAttack)) {
 			skippedAnimationFrames += 1;
 		}
@@ -434,17 +453,17 @@ void StartSpell(Player &player, Direction d, WorldTileCoord cx, WorldTileCoord c
 	// Checks conditions for spell again, cause initial check was done when spell was queued and the parameters could be changed meanwhile
 	bool isValid = true;
 	switch (player.queuedSpell.spellType) {
-	case RSPLTYPE_SKILL:
-	case RSPLTYPE_SPELL:
+	case SpellType::Skill:
+	case SpellType::Spell:
 		isValid = CheckSpell(player, player.queuedSpell.spellId, player.queuedSpell.spellType, true) == SpellCheckResult::Success;
 		break;
-	case RSPLTYPE_SCROLL:
+	case SpellType::Scroll:
 		isValid = CanUseScroll(player, player.queuedSpell.spellId);
 		break;
-	case RSPLTYPE_CHARGES:
+	case SpellType::Charges:
 		isValid = CanUseStaff(player, player.queuedSpell.spellId);
 		break;
-	case RSPLTYPE_INVALID:
+	case SpellType::Invalid:
 		isValid = false;
 		break;
 	}
@@ -1217,7 +1236,7 @@ bool DoSpell(Player &player)
 		    player.position.temp.y,
 		    player.executedSpell.spellLevel);
 
-		if (IsAnyOf(player.executedSpell.spellType, RSPLTYPE_SCROLL, RSPLTYPE_CHARGES)) {
+		if (IsAnyOf(player.executedSpell.spellType, SpellType::Scroll, SpellType::Charges)) {
 			EnsureValidReadiedSpell(player);
 		}
 	}
@@ -1365,7 +1384,7 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 						if (player.destAction == ACTION_ATTACKMON && monster->talkMsg != TEXT_NONE && monster->talkMsg != TEXT_VILE14) {
 							TalktoMonster(player, *monster);
 						} else {
-							StartAttack(player, d);
+							StartAttack(player, d, pmWillBeCalled);
 						}
 						player.destAction = ACTION_NONE;
 					}
@@ -1421,7 +1440,7 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 		switch (player.destAction) {
 		case ACTION_ATTACK:
 			d = GetDirection(player.position.tile, { player.destParam1, player.destParam2 });
-			StartAttack(player, d);
+			StartAttack(player, d, pmWillBeCalled);
 			break;
 		case ACTION_ATTACKMON:
 			x = abs(player.position.tile.x - monster->position.future.x);
@@ -1431,7 +1450,7 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 				if (monster->talkMsg != TEXT_NONE && monster->talkMsg != TEXT_VILE14) {
 					TalktoMonster(player, *monster);
 				} else {
-					StartAttack(player, d);
+					StartAttack(player, d, pmWillBeCalled);
 				}
 			}
 			break;
@@ -1440,24 +1459,24 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 			y = abs(player.position.tile.y - target->position.future.y);
 			if (x <= 1 && y <= 1) {
 				d = GetDirection(player.position.future, target->position.future);
-				StartAttack(player, d);
+				StartAttack(player, d, pmWillBeCalled);
 			}
 			break;
 		case ACTION_RATTACK:
 			d = GetDirection(player.position.tile, { player.destParam1, player.destParam2 });
-			StartRangeAttack(player, d, player.destParam1, player.destParam2);
+			StartRangeAttack(player, d, player.destParam1, player.destParam2, pmWillBeCalled);
 			break;
 		case ACTION_RATTACKMON:
 			d = GetDirection(player.position.future, monster->position.future);
 			if (monster->talkMsg != TEXT_NONE && monster->talkMsg != TEXT_VILE14) {
 				TalktoMonster(player, *monster);
 			} else {
-				StartRangeAttack(player, d, monster->position.future.x, monster->position.future.y);
+				StartRangeAttack(player, d, monster->position.future.x, monster->position.future.y, pmWillBeCalled);
 			}
 			break;
 		case ACTION_RATTACKPLR:
 			d = GetDirection(player.position.future, target->position.future);
-			StartRangeAttack(player, d, target->position.future.x, target->position.future.y);
+			StartRangeAttack(player, d, target->position.future.x, target->position.future.y, pmWillBeCalled);
 			break;
 		case ACTION_SPELL:
 			d = GetDirection(player.position.tile, { player.destParam1, player.destParam2 });
@@ -1483,7 +1502,7 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 			if (IsPlayerAdjacentToObject(player, *object)) {
 				if (object->_oBreak == 1) {
 					d = GetDirection(player.position.tile, object->position);
-					StartAttack(player, d);
+					StartAttack(player, d, pmWillBeCalled);
 				} else {
 					OperateObject(player, *object);
 				}
@@ -1493,7 +1512,7 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 			if (IsPlayerAdjacentToObject(player, *object)) {
 				if (object->_oBreak == 1) {
 					d = GetDirection(player.position.tile, object->position);
-					StartAttack(player, d);
+					StartAttack(player, d, pmWillBeCalled);
 				} else {
 					TryDisarm(player, *object);
 					OperateObject(player, *object);
@@ -1543,14 +1562,14 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 	if (player._pmode == PM_ATTACK && player.AnimInfo.currentFrame >= player._pAFNum) {
 		if (player.destAction == ACTION_ATTACK) {
 			d = GetDirection(player.position.future, { player.destParam1, player.destParam2 });
-			StartAttack(player, d);
+			StartAttack(player, d, pmWillBeCalled);
 			player.destAction = ACTION_NONE;
 		} else if (player.destAction == ACTION_ATTACKMON) {
 			x = abs(player.position.tile.x - monster->position.future.x);
 			y = abs(player.position.tile.y - monster->position.future.y);
 			if (x <= 1 && y <= 1) {
 				d = GetDirection(player.position.future, monster->position.future);
-				StartAttack(player, d);
+				StartAttack(player, d, pmWillBeCalled);
 			}
 			player.destAction = ACTION_NONE;
 		} else if (player.destAction == ACTION_ATTACKPLR) {
@@ -1558,14 +1577,14 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 			y = abs(player.position.tile.y - target->position.future.y);
 			if (x <= 1 && y <= 1) {
 				d = GetDirection(player.position.future, target->position.future);
-				StartAttack(player, d);
+				StartAttack(player, d, pmWillBeCalled);
 			}
 			player.destAction = ACTION_NONE;
 		} else if (player.destAction == ACTION_OPERATE) {
 			if (IsPlayerAdjacentToObject(player, *object)) {
 				if (object->_oBreak == 1) {
 					d = GetDirection(player.position.tile, object->position);
-					StartAttack(player, d);
+					StartAttack(player, d, pmWillBeCalled);
 				}
 			}
 		}
@@ -1574,15 +1593,15 @@ void CheckNewPath(Player &player, bool pmWillBeCalled)
 	if (player._pmode == PM_RATTACK && player.AnimInfo.currentFrame >= player._pAFNum) {
 		if (player.destAction == ACTION_RATTACK) {
 			d = GetDirection(player.position.tile, { player.destParam1, player.destParam2 });
-			StartRangeAttack(player, d, player.destParam1, player.destParam2);
+			StartRangeAttack(player, d, player.destParam1, player.destParam2, pmWillBeCalled);
 			player.destAction = ACTION_NONE;
 		} else if (player.destAction == ACTION_RATTACKMON) {
 			d = GetDirection(player.position.tile, monster->position.future);
-			StartRangeAttack(player, d, monster->position.future.x, monster->position.future.y);
+			StartRangeAttack(player, d, monster->position.future.x, monster->position.future.y, pmWillBeCalled);
 			player.destAction = ACTION_NONE;
 		} else if (player.destAction == ACTION_RATTACKPLR) {
 			d = GetDirection(player.position.tile, target->position.future);
-			StartRangeAttack(player, d, target->position.future.x, target->position.future.y);
+			StartRangeAttack(player, d, target->position.future.x, target->position.future.y, pmWillBeCalled);
 			player.destAction = ACTION_NONE;
 		}
 	}
@@ -1978,7 +1997,7 @@ void Player::ReadySpellFromEquipment(inv_body_loc bodyLocation)
 	auto &item = InvBody[bodyLocation];
 	if (item._itype == ItemType::Staff && IsValidSpell(item._iSpell) && item._iCharges > 0) {
 		_pRSpell = item._iSpell;
-		_pRSplType = RSPLTYPE_CHARGES;
+		_pRSplType = SpellType::Charges;
 		RedrawEverything();
 	}
 }
@@ -2521,7 +2540,7 @@ void CreatePlayer(Player &player, HeroClass c)
 	player._pLightRad = 10;
 	player._pInfraFlag = false;
 
-	player._pRSplType = RSPLTYPE_SKILL;
+	player._pRSplType = SpellType::Skill;
 	if (c == HeroClass::Warrior) {
 		player._pAblSpells = GetSpellBitmask(SPL_REPAIR);
 		player._pRSpell = SPL_REPAIR;
@@ -2544,7 +2563,7 @@ void CreatePlayer(Player &player, HeroClass c)
 
 	if (c == HeroClass::Sorcerer) {
 		player._pMemSpells = GetSpellBitmask(SPL_FIREBOLT);
-		player._pRSplType = RSPLTYPE_SPELL;
+		player._pRSplType = SpellType::Spell;
 		player._pRSpell = SPL_FIREBOLT;
 	} else {
 		player._pMemSpells = 0;
@@ -2667,6 +2686,12 @@ void AddPlrExperience(Player &player, int lvl, int exp)
 		return;
 	}
 
+	// exit function early if player is unable to gain more experience by checking final index of ExpLvlsTbl
+	int expLvlsTblSize = sizeof(ExpLvlsTbl) / sizeof(ExpLvlsTbl[0]);
+	if (player._pExperience >= ExpLvlsTbl[expLvlsTblSize - 1]) {
+		return;
+	}
+
 	if (player._pHitPoints <= 0) {
 		return;
 	}
@@ -2692,8 +2717,10 @@ void AddPlrExperience(Player &player, int lvl, int exp)
 		RedrawEverything();
 	}
 
-	if (player._pExperience >= ExpLvlsTbl[49]) {
-		player._pLevel = 50;
+	/* set player level to MaxCharacterLevel if the experience value for MaxCharacterLevel is reached, which exits the function early
+	and does not call NextPlrLevel(), which is responsible for giving Attribute points and Life/Mana on level up */
+	if (player._pExperience >= ExpLvlsTbl[MaxCharacterLevel - 1]) {
+		player._pLevel = MaxCharacterLevel;
 		return;
 	}
 
@@ -2730,7 +2757,7 @@ void AddPlrMonstExper(int lvl, int exp, char pmask)
 void InitPlayer(Player &player, bool firstTime)
 {
 	if (firstTime) {
-		player._pRSplType = RSPLTYPE_INVALID;
+		player._pRSplType = SpellType::Invalid;
 		player._pRSpell = SPL_INVALID;
 		if (&player == MyPlayer)
 			LoadHotkeys();
@@ -2921,10 +2948,7 @@ void StartPlrHit(Player &player, int dam, bool forcehit)
 	Direction pd = player._pdir;
 
 	int8_t skippedAnimationFrames = 0;
-	constexpr ItemSpecialEffect ZenFlags = ItemSpecialEffect::FastHitRecovery | ItemSpecialEffect::FasterHitRecovery | ItemSpecialEffect::FastestHitRecovery;
-	if (HasAllOf(player._pIFlags, ZenFlags)) { // if multiple hitrecovery modes are present the skipping of frames can go so far, that they skip frames that would skip. so the additional skipping thats skipped. that means we can't add the different modes together.
-		skippedAnimationFrames = 4;
-	} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastestHitRecovery)) {
+	if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastestHitRecovery)) {
 		skippedAnimationFrames = 3;
 	} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FasterHitRecovery)) {
 		skippedAnimationFrames = 2;
@@ -3398,7 +3422,7 @@ void CalcPlrStaff(Player &player)
 	}
 }
 
-void CheckPlrSpell(bool isShiftHeld, spell_id spellID, spell_type spellType)
+void CheckPlrSpell(bool isShiftHeld, spell_id spellID, SpellType spellType)
 {
 	bool addflag = false;
 
@@ -3437,23 +3461,23 @@ void CheckPlrSpell(bool isShiftHeld, spell_id spellID, spell_type spellType)
 
 	SpellCheckResult spellcheck = SpellCheckResult::Success;
 	switch (spellType) {
-	case RSPLTYPE_SKILL:
-	case RSPLTYPE_SPELL:
+	case SpellType::Skill:
+	case SpellType::Spell:
 		spellcheck = CheckSpell(*MyPlayer, spellID, spellType, false);
 		addflag = spellcheck == SpellCheckResult::Success;
 		break;
-	case RSPLTYPE_SCROLL:
+	case SpellType::Scroll:
 		addflag = pcurs == CURSOR_HAND && CanUseScroll(myPlayer, spellID);
 		break;
-	case RSPLTYPE_CHARGES:
+	case SpellType::Charges:
 		addflag = pcurs == CURSOR_HAND && CanUseStaff(myPlayer, spellID);
 		break;
-	case RSPLTYPE_INVALID:
+	case SpellType::Invalid:
 		return;
 	}
 
 	if (!addflag) {
-		if (spellType == RSPLTYPE_SPELL) {
+		if (spellType == SpellType::Spell) {
 			switch (spellcheck) {
 			case SpellCheckResult::Fail_NoMana:
 				myPlayer.Say(HeroSpeech::NotEnoughMana);
@@ -3474,16 +3498,16 @@ void CheckPlrSpell(bool isShiftHeld, spell_id spellID, spell_type spellType)
 	if (IsWallSpell(spellID)) {
 		LastMouseButtonAction = MouseActionType::Spell;
 		Direction sd = GetDirection(myPlayer.position.tile, cursPosition);
-		NetSendCmdLocParam4(true, CMD_SPELLXYD, cursPosition, spellID, spellType, static_cast<uint16_t>(sd), sl);
+		NetSendCmdLocParam4(true, CMD_SPELLXYD, cursPosition, spellID, static_cast<uint8_t>(spellType), static_cast<uint16_t>(sd), sl);
 	} else if (pcursmonst != -1 && !isShiftHeld) {
 		LastMouseButtonAction = MouseActionType::SpellMonsterTarget;
-		NetSendCmdParam4(true, CMD_SPELLID, pcursmonst, spellID, spellType, sl);
+		NetSendCmdParam4(true, CMD_SPELLID, pcursmonst, spellID, static_cast<uint8_t>(spellType), sl);
 	} else if (pcursplr != -1 && !isShiftHeld && !myPlayer.friendlyMode) {
 		LastMouseButtonAction = MouseActionType::SpellPlayerTarget;
-		NetSendCmdParam4(true, CMD_SPELLPID, pcursplr, spellID, spellType, sl);
+		NetSendCmdParam4(true, CMD_SPELLPID, pcursplr, spellID, static_cast<uint8_t>(spellType), sl);
 	} else {
 		LastMouseButtonAction = MouseActionType::Spell;
-		NetSendCmdLocParam3(true, CMD_SPELLXY, cursPosition, spellID, spellType, sl);
+		NetSendCmdLocParam3(true, CMD_SPELLXY, cursPosition, spellID, static_cast<uint8_t>(spellType), sl);
 	}
 }
 

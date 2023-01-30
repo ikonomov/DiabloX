@@ -191,7 +191,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * disabled auto refilling belt
       * disabled auto pickup except for gold (configurable for gold)
       * disabled auto equip except for weapons and shields (configurable for weapons and shields)
-      * enabled zoom on start by default with a resolution of 1284x963
+      * enabled zoom on start by default with a resolution of 1280x960
 
 ## Credits
 

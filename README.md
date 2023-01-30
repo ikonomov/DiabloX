@@ -16,7 +16,7 @@ More detailed instructions can be found by following the [Installation Instructi
 
 ## Test builds
 
-If you want to help test the latest state of the next version you can fetch the build artifact from one of the build servers:
+If you want to help test the latest development stage of the next version (make sure to backup your files as these may contain bugs), you can fetch the test build artifact from one of the build servers:
 
 *Note: You must be logged into GitHub to download the attachments.*
 

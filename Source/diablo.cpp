@@ -1811,10 +1811,23 @@ void InitKeymapActions()
 	    N_("Displays game infos."),
 	    'V',
 	    [] {
+		    string_view difficulty;
+		    switch (sgGameInitInfo.nDifficulty) {
+		    case DIFF_NORMAL:
+			    difficulty = _("Normal");
+			    break;
+		    case DIFF_NIGHTMARE:
+			    difficulty = _("Nightmare");
+			    break;
+		    case DIFF_HELL:
+			    difficulty = _("Hell");
+			    break;
+		    }
 		    EventPlrMsg(fmt::format(
-		                    fmt::runtime(_(/* TRANSLATORS: {:s} means: Character Name, Game Version, Game Difficulty. */ "{:s} {:s}")),
+		                    fmt::runtime(_(/* TRANSLATORS: {:s} means: Character Name, Game Version, Game Difficulty. */ "{:s} {:s}, Difficulty: {:s}")),
 		                    PROJECT_NAME,
-		                    PROJECT_VERSION),
+		                    PROJECT_VERSION,
+		                    difficulty),
 		        UiFlags::ColorWhite);
 	    },
 	    nullptr,

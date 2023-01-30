@@ -3034,6 +3034,15 @@ void SpawnItem(Monster &monster, Point position, bool sendmsg)
 		break;
 	}
 
+	switch (sgGameInitInfo.nDifficulty) {
+	case DIFF_NIGHTMARE:
+		mLevel += 8;
+		break;
+	case DIFF_HELL:
+		mLevel += 16;
+		break;
+	}
+
 	SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), mLevel, uper, onlygood, false, false);
 
 	if (sendmsg)

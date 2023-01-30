@@ -53,7 +53,7 @@ If you want to help test the latest state of the next version you can fetch the 
       * Lightning, Chain Lightning: min: 1 [2], max: (3+clvl)/2 [2+clvl]
       * Chain Lightning: creates 1+(slvl+5)/3 number of bolts
       * Fire Wall: 1/2 of the original
-      * Flash, Elemental, Fireball: 1/3 of the original
+      * Flash, Elemental, Fireball, Guardian: 1/3 of the original
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.

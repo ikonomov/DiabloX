@@ -17,7 +17,7 @@
 
 namespace devilution {
 
-constexpr uint32_t GameIdDiabloFull = LoadBE32("DRTL");
+constexpr uint32_t GameIdDiabloFull = LoadBE32("DRDX");
 constexpr uint32_t GameIdDiabloSpawn = LoadBE32("DSHR");
 constexpr uint32_t GameIdHellfireFull = LoadBE32("HRTL");
 constexpr uint32_t GameIdHellfireSpawn = LoadBE32("HSHR");

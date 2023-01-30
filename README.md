@@ -69,7 +69,6 @@ If you want to help test the latest state of the next version you can fetch the 
    * Long War Bow has been restored to its original Diablo graphic.
    * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
    * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
-   * The additional hit recovery reduction when equipping three or more items having all of the three suffixes (balance, stability and harmony) has been removed.
    * Damage versus demons affix: +50% [+200%].
    * Set to maximum values:
       * Affixes with a range of values.

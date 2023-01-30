@@ -446,6 +446,8 @@ void selgame_Diff_Select(int value)
 	}
 
 	selgame_GameSpeedSelection();
+	vecSelGameDlgItems[0]->m_value = 20;
+	selgame_Speed_Select(0);
 }
 
 void selgame_Diff_Esc()
@@ -677,7 +679,8 @@ void selgame_Password_Esc()
 	if (selgame_selectedGame == 2)
 		selgame_GameSelection_Select(2);
 	else
-		selgame_GameSpeedSelection();
+		vecSelGameDlgItems[0]->m_value = 20;
+	selgame_GameSelection_Select(selgame_selectedGame);
 }
 
 void RefreshGameList()

@@ -129,7 +129,7 @@ If you want to help test the latest state of the next version you can fetch the 
          * vampires: 24 [19]
          * amber: 14 [12]
          * jade: 23 [18]
-         * obsidian: 36 [24]
+         * obsidian: 35 [24]
          * emerald: 43 [31]
          * swiftness: 16 [10]
          * speed: 24 [19]

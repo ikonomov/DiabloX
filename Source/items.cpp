@@ -3026,7 +3026,7 @@ void SpawnItem(Monster &monster, Point position, bool sendmsg)
 	if (!gbIsHellfire && monster.type().type == MT_DIABLO)
 		mLevel -= 15;
 
-	switch (sgGameInitInfo.nDifficulty) {
+	switch (sgGameInitInfo.nDifficulty) { // mlvl for item drops
 	case DIFF_NIGHTMARE:
 		mLevel += 8;
 		break;

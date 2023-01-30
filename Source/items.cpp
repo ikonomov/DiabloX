@@ -1917,7 +1917,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 	dexterity += dexterity / 5;
 	magic += magic / 5;
 
-	plvl = clamp(plvl, 1, 36); // affix maximum ilvl for Griswold
+	plvl = clamp(plvl, 1, 36);
 
 	int count = 0;
 

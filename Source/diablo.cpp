@@ -851,23 +851,23 @@ void RunGameLoop(interface_mode uMsg)
 
 		discord_manager::UpdateGame();
 
-		// auto-clicker start
+		// auto-clicker
 		if (ControlMode == ControlTypes::KeyboardAndMouse && (sgbMouseDown == CLICK_LEFT || sgbMouseDown == CLICK_RIGHT)) {
 
-			int currentTickCount = SDL_GetTicks(); // calculate how long a mouse button has been hold down
-			int ticksElapsed = currentTickCount - mouseHeldDownFor;
+			int currentTickCount = SDL_GetTicks();
+			int ticksElapsed = currentTickCount - mouseHeldDownFor; // calculate how long a mouse button has been hold down
 
 			if (ticksElapsed > gnTickDelay * 6 && (pcursmonst != -1 || pcursplr != -1)) { // check if 6 ticks have elapsed
 				mouseHeldDownFor = SDL_GetTicks(); // reset timer
 
-				if (sgbMouseDown == CLICK_LEFT) { // re-press mouse button
+				// re-press mouse button
+				if (sgbMouseDown == CLICK_LEFT) {
 					LeftMouseDown(wParamLast);
 				} else {
 					RightMouseDown(wParamLast);
 				}
 			}
 		}
-		// auto-clicker end
 
 		if (!runGameLoop) {
 			if (processInput)

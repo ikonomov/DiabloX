@@ -621,6 +621,9 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 	}
 }
 
+static unsigned long long mouseHeldDownFor = 0; // auto-clicker tracking how long a mouse button has been held down
+static uint32_t wParamLast = 0; // auto-clicker remember argument
+
 void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 {
 	if (stextflag != STORE_NONE && (button == SDL_BUTTON_X1
@@ -635,10 +638,12 @@ void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 	if (sgbMouseDown == CLICK_NONE) {
 		switch (button) {
 		case SDL_BUTTON_LEFT:
+			mouseHeldDownFor = SDL_GetTicks(); // auto-clicker remember at which tick a mouse button started to be held down
 			sgbMouseDown = CLICK_LEFT;
 			LeftMouseDown(modState);
 			break;
 		case SDL_BUTTON_RIGHT:
+			mouseHeldDownFor = SDL_GetTicks(); // auto-clicker remember at which tick a mouse button started to be held down
 			sgbMouseDown = CLICK_RIGHT;
 			RightMouseDown((modState & KMOD_SHIFT) != 0);
 			break;
@@ -742,6 +747,7 @@ void GameEventHandler(const SDL_Event &event, uint16_t modState)
 		gmenu_on_mouse_move();
 		return;
 	case SDL_MOUSEBUTTONDOWN:
+		wParamLast = wParam; // auto-clicker remember argument for last mouse click
 		MousePosition = { event.button.x, event.button.y };
 		HandleMouseButtonDown(event.button.button, modState);
 		return;
@@ -844,6 +850,24 @@ void RunGameLoop(interface_mode uMsg)
 			demo::RecordGameLoopResult(runGameLoop);
 
 		discord_manager::UpdateGame();
+
+		// auto-clicker
+		if (ControlMode == ControlTypes::KeyboardAndMouse && (sgbMouseDown == CLICK_LEFT || sgbMouseDown == CLICK_RIGHT)) {
+
+			int currentTickCount = SDL_GetTicks();
+			int ticksElapsed = currentTickCount - mouseHeldDownFor; // calculate how long a mouse button has been hold down
+
+			if (ticksElapsed > gnTickDelay * 6 && (pcursmonst != -1 || pcursplr != -1)) { // check if 6 ticks have elapsed
+				mouseHeldDownFor = SDL_GetTicks(); // reset timer
+
+				// re-press mouse button
+				if (sgbMouseDown == CLICK_LEFT) {
+					LeftMouseDown(wParamLast);
+				} else {
+					RightMouseDown(wParamLast);
+				}
+			}
+		}
 
 		if (!runGameLoop) {
 			if (processInput)

@@ -443,7 +443,7 @@ void CheckCursMove()
 	const Point currentTile { mx, my };
 
 	// While holding the button down we should retain target (but potentially lose it if it dies, goes out of view, etc)
-	if ((sgbMouseDown != CLICK_NONE || ControllerActionHeld != GameActionType_NONE) && IsNoneOf(LastMouseButtonAction, MouseActionType::None, MouseActionType::Attack, MouseActionType::Spell)) {
+	if (ControlMode != ControlTypes::KeyboardAndMouse && (sgbMouseDown != CLICK_NONE || ControllerActionHeld != GameActionType_NONE) && IsNoneOf(LastMouseButtonAction, MouseActionType::None, MouseActionType::Attack, MouseActionType::Spell)) { // auto-clicker disable
 		InvalidateTargets();
 
 		if (pcursmonst == -1 && ObjectUnderCursor == nullptr && pcursitem == -1 && pcursinvitem == -1 && pcursstashitem == uint16_t(-1) && pcursplr == -1) {

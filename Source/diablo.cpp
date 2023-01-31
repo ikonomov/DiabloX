@@ -622,7 +622,7 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 }
 
 static unsigned long long mouseHeldDownFor = 0; // auto-clicker tracking how long a mouse button has been held down
-static uint32_t wParamLast = 0; // auto-clicker remember argument
+static uint32_t wParamLast = 0;                 // auto-clicker remember argument
 
 void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 {
@@ -858,7 +858,7 @@ void RunGameLoop(interface_mode uMsg)
 			int ticksElapsed = currentTickCount - mouseHeldDownFor; // calculate how long a mouse button has been held down
 
 			if (ticksElapsed > gnTickDelay * 6 && (pcursmonst != -1 || pcursplr != -1)) { // check if 6 ticks have elapsed
-				mouseHeldDownFor = SDL_GetTicks(); // reset timer
+				mouseHeldDownFor = SDL_GetTicks();                                        // reset timer
 
 				// re-press mouse button
 				if (sgbMouseDown == CLICK_LEFT) {

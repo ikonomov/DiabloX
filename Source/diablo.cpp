@@ -638,12 +638,12 @@ void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 	if (sgbMouseDown == CLICK_NONE) {
 		switch (button) {
 		case SDL_BUTTON_LEFT:
-			mouseHeldDownFor = SDL_GetTicks(); // auto-clicker remember at which tick we started holding down mouse button
+			mouseHeldDownFor = SDL_GetTicks(); // auto-clicker remember at which tick a mouse button started to be hold down
 			sgbMouseDown = CLICK_LEFT;
 			LeftMouseDown(modState);
 			break;
 		case SDL_BUTTON_RIGHT:
-			mouseHeldDownFor = SDL_GetTicks(); // auto-clicker remember at which tick we started holding down mouse button
+			mouseHeldDownFor = SDL_GetTicks(); // auto-clicker remember at which tick a mouse button started to be hold down
 			sgbMouseDown = CLICK_RIGHT;
 			RightMouseDown((modState & KMOD_SHIFT) != 0);
 			break;

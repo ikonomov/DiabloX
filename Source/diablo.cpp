@@ -622,7 +622,7 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 }
 
 static unsigned long long mouseHeldDownFor = 0; // auto-clicker tracking how long a mouse button has been held down
-static uint32_t modStateLast = 0; // auto-clicker remember argument
+static uint32_t modStateLast = 0;               // auto-clicker remember argument
 
 void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 {

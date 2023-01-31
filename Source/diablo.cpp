@@ -622,7 +622,7 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 }
 
 static unsigned long long mouseHeldDownFor = 0; // auto-clicker tracking how long a mouse button has been held down
-static uint32_t wParamLast = 0;                 // auto-clicker remember argument
+static uint32_t modStateLast = 0;                 // auto-clicker remember argument
 
 void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 {
@@ -747,7 +747,7 @@ void GameEventHandler(const SDL_Event &event, uint16_t modState)
 		gmenu_on_mouse_move();
 		return;
 	case SDL_MOUSEBUTTONDOWN:
-		wParamLast = wParam; // auto-clicker remember argument for last mouse click
+		modStateLast = modState; // auto-clicker remember argument for last mouse click
 		MousePosition = { event.button.x, event.button.y };
 		HandleMouseButtonDown(event.button.button, modState);
 		return;
@@ -862,9 +862,9 @@ void RunGameLoop(interface_mode uMsg)
 
 				// re-press mouse button
 				if (sgbMouseDown == CLICK_LEFT) {
-					LeftMouseDown(wParamLast);
+					LeftMouseDown(modStateLast);
 				} else {
-					RightMouseDown(wParamLast);
+					RightMouseDown(modStateLast);
 				}
 			}
 		}

@@ -855,7 +855,7 @@ void RunGameLoop(interface_mode uMsg)
 		if (ControlMode == ControlTypes::KeyboardAndMouse && (sgbMouseDown == CLICK_LEFT || sgbMouseDown == CLICK_RIGHT)) {
 
 			int currentTickCount = SDL_GetTicks();
-			int ticksElapsed = currentTickCount - mouseHeldDownFor; // calculate how long a mouse button has been hold down
+			int ticksElapsed = currentTickCount - mouseHeldDownFor; // calculate how long a mouse button has been held down
 
 			if (ticksElapsed > gnTickDelay * 6 && (pcursmonst != -1 || pcursplr != -1)) { // check if 6 ticks have elapsed
 				mouseHeldDownFor = SDL_GetTicks(); // reset timer

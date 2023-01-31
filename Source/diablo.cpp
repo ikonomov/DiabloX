@@ -635,10 +635,12 @@ void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 	if (sgbMouseDown == CLICK_NONE) {
 		switch (button) {
 		case SDL_BUTTON_LEFT:
+			mouseHeldDownFor = SDL_GetTicks(); // auto-clicker remember at which tick we started holding down mouse button
 			sgbMouseDown = CLICK_LEFT;
 			LeftMouseDown(modState);
 			break;
 		case SDL_BUTTON_RIGHT:
+			mouseHeldDownFor = SDL_GetTicks(); // auto-clicker remember at which tick we started holding down mouse button
 			sgbMouseDown = CLICK_RIGHT;
 			RightMouseDown((modState & KMOD_SHIFT) != 0);
 			break;
@@ -684,6 +686,9 @@ bool HandleTextInput(string_view text)
 {
 	LogVerbose("Unhandled SDL event: {} {}", name, value);
 }
+
+static unsigned long long mouseHeldDownFor = 0; // auto-clicker tracking how long we've held down a mouse button for
+static uint32_t wParamLast = 0; // auto-clicker remember argument
 
 void GameEventHandler(const SDL_Event &event, uint16_t modState)
 {
@@ -742,6 +747,7 @@ void GameEventHandler(const SDL_Event &event, uint16_t modState)
 		gmenu_on_mouse_move();
 		return;
 	case SDL_MOUSEBUTTONDOWN:
+		wParamLast = wParam; // auto-clicker remember argument for last mouse click
 		MousePosition = { event.button.x, event.button.y };
 		HandleMouseButtonDown(event.button.button, modState);
 		return;
@@ -844,6 +850,22 @@ void RunGameLoop(interface_mode uMsg)
 			demo::RecordGameLoopResult(runGameLoop);
 
 		discord_manager::UpdateGame();
+
+		if (sgbMouseDown == CLICK_LEFT || sgbMouseDown == CLICK_RIGHT) { // auto-clicker start
+
+			int currentTickCount = SDL_GetTicks(); // Calculate how long we've been holding down a mouse button
+			int ticksElapsed = currentTickCount - mouseHeldDownFor;
+
+			if (ticksElapsed > gnTickDelay * 6 && (pcursmonst != -1 || pcursplr != -1)) { // Check if 300ms has elapsed (6 gameplay ticks)
+				mouseHeldDownFor = SDL_GetTicks(); // Reset our timer
+
+				if (sgbMouseDown == CLICK_LEFT) { //"re-press" mouse button
+					LeftMouseDown(wParamLast);
+				} else {
+					RightMouseDown(wParamLast);
+				}
+			}
+		} // auto-clicker end
 
 		if (!runGameLoop) {
 			if (processInput)

@@ -621,6 +621,9 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 	}
 }
 
+static unsigned long long mouseHeldDownFor = 0; // auto-clicker tracking how long we've held down a mouse button for
+static uint32_t wParamLast = 0; // auto-clicker remember argument
+
 void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 {
 	if (stextflag != STORE_NONE && (button == SDL_BUTTON_X1
@@ -686,9 +689,6 @@ bool HandleTextInput(string_view text)
 {
 	LogVerbose("Unhandled SDL event: {} {}", name, value);
 }
-
-static unsigned long long mouseHeldDownFor = 0; // auto-clicker tracking how long we've held down a mouse button for
-static uint32_t wParamLast = 0; // auto-clicker remember argument
 
 void GameEventHandler(const SDL_Event &event, uint16_t modState)
 {

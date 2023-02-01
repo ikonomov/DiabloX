@@ -29,6 +29,7 @@ void GamemenuOptions(bool bActivate);
 void GamemenuMusicVolume(bool bActivate);
 void GamemenuSoundVolume(bool bActivate);
 void GamemenuGamma(bool bActivate);
+void GamemenuSpeed(bool bActivate);
 
 /** Contains the game menu items of the single player menu. */
 TMenuItem sgSingleMenu[] = {

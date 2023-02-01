@@ -50,10 +50,11 @@ If you want to help test the latest development stage of the next version (make 
       * Sorcerer: 0 [10]
 #### Spells:
    * Damage:
-      * Lightning, Chain Lightning: min: 1 [2], max: (3+clvl)/2 [2+clvl]
-      * Chain Lightning: creates 1+(slvl+5)/3 number of bolts
       * Fire Wall: 1/2 of the original
-      * Flash, Elemental, Fireball, Guardian: 1/3 of the original
+      * Lightning, Chain Lightning: min: 1 [2], max: (5+clvl)/3 [2+clvl]
+      * Chain Lightning: creates 1+(5+slvl)/3 number of bolts
+      * Guardian: 1/3 of the original
+      * Flash, Elemental, Fireball: 1/4 of the original
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
@@ -166,8 +167,7 @@ If you want to help test the latest development stage of the next version (make 
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Interface:
-   * The Lock-on target feature has been disabled.
-   * Holding down left or right mouse buttons simulate multiple attacks.
+   * The lock-on target functionality has been replaced by rapid fire when playing with keyboard and mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.

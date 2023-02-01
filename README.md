@@ -144,7 +144,6 @@ If you want to help test the latest development stage of the next version (make 
          * The Blackoak Bow: 8 [5]
          * Deadly Hunter: 10 [3]
          * Civerb’s Cudgel: 10 [1]
-         * Lightforge: 14 [1]
          * Helm of Spirits: 14 [1]
          * The Bleeder: 9 [2]
          * Bramble: 7 [1]

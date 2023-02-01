@@ -490,10 +490,12 @@ struct Player {
 	 */
 	int GetArmor() const
 	{
-		int meleeBonusAC = _pIBonusAC + _pIAC + _pDexterity / 5;
+		int dexBonusAC = _pIBonusAC + _pIAC;
 		if ((player.InvBody[INVLOC_HAND_LEFT]._itype != ItemType::Shield || player.InvBody[INVLOC_HAND_RIGHT]._itype != ItemType::Shield) && (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Staff || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Staff || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Mace || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Mace || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Sword || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Sword))
-			meleeBonusAC = _pIBonusAC + _pIAC + _pDexterity * 2 / 5;
-		return meleeBonusAC;
+			dexBonusAC += _pDexterity * 2 / 5;
+		else
+			dexBonusAC += _pDexterity / 5;
+		return dexBonusAC;
 	}
 
 	/**

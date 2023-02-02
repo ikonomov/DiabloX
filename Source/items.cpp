@@ -688,7 +688,7 @@ int SaveItemPower(const Player &player, Item &item, ItemPower &power)
 {
 	if (!gbIsHellfire) {
 		if (power.type == IPL_TARGAC) {
-			power.param1 = 1 << power.param1;
+			power.param1 = 3 << power.param1;
 			power.param2 = 3 << power.param2;
 		}
 	}
@@ -3890,10 +3890,31 @@ void UseItem(size_t pnum, item_misc_id mid, spell_id spl)
 		NewCursor(CURSOR_OIL);
 		break;
 	case IMISC_SPECELIX:
-		ModifyPlrStr(player, 3);
-		ModifyPlrMag(player, 3);
-		ModifyPlrDex(player, 3);
-		ModifyPlrVit(player, 3);
+		int str = 1;
+		int mag = 1;
+		int dex = 1;
+		int vit = 1;
+		switch (static_cast<CharacterAttribute>(GenerateRnd(4))) {
+		case CharacterAttribute::Strength:
+			str -= 2;
+			break;
+		case CharacterAttribute::Magic:
+			mag -= 2;
+			break;
+		case CharacterAttribute::Dexterity:
+			dex -= 2;
+			break;
+		case CharacterAttribute::Vitality:
+			vit -= 2;
+			break;
+		}
+		ModifyPlrStr(player, str);
+		ModifyPlrMag(player, mag);
+		ModifyPlrDex(player, dex);
+		ModifyPlrVit(player, vit);
+		CheckStats(player);
+		CalcPlrInv(player, true);
+		RedrawEverything();
 		break;
 	case IMISC_RUNEF:
 		player._pTSpell = SPL_RUNEFIRE;

@@ -2483,6 +2483,12 @@ void CalcPlrItemVals(Player &player, bool loadgfx)
 			player._pDamageMod = player._pLevel * player._pStrength / 100;
 		}
 	}
+	
+	if (player.InvBody[INVLOC_HAND_LEFT]._itype != ItemType::Shield && player.InvBody[INVLOC_HAND_RIGHT]._itype != ItemType::Shield && (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Staff || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Staff || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Mace || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Mace || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Sword || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Sword)) {
+		player._pIAC += _pDexterity * 2 / 5;
+	} else {
+		player._pIAC += _pDexterity / 5;
+	}
 
 	player._pISpells = spl;
 

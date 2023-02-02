@@ -2183,7 +2183,7 @@ void OperateSlainHero(const Player &player, Object &corpse)
 	if (player._pClass == HeroClass::Warrior) {
 		CreateMagicArmor(corpse.position, ItemType::HeavyArmor, ICURS_BREAST_PLATE, true, false);
 	} else if (player._pClass == HeroClass::Rogue) {
-		CreateMagicWeapon(corpse.position, ItemType::Bow, ICURS_LONG_BATTLE_BOW, true, false);
+		CreateMagicWeapon(corpse.position, ItemType::Bow, ICURS_LONG_WAR_BOW, true, false);
 	} else if (player._pClass == HeroClass::Sorcerer) {
 		CreateSpellBook(corpse.position, SPL_LIGHTNING, true, false);
 	} else if (player._pClass == HeroClass::Monk) {

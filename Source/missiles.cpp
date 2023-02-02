@@ -359,8 +359,6 @@ bool Plr2PlrMHit(const Player &player, int p, int mindam, int maxdam, int dist, 
 		if (!shift)
 			dam <<= 6;
 	}
-	if (missileData.mType != 0)
-		dam /= 2;
 	if (resper > 0) {
 		dam -= (dam * resper) / 100;
 		if (&player == MyPlayer)
@@ -788,8 +786,8 @@ void GetDamageAmt(spell_id i, int *mind, int *maxd)
 		break;
 	case SPL_RUNELIGHT:
 	case SPL_LIGHTNING:
-		*mind = 2;
-		*maxd = 2 + myPlayer._pLevel;
+		*mind = (6 + sl / 2);
+		*maxd = (10 + myPlayer._pLevel) * (6 + sl / 2) / 4;
 		break;
 	case SPL_FLASH:
 		*mind = ScaleSpellEffect(myPlayer._pLevel, sl);
@@ -840,8 +838,8 @@ void GetDamageAmt(spell_id i, int *mind, int *maxd)
 		*maxd = ScaleSpellEffect(base + 9, sl);
 	} break;
 	case SPL_CHAIN:
-		*mind = 4;
-		*maxd = 4 + (2 * myPlayer._pLevel);
+		*mind = 2 * (6 + sl / 2);
+		*maxd = 2 * ((10 + myPlayer._pLevel) * (6 + sl / 2) / 4);
 		break;
 	case SPL_WAVE:
 		*mind = 6 * (myPlayer._pLevel + 1);

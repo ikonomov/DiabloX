@@ -657,28 +657,28 @@ int RndPL(int param1, int param2)
 int CalculateToHitBonus(int level)
 {
 	switch (level) {
-	case -75:
-		return -RndPL(10, 10);
-	case -45:
-		return -RndPL(5, 5);
-	case 35:
-		return RndPL(5, 5);
-	case 50:
-		return RndPL(10, 10);
-	case 65:
-		return RndPL(15, 15);
-	case 80:
-		return RndPL(20, 20);
-	case 95:
-		return RndPL(30, 30);
-	case 110:
-		return RndPL(40, 40);
-	case 125:
-		return RndPL(50, 50);
-	case 150:
-		return RndPL(75, 75);
-	case 175:
-		return RndPL(100, 100);
+	case -50:
+		return -RndPL(6, 10);
+	case -25:
+		return -RndPL(1, 5);
+	case 20:
+		return RndPL(1, 5);
+	case 36:
+		return RndPL(6, 10);
+	case 51:
+		return RndPL(11, 15);
+	case 66:
+		return RndPL(16, 20);
+	case 81:
+		return RndPL(21, 30);
+	case 96:
+		return RndPL(31, 40);
+	case 111:
+		return RndPL(41, 50);
+	case 126:
+		return RndPL(51, 75);
+	case 151:
+		return RndPL(76, 100);
 	default:
 		app_fatal("Unknown to hit bonus");
 	}
@@ -688,7 +688,7 @@ int SaveItemPower(const Player &player, Item &item, ItemPower &power)
 {
 	if (!gbIsHellfire) {
 		if (power.type == IPL_TARGAC) {
-			power.param1 = 3 << power.param1;
+			power.param1 = 1 << power.param1;
 			power.param2 = 3 << power.param2;
 		}
 	}
@@ -3896,31 +3896,10 @@ void UseItem(size_t pnum, item_misc_id mid, spell_id spl)
 		NewCursor(CURSOR_OIL);
 		break;
 	case IMISC_SPECELIX:
-		int str = 1;
-		int mag = 1;
-		int dex = 1;
-		int vit = 1;
-		switch (static_cast<CharacterAttribute>(GenerateRnd(4))) {
-		case CharacterAttribute::Strength:
-			str -= 2;
-			break;
-		case CharacterAttribute::Magic:
-			mag -= 2;
-			break;
-		case CharacterAttribute::Dexterity:
-			dex -= 2;
-			break;
-		case CharacterAttribute::Vitality:
-			vit -= 2;
-			break;
-		}
-		ModifyPlrStr(player, str);
-		ModifyPlrMag(player, mag);
-		ModifyPlrDex(player, dex);
-		ModifyPlrVit(player, vit);
-		CheckStats(player);
-		CalcPlrInv(player, true);
-		RedrawEverything();
+		ModifyPlrStr(player, 3);
+		ModifyPlrMag(player, 3);
+		ModifyPlrDex(player, 3);
+		ModifyPlrVit(player, 3);
 		break;
 	case IMISC_RUNEF:
 		player._pTSpell = SPL_RUNEFIRE;

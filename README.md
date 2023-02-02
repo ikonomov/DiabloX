@@ -50,9 +50,9 @@ If you want to help test the latest development stage of the next version (make 
 #### Spells:
    * Damage:
       * Fire Wall: 1/2 of the original
-      * Lightning, Chain Lightning: min: 1 [2], max: (5+clvl)/3 [2+clvl]
-      * Chain Lightning: creates 1+(5+slvl)/3 number of bolts
       * Guardian: 1/3 of the original
+      * Lightning, Chain Lightning: min: 1 [2], max: (10+clvl)/4 [2+clvl]
+      * Chain Lightning: creates 1+(5+slvl)/3 number of bolts
       * Flash, Elemental, Fireball: 1/4 of the original
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.

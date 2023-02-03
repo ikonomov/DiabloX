@@ -12,7 +12,6 @@
 #include "controls/controller_buttons.h"
 #include "controls/game_controls.h"
 #include "engine/sound_defs.hpp"
-#include "miniwin/misc_msg.h"
 #include "pack.h"
 #include "utils/enum_traits.h"
 #include "utils/stdcompat/optional.hpp"
@@ -60,6 +59,15 @@ enum class Resampler : uint8_t {
 
 string_view ResamplerToString(Resampler resampler);
 std::optional<Resampler> ResamplerFromString(string_view resampler);
+
+enum class FloatingNumbers : uint8_t {
+	/** @brief Show no floating numbers. */
+	Off = 0,
+	/** @brief Show floating numbers at random angles. */
+	Random = 1,
+	/** @brief Show floating numbers vertically only. */
+	Vertical = 2,
+};
 
 enum class OptionEntryType : uint8_t {
 	Boolean,
@@ -584,7 +592,7 @@ struct GameplayOptions : OptionCategoryBase {
 	/** @brief Number of Full Rejuvenating potions to pick up automatically */
 	OptionEntryInt<int> numFullRejuPotionPickup;
 	/** @brief Enable floating numbers. */
-	OptionEntryBoolean enableFloatingNumbers;
+	OptionEntryEnum<FloatingNumbers> enableFloatingNumbers;
 };
 
 struct ControllerOptions : OptionCategoryBase {

@@ -12,7 +12,6 @@
 #include "controls/plrctrls.h"
 #include "cursor.h"
 #include "dead.h"
-#include "miniwin/misc_msg.h"
 #ifdef _DEBUG
 #include "debug.h"
 #endif
@@ -2686,6 +2685,12 @@ void AddPlrExperience(Player &player, int lvl, int exp)
 		return;
 	}
 
+	// exit function early if player is unable to gain more experience by checking final index of ExpLvlsTbl
+	int expLvlsTblSize = sizeof(ExpLvlsTbl) / sizeof(ExpLvlsTbl[0]);
+	if (player._pExperience >= ExpLvlsTbl[expLvlsTblSize - 1]) {
+		return;
+	}
+
 	if (player._pHitPoints <= 0) {
 		return;
 	}
@@ -2711,8 +2716,10 @@ void AddPlrExperience(Player &player, int lvl, int exp)
 		RedrawEverything();
 	}
 
-	if (player._pExperience >= ExpLvlsTbl[49]) {
-		player._pLevel = 50;
+	/* set player level to MaxCharacterLevel if the experience value for MaxCharacterLevel is reached, which exits the function early
+	and does not call NextPlrLevel(), which is responsible for giving Attribute points and Life/Mana on level up */
+	if (player._pExperience >= ExpLvlsTbl[MaxCharacterLevel - 1]) {
+		player._pLevel = MaxCharacterLevel;
 		return;
 	}
 
@@ -2940,10 +2947,7 @@ void StartPlrHit(Player &player, int dam, bool forcehit)
 	Direction pd = player._pdir;
 
 	int8_t skippedAnimationFrames = 0;
-	constexpr ItemSpecialEffect ZenFlags = ItemSpecialEffect::FastHitRecovery | ItemSpecialEffect::FasterHitRecovery | ItemSpecialEffect::FastestHitRecovery;
-	if (HasAllOf(player._pIFlags, ZenFlags)) { // if multiple hitrecovery modes are present the skipping of frames can go so far, that they skip frames that would skip. so the additional skipping thats skipped. that means we can't add the different modes together.
-		skippedAnimationFrames = 4;
-	} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastestHitRecovery)) {
+	if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FastestHitRecovery)) {
 		skippedAnimationFrames = 3;
 	} else if (HasAnyOf(player._pIFlags, ItemSpecialEffect::FasterHitRecovery)) {
 		skippedAnimationFrames = 2;

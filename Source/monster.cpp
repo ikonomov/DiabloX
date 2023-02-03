@@ -1905,9 +1905,9 @@ void AiRanged(Monster &monster)
 			if (LineClearMissile(monster.position.tile, monster.enemyPosition)) {
 				MissileID missileType = GetMissileType(monster.ai);
 				if (monster.ai == MonsterAIID::AcidUnique)
-					StartRangedSpecialAttack(monster, missileType, 4);
+					StartRangedSpecialAttack(monster, missileType, 0);
 				else
-					StartRangedAttack(monster, missileType, 4);
+					StartRangedAttack(monster, missileType, 0);
 			} else {
 				monster.checkStandAnimationIsLoaded(md);
 			}
@@ -1931,7 +1931,7 @@ void AiRangedAvoidance(Monster &monster)
 	if (IsAnyOf(monster.ai, MonsterAIID::Magma, MonsterAIID::Storm, MonsterAIID::BoneDemon) && monster.activeForTicks < UINT8_MAX)
 		MonstCheckDoors(monster);
 	int lessmissiles = (monster.ai == MonsterAIID::Acid) ? 1 : 0;
-	int dam = (monster.ai == MonsterAIID::Diablo) ? 40 : 4;
+	int dam = (monster.ai == MonsterAIID::Diablo) ? 40 : 0;
 	MissileID missileType = GetMissileType(monster.ai);
 	int v = GenerateRnd(10000);
 	unsigned distanceToEnemy = monster.distanceToEnemy();
@@ -3379,46 +3379,46 @@ void InitMonsterGFX(CMonster &monsterType)
 	}
 
 	if (IsAnyOf(mtype, MT_NMAGMA, MT_YMAGMA, MT_BMAGMA, MT_WMAGMA))
-		MissileSpriteData[MFILE_MAGBALL].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::MagmaBall).LoadGFX();
 	if (IsAnyOf(mtype, MT_STORM, MT_RSTORM, MT_STORML, MT_MAEL))
-		MissileSpriteData[MFILE_THINLGHT].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::ThinLightning).LoadGFX();
 	if (mtype == MT_SNOWWICH) {
-		MissileSpriteData[MFILE_SCUBMISB].LoadGFX();
-		MissileSpriteData[MFILE_SCBSEXPB].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BloodStarBlue).LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BloodStarBlueExplosion).LoadGFX();
 	}
 	if (mtype == MT_HLSPWN) {
-		MissileSpriteData[MFILE_SCUBMISD].LoadGFX();
-		MissileSpriteData[MFILE_SCBSEXPD].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BloodStarRed).LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BloodStarRedExplosion).LoadGFX();
 	}
 	if (mtype == MT_SOLBRNR) {
-		MissileSpriteData[MFILE_SCUBMISC].LoadGFX();
-		MissileSpriteData[MFILE_SCBSEXPC].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BloodStarYellow).LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BloodStarYellowExplosion).LoadGFX();
 	}
 	if (IsAnyOf(mtype, MT_NACID, MT_RACID, MT_BACID, MT_XACID, MT_SPIDLORD)) {
-		MissileSpriteData[MFILE_ACIDBF].LoadGFX();
-		MissileSpriteData[MFILE_ACIDSPLA].LoadGFX();
-		MissileSpriteData[MFILE_ACIDPUD].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::Acid).LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::AcidSplat).LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::AcidPuddle).LoadGFX();
 	}
 	if (mtype == MT_LICH) {
-		MissileSpriteData[MFILE_LICH].LoadGFX();
-		MissileSpriteData[MFILE_EXORA1].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::OrangeFlare).LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::OrangeFlareExplosion).LoadGFX();
 	}
 	if (mtype == MT_ARCHLICH) {
-		MissileSpriteData[MFILE_ARCHLICH].LoadGFX();
-		MissileSpriteData[MFILE_EXYEL2].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::YellowFlare).LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::YellowFlareExplosion).LoadGFX();
 	}
 	if (IsAnyOf(mtype, MT_PSYCHORB, MT_BONEDEMN))
-		MissileSpriteData[MFILE_BONEDEMON].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BlueFlare2).LoadGFX();
 	if (mtype == MT_NECRMORB) {
-		MissileSpriteData[MFILE_NECROMORB].LoadGFX();
-		MissileSpriteData[MFILE_EXRED3].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::RedFlare).LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::RedFlareExplosion).LoadGFX();
 	}
 	if (mtype == MT_PSYCHORB)
-		MissileSpriteData[MFILE_EXBL2].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BlueFlareExplosion).LoadGFX();
 	if (mtype == MT_BONEDEMN)
-		MissileSpriteData[MFILE_EXBL3].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::BlueFlareExplosion2).LoadGFX();
 	if (mtype == MT_DIABLO)
-		MissileSpriteData[MFILE_FIREPLAR].LoadGFX();
+		GetMissileSpriteData(MissileGraphicID::DiabloApocalypseBoom).LoadGFX();
 }
 
 void WeakenNaKrul()
@@ -4609,7 +4609,7 @@ bool Monster::isWalking() const
 
 bool Monster::isImmune(MissileID missileType) const
 {
-	DamageType missileElement = MissilesData[static_cast<int8_t>(missileType)].damageType;
+	DamageType missileElement = GetMissileData(missileType).damageType;
 
 	if (((resistance & IMMUNE_MAGIC) != 0 && missileElement == DamageType::Magic)
 	    || ((resistance & IMMUNE_FIRE) != 0 && missileElement == DamageType::Fire)
@@ -4623,7 +4623,7 @@ bool Monster::isImmune(MissileID missileType) const
 
 bool Monster::isResistant(MissileID missileType) const
 {
-	DamageType missileElement = MissilesData[static_cast<int8_t>(missileType)].damageType;
+	DamageType missileElement = GetMissileData(missileType).damageType;
 
 	if (((resistance & RESIST_MAGIC) != 0 && missileElement == DamageType::Magic)
 	    || ((resistance & RESIST_FIRE) != 0 && missileElement == DamageType::Fire)

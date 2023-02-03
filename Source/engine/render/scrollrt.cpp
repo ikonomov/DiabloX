@@ -25,9 +25,6 @@
 #include "inv.h"
 #include "lighting.h"
 #include "minitext.h"
-#ifdef _DEBUG
-#include "miniwin/misc_msg.h"
-#endif
 #include "missiles.h"
 #include "nthread.h"
 #include "options.h"
@@ -125,7 +122,7 @@ void UpdateMissileRendererData(Missile &m)
 	m.position.tileForRendering = m.position.tile;
 	m.position.offsetForRendering = m.position.offset;
 
-	const MissileMovementDistribution missileMovement = MissilesData[static_cast<int8_t>(m._mitype)].MovementDistribution;
+	const MissileMovementDistribution missileMovement = GetMissileData(m._mitype).MovementDistribution;
 	// don't calculate missile position if they don't move
 	if (missileMovement == MissileMovementDistribution::Disabled || m.position.velocity == Displacement {})
 		return;
@@ -354,11 +351,11 @@ void DrawMonster(const Surface &out, Point tilePosition, Point targetBufferPosit
 /**
  * @brief Helper for rendering a specific player icon (Mana Shield or Reflect)
  */
-void DrawPlayerIconHelper(const Surface &out, missile_graphic_id missileGraphicId, Point position, bool lighting, bool infraVision)
+void DrawPlayerIconHelper(const Surface &out, MissileGraphicID missileGraphicId, Point position, bool lighting, bool infraVision)
 {
-	position.x -= MissileSpriteData[missileGraphicId].animWidth2;
+	position.x -= GetMissileSpriteData(missileGraphicId).animWidth2;
 
-	const ClxSprite sprite = (*MissileSpriteData[missileGraphicId].sprites).list()[0];
+	const ClxSprite sprite = (*GetMissileSpriteData(missileGraphicId).sprites).list()[0];
 
 	if (!lighting) {
 		ClxDraw(out, position, sprite);
@@ -383,9 +380,9 @@ void DrawPlayerIconHelper(const Surface &out, missile_graphic_id missileGraphicI
 void DrawPlayerIcons(const Surface &out, const Player &player, Point position, bool infraVision)
 {
 	if (player.pManaShield)
-		DrawPlayerIconHelper(out, MFILE_MANASHLD, position, &player != MyPlayer, infraVision);
+		DrawPlayerIconHelper(out, MissileGraphicID::ManaShield, position, &player != MyPlayer, infraVision);
 	if (player.wReflections > 0)
-		DrawPlayerIconHelper(out, MFILE_REFLECT, position + Displacement { 0, 16 }, &player != MyPlayer, infraVision);
+		DrawPlayerIconHelper(out, MissileGraphicID::Reflect, position + Displacement { 0, 16 }, &player != MyPlayer, infraVision);
 }
 
 /**

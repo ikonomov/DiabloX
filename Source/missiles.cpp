@@ -790,9 +790,8 @@ void GetDamageAmt(spell_id i, int *mind, int *maxd)
 		*maxd = ((10 + myPlayer._pLevel) / 4) * (6 + sl / 2);
 		break;
 	case SPL_FLASH:
-		*mind = ScaleSpellEffect(myPlayer._pLevel, sl);
-		*mind += *mind / 2;
-		*maxd = *mind * 2;
+		*mind = ScaleSpellEffect(myPlayer._pLevel + 1, sl) * 57 / 512;
+		*maxd = ScaleSpellEffect(myPlayer._pLevel * 20 + 20, sl) * 57 / 512;
 		break;
 	case SPL_IDENTIFY:
 	case SPL_TOWN:
@@ -823,27 +822,27 @@ void GetDamageAmt(spell_id i, int *mind, int *maxd)
 	case SPL_FIREWALL:
 	case SPL_LIGHTWALL:
 	case SPL_FIRERING:
-		*mind = 2 * myPlayer._pLevel + 4;
-		*maxd = *mind + 36;
+		*mind = (myPlayer._pLevel + 2) * 5 / 4;
+		*maxd = (myPlayer._pLevel + 20) * 5 / 4;
 		break;
 	case SPL_FIREBALL:
 	case SPL_RUNEFIRE: {
 		int base = (2 * myPlayer._pLevel) + 4;
-		*mind = ScaleSpellEffect(base, sl);
-		*maxd = ScaleSpellEffect(base + 36, sl);
+		*mind = ScaleSpellEffect(base, sl) / 4;
+		*maxd = ScaleSpellEffect(base + 36, sl) / 4;
 	} break;
 	case SPL_GUARDIAN: {
 		int base = (myPlayer._pLevel / 2) + 1;
-		*mind = ScaleSpellEffect(base, sl);
-		*maxd = ScaleSpellEffect(base + 9, sl);
+		*mind = ScaleSpellEffect(base, sl) / 3;
+		*maxd = ScaleSpellEffect(base + 9, sl) / 3;
 	} break;
 	case SPL_CHAIN:
-		*mind = (6 + sl / 2) * 2;
-		*maxd = ((10 + myPlayer._pLevel) / 4) * (6 + sl / 2) * 2;
+		*mind = (6 + sl / 2);
+		*maxd = ((10 + myPlayer._pLevel) / 4) * (6 + sl / 2);
 		break;
 	case SPL_WAVE:
-		*mind = 6 * (myPlayer._pLevel + 1);
-		*maxd = *mind + 54;
+		*mind = myPlayer._pLevel + 1;
+		*maxd = *mind + 9;
 		break;
 	case SPL_NOVA:
 	case SPL_IMMOLAT:
@@ -853,23 +852,20 @@ void GetDamageAmt(spell_id i, int *mind, int *maxd)
 		*maxd = ScaleSpellEffect((myPlayer._pLevel + 30) / 2, sl) * 5;
 		break;
 	case SPL_FLAME:
-		*mind = 3;
-		*maxd = myPlayer._pLevel + 4;
-		*maxd += *maxd / 2;
+		*mind = 15 / 2;
+		*maxd = (45 * myPlayer._pLevel + 90) / 8;
 		break;
 	case SPL_GOLEM:
-		*mind = 11;
-		*maxd = 17;
+		*mind = 8 + 2 * sl;
+		*maxd = *mind + 8;
 		break;
 	case SPL_APOCA:
 		*mind = myPlayer._pLevel;
 		*maxd = *mind * 6;
 		break;
 	case SPL_ELEMENT:
-		*mind = ScaleSpellEffect(2 * myPlayer._pLevel + 4, sl);
-		/// BUGFIX: add here '*mind /= 2;'
-		*maxd = ScaleSpellEffect(2 * myPlayer._pLevel + 40, sl);
-		/// BUGFIX: add here '*maxd /= 2;'
+		*mind = ScaleSpellEffect(2 * myPlayer._pLevel + 4, sl) / 8;
+		*maxd = ScaleSpellEffect(2 * myPlayer._pLevel + 40, sl) / 8;
 		break;
 	case SPL_CBOLT:
 		*mind = 1;
@@ -1855,6 +1851,7 @@ void AddFirewall(Missile &missile, AddMissileParameter &parameter)
 {
 	missile._midam = GenerateRndSum(10, 2) + 2;
 	missile._midam += missile._misource >= 0 ? Players[missile._misource]._pLevel : currlevel; // BUGFIX: missing parenthesis around ternary (fixed)
+	missile._midam /= 2;
 	missile._midam <<= 3;
 	UpdateMissileVelocity(missile, parameter.dst, 16);
 	int i = missile._mispllvl;
@@ -1881,7 +1878,7 @@ void AddFireball(Missile &missile, AddMissileParameter &parameter)
 		Player &player = Players[missile._misource];
 
 		int dmg = 2 * (player._pLevel + GenerateRndSum(10, 2)) + 4;
-		missile._midam = ScaleSpellEffect(dmg, missile._mispllvl);
+		missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) / 4;
 	}
 	UpdateMissileVelocity(missile, dst, sp);
 	SetMissDir(missile, GetDirection16(missile.position.start, dst));
@@ -2019,8 +2016,7 @@ void AddFlash(Missile &missile, AddMissileParameter & /*parameter*/)
 	case MissileSource::Player: {
 		Player &player = *missile.sourcePlayer();
 		int dmg = GenerateRndSum(20, player._pLevel + 1) + player._pLevel + 1;
-		missile._midam = ScaleSpellEffect(dmg, missile._mispllvl);
-		missile._midam += missile._midam / 2;
+		missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) * 3 / 8;
 	} break;
 	case MissileSource::Monster:
 		missile._midam = missile.sourceMonster()->level(sgGameInitInfo.nDifficulty) * 2;
@@ -2039,8 +2035,7 @@ void AddFlash2(Missile &missile, AddMissileParameter & /*parameter*/)
 		if (!missile.IsTrap()) {
 			int dmg = Players[missile._misource]._pLevel + 1;
 			dmg += GenerateRndSum(20, dmg);
-			missile._midam = ScaleSpellEffect(dmg, missile._mispllvl);
-			missile._midam += missile._midam / 2;
+			missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) * 3 / 8;
 		} else {
 			missile._midam = currlevel / 2;
 		}
@@ -2268,7 +2263,7 @@ void AddStone(Missile &missile, AddMissileParameter &parameter)
 
 		    auto &monster = Monsters[monsterId];
 
-		    if (IsAnyOf(monster.type().type, MT_GOLEM, MT_DIABLO, MT_NAKRUL)) {
+		    if (IsAnyOf(monster.type().type, MT_GOLEM, MT_DIABLO) || monster.isUnique()) {
 			    return false;
 		    }
 		    if (IsAnyOf(monster.mode, MonsterMode::FadeIn, MonsterMode::FadeOut, MonsterMode::Charge)) {
@@ -2380,7 +2375,7 @@ void AddElement(Missile &missile, AddMissileParameter &parameter)
 	Player &player = Players[missile._misource];
 
 	int dmg = 2 * (player._pLevel + GenerateRndSum(10, 2)) + 4;
-	missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) / 2;
+	missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) / 8;
 
 	UpdateMissileVelocity(missile, dst, 16);
 	SetMissDir(missile, GetDirection(missile.position.start, dst));

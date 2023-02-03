@@ -251,6 +251,7 @@ struct Player {
 	int _pMana;
 	int _pMaxMana;
 	int _pManaPer;
+	int _pRegenOverflow;
 	int _pIMinDam;
 	int _pIMaxDam;
 	int _pIAC;
@@ -569,6 +570,16 @@ struct Player {
 	 * Valid only for players with Mana Shield spell level greater than zero.
 	 */
 	int GetManaShieldDamageReduction();
+
+	void RegenerateMana()
+	{
+		int regenDivisor = 2000;
+		_pRegenOverflow += _pMaxMana % regenDivisor;
+		int regenMana = _pMaxMana / regenDivisor + _pRegenOverflow / regenDivisor;
+		_pRegenOverflow %= regenDivisor;
+		_pMana = clamp(_pMana + regenMana, _pMana, _pMaxMana);
+		_pManaBase = clamp(_pManaBase + regenMana, _pManaBase, _pMaxManaBase);
+	}
 
 	/**
 	 * @brief Gets the effective spell level for the player, considering item bonuses

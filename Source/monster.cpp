@@ -1905,9 +1905,9 @@ void AiRanged(Monster &monster)
 			if (LineClearMissile(monster.position.tile, monster.enemyPosition)) {
 				MissileID missileType = GetMissileType(monster.ai);
 				if (monster.ai == MonsterAIID::AcidUnique)
-					StartRangedSpecialAttack(monster, missileType, 4);
+					StartRangedSpecialAttack(monster, missileType, 0);
 				else
-					StartRangedAttack(monster, missileType, 4);
+					StartRangedAttack(monster, missileType, 0);
 			} else {
 				monster.checkStandAnimationIsLoaded(md);
 			}
@@ -1931,7 +1931,7 @@ void AiRangedAvoidance(Monster &monster)
 	if (IsAnyOf(monster.ai, MonsterAIID::Magma, MonsterAIID::Storm, MonsterAIID::BoneDemon) && monster.activeForTicks < UINT8_MAX)
 		MonstCheckDoors(monster);
 	int lessmissiles = (monster.ai == MonsterAIID::Acid) ? 1 : 0;
-	int dam = (monster.ai == MonsterAIID::Diablo) ? 40 : 4;
+	int dam = (monster.ai == MonsterAIID::Diablo) ? 40 : 0;
 	MissileID missileType = GetMissileType(monster.ai);
 	int v = GenerateRnd(10000);
 	unsigned distanceToEnemy = monster.distanceToEnemy();
@@ -3379,46 +3379,46 @@ void InitMonsterGFX(CMonster &monsterType)
 	}
 
 	if (IsAnyOf(mtype, MT_NMAGMA, MT_YMAGMA, MT_BMAGMA, MT_WMAGMA))
-		MissileSpriteData[MFILE_MAGBALL].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::MagmaBall)].LoadGFX();
 	if (IsAnyOf(mtype, MT_STORM, MT_RSTORM, MT_STORML, MT_MAEL))
-		MissileSpriteData[MFILE_THINLGHT].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::ThinLightning)].LoadGFX();
 	if (mtype == MT_SNOWWICH) {
-		MissileSpriteData[MFILE_SCUBMISB].LoadGFX();
-		MissileSpriteData[MFILE_SCBSEXPB].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BloodStarBlue)].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BloodStarBlueExplosion)].LoadGFX();
 	}
 	if (mtype == MT_HLSPWN) {
-		MissileSpriteData[MFILE_SCUBMISD].LoadGFX();
-		MissileSpriteData[MFILE_SCBSEXPD].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BloodStarRed)].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BloodStarRedExplosion)].LoadGFX();
 	}
 	if (mtype == MT_SOLBRNR) {
-		MissileSpriteData[MFILE_SCUBMISC].LoadGFX();
-		MissileSpriteData[MFILE_SCBSEXPC].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BloodStarYellow)].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BloodStarYellowExplosion)].LoadGFX();
 	}
 	if (IsAnyOf(mtype, MT_NACID, MT_RACID, MT_BACID, MT_XACID, MT_SPIDLORD)) {
-		MissileSpriteData[MFILE_ACIDBF].LoadGFX();
-		MissileSpriteData[MFILE_ACIDSPLA].LoadGFX();
-		MissileSpriteData[MFILE_ACIDPUD].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::Acid)].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::AcidSplat)].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::AcidPuddle)].LoadGFX();
 	}
 	if (mtype == MT_LICH) {
-		MissileSpriteData[MFILE_LICH].LoadGFX();
-		MissileSpriteData[MFILE_EXORA1].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::OrangeFlare)].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::OrangeFlareExplosion)].LoadGFX();
 	}
 	if (mtype == MT_ARCHLICH) {
-		MissileSpriteData[MFILE_ARCHLICH].LoadGFX();
-		MissileSpriteData[MFILE_EXYEL2].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::YellowFlare)].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::YellowFlareExplosion)].LoadGFX();
 	}
 	if (IsAnyOf(mtype, MT_PSYCHORB, MT_BONEDEMN))
-		MissileSpriteData[MFILE_BONEDEMON].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BlueFlare2)].LoadGFX();
 	if (mtype == MT_NECRMORB) {
-		MissileSpriteData[MFILE_NECROMORB].LoadGFX();
-		MissileSpriteData[MFILE_EXRED3].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::RedFlare)].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::RedFlareExplosion)].LoadGFX();
 	}
 	if (mtype == MT_PSYCHORB)
-		MissileSpriteData[MFILE_EXBL2].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BlueFlareExplosion)].LoadGFX();
 	if (mtype == MT_BONEDEMN)
-		MissileSpriteData[MFILE_EXBL3].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::BlueFlareExplosion2)].LoadGFX();
 	if (mtype == MT_DIABLO)
-		MissileSpriteData[MFILE_FIREPLAR].LoadGFX();
+		MissileSpriteData[static_cast<uint8_t>(MissileGraphicID::DiabloApocalypseBoom)].LoadGFX();
 }
 
 void WeakenNaKrul()

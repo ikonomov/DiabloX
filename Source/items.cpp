@@ -4550,7 +4550,7 @@ void RechargeItem(Item &item, Player &player)
 	if (item._iCharges == item._iMaxCharges)
 		return;
 
-	int r = GetSpellBookLevel(item._iSpell);
+	int r = GetSpellStaffLevel(item._iSpell);
 	r = GenerateRnd(player._pLevel / r) + 1;
 
 	do {

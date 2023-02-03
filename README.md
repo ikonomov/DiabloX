@@ -81,8 +81,8 @@ If you want to help test the latest development stage of the next version (make 
          * Gothic Plate: 55 [50-60]
          * Full Plate Mail: 60 [60-75]
    * Renamed affixes:
-      * fine (armor) to stout
-      * crimson (31-40) to russet
+      * sturdy to stout
+      * burgundy to russet
 <details>
   <summary>Qlvl (click to expand)</summary>
 

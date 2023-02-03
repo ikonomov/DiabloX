@@ -658,7 +658,7 @@ bool GuardianTryFireAt(Missile &missile, Point target)
 
 	Player &player = Players[missile._misource];
 	int dmg = GenerateRnd(10) + (player._pLevel / 2) + 1;
-	dmg = ScaleSpellEffect(dmg, missile._mispllvl);
+	dmg = ScaleSpellEffect(dmg, missile._mispllvl) / 3;
 
 	Direction dir = GetDirection(position, target);
 	AddMissile(position, target, dir, MissileID::Firebolt, TARGET_MONSTERS, missile._misource, dmg, missile.sourcePlayer()->GetSpellLevel(SPL_GUARDIAN), &missile);
@@ -787,7 +787,7 @@ void GetDamageAmt(spell_id i, int *mind, int *maxd)
 	case SPL_RUNELIGHT:
 	case SPL_LIGHTNING:
 		*mind = (6 + sl / 2);
-		*maxd = ((10 + myPlayer._pLevel) / 4) * (6 + sl / 2);
+		*maxd = ((5 + myPlayer._pLevel) / 3) * (6 + sl / 2);
 		break;
 	case SPL_FLASH:
 		*mind = ScaleSpellEffect(myPlayer._pLevel + 1, sl) * 57 / 512;
@@ -838,7 +838,7 @@ void GetDamageAmt(spell_id i, int *mind, int *maxd)
 	} break;
 	case SPL_CHAIN:
 		*mind = (6 + sl / 2);
-		*maxd = ((10 + myPlayer._pLevel) / 4) * (6 + sl / 2);
+		*maxd = ((5 + myPlayer._pLevel) / 3) * (6 + sl / 2);
 		break;
 	case SPL_WAVE:
 		*mind = myPlayer._pLevel + 1;
@@ -3279,7 +3279,7 @@ void MI_Lightctrl(Missile &missile)
 		dam = GenerateRnd(currlevel) + 2 * currlevel;
 	} else if (missile._micaster == TARGET_MONSTERS) {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		dam = (GenerateRnd(2) + GenerateRnd(Players[missile._misource]._pLevel) + 2) << 6;
+		dam = ((GenerateRnd(4) + GenerateRnd(Players[missile._misource]._pLevel) + 3) / 3) << 6;
 	} else {
 		auto &monster = Monsters[missile._misource];
 		dam = 2 * (monster.minDamage + GenerateRnd(monster.maxDamage - monster.minDamage + 1));
@@ -3503,13 +3503,16 @@ void MI_Chain(Missile &missile)
 	Direction dir = GetDirection(position, dst);
 	AddMissile(position, dst, dir, MissileID::LightningControl, TARGET_MONSTERS, id, 1, missile._mispllvl);
 	int rad = std::min<int>(missile._mispllvl + 3, MaxCrawlRadius);
+	int maxTargets = (missile._mispllvl + 5) / 3;
+	int targetCount = 0;
 	Crawl(1, rad, [&](Displacement displacement) {
 		Point target = position + displacement;
 		if (InDungeonBounds(target) && dMonster[target.x][target.y] > 0) {
 			dir = GetDirection(position, target);
 			AddMissile(position, target, dir, MissileID::LightningControl, TARGET_MONSTERS, id, 1, missile._mispllvl);
+			targetCount++;
 		}
-		return false;
+		return targetCount >= maxTargets;
 	});
 	missile._mirange--;
 	if (missile._mirange == 0)

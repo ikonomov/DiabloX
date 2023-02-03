@@ -95,6 +95,7 @@ enum class OptionEntryFlags : uint8_t {
 	NeedDiabloMpq = 1 << 6,
 	/** @brief hellfire.mpq must be present. */
 	NeedHellfireMpq = 1 << 7,
+	IniInvisible = 1 << 8,
 };
 use_enum_as_flags(OptionEntryFlags);
 

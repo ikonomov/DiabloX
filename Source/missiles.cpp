@@ -863,7 +863,7 @@ void GetDamageAmt(spell_id i, int *mind, int *maxd)
 		break;
 	case SPL_APOCA:
 		*mind = myPlayer._pLevel;
-		*maxd = *mind * 6;
+		*maxd = *mind * 3;
 		break;
 	case SPL_ELEMENT:
 		*mind = ScaleSpellEffect(2 * myPlayer._pLevel + 4, sl) / 8;
@@ -2547,7 +2547,7 @@ void AddApocalypse(Missile &missile, AddMissileParameter & /*parameter*/)
 	missile.var5 = std::min(missile.position.start.x + 8, MAXDUNX - 1);
 	missile.var6 = missile.var4;
 	int playerLevel = player._pLevel;
-	missile._midam = GenerateRndSum(6, playerLevel) + playerLevel;
+	missile._midam = GenerateRndSum(3, playerLevel) + playerLevel;
 	missile._mirange = 255;
 }
 
@@ -3754,7 +3754,7 @@ void ProcessApocalypse(Missile &missile)
 				continue;
 			if (TileHasAny(dPiece[k][j], TileProperties::Solid))
 				continue;
-			if (gbIsHellfire && !LineClearMissile(missile.position.tile, { k, j }))
+			if (!LineClearMissile(missile.position.tile, { k, j }))
 				continue;
 
 			int id = missile._misource;

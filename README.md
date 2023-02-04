@@ -63,7 +63,7 @@ If you want to help test the latest development stage of the next version (make 
       * Town Portal initial: 53 [35]; minimum: 36 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]
-      * Stone Curse initial: 160 [60]; minimum: 100 [40]; decrease per slvl: 6 [3]
+      * Stone Curse initial: 120 [60]; minimum: 80 [40]; decrease per slvl: 6 [3]
       * Fire Wall initial: 60 [28]; minimum: 40 [16]; decrease per slvl: 3 [2]
 #### Items:
    * Potions cost 100% more gold.
@@ -81,8 +81,8 @@ If you want to help test the latest development stage of the next version (make 
          * Gothic Plate: 55 [50-60]
          * Full Plate Mail: 60 [60-75]
    * Renamed affixes:
-      * fine (armor) to stout
-      * crimson (31-40) to russet
+      * sturdy to stout
+      * burgundy to russet
 <details>
   <summary>Qlvl (click to expand)</summary>
 

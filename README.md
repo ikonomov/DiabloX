@@ -52,7 +52,7 @@ If you want to help test the latest development stage of the next version (make 
       * Apocalypse max: 3·clvl [6·clvl]
       * Fire Wall: 1/2 of the original
       * Guardian: 1/3 of the original
-      * Lightning, Chain Lightning max: (5+clvl)/3 [2+clvl]
+      * Lightning, Chain Lightning min: 1 [2], max: (5+clvl)/3 [2+clvl]
       * Chain Lightning: creates 1+(5+slvl)/3 number of bolts
       * Flash, Elemental, Fireball: 1/4 of the original
    * The 1/2 spell damage modifier in player versus player has been removed.

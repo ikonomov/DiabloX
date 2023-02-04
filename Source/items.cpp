@@ -2438,8 +2438,10 @@ void CalcPlrItemVals(Player &player, bool loadgfx)
 	player._pVitality = std::max(0, vadd + player._pBaseVit);
 
 	if (player._pClass == HeroClass::Rogue) {
-		if (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe
-		    || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Staff || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Staff
+		if (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe
+			|| player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe
+		    || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Staff
+			|| player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Staff
 		    || (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Mace && player.InvBody[INVLOC_HAND_LEFT]._iLoc == ILOC_TWOHAND)
 		    || (player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Mace && player.InvBody[INVLOC_HAND_RIGHT]._iLoc == ILOC_TWOHAND)
 		    || (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Sword && player.InvBody[INVLOC_HAND_LEFT]._iLoc == ILOC_TWOHAND)
@@ -2482,8 +2484,10 @@ void CalcPlrItemVals(Player &player, bool loadgfx)
 		}
 		player._pIAC += player._pLevel / 4;
 	} else {
-		if (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe
-		    || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Staff || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Staff
+		if (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe
+			|| player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe
+		    || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Staff
+			|| player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Staff
 		    || (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Mace && player.InvBody[INVLOC_HAND_LEFT]._iLoc == ILOC_TWOHAND)
 		    || (player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Mace && player.InvBody[INVLOC_HAND_RIGHT]._iLoc == ILOC_TWOHAND)
 		    || (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Sword && player.InvBody[INVLOC_HAND_LEFT]._iLoc == ILOC_TWOHAND)

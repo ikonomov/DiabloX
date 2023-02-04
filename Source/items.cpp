@@ -3547,7 +3547,7 @@ bool DoOil(Player &player, int cii)
 	case IPL_KNOCKBACK:
 		return _("knocks target back");
 	case IPL_3XDAMVDEM:
-		return _(/*xgettext:no-c-format*/ "+200% damage vs. demons");
+		return _(/*xgettext:no-c-format*/ "+50% damage vs. demons");
 	case IPL_ALLRESZERO:
 		return _("All Resistance equals 0");
 	case IPL_STEALMANA:

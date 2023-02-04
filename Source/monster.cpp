@@ -177,29 +177,23 @@ void InitMonster(Monster &monster, Direction rd, size_t typeIndex, Point positio
 
 	if (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE) {
 		monster.maxHitPoints = 3 * monster.maxHitPoints;
-		if (gbIsHellfire)
-			monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
-		else
-			monster.maxHitPoints += 64;
+		monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
 		monster.hitPoints = monster.maxHitPoints;
 		monster.toHit += NightmareToHitBonus;
-		monster.minDamage = 2 * (monster.minDamage + 2);
-		monster.maxDamage = 2 * (monster.maxDamage + 2);
-		monster.minDamageSpecial = 2 * (monster.minDamageSpecial + 2);
-		monster.maxDamageSpecial = 2 * (monster.maxDamageSpecial + 2);
+		monster.minDamage = 3 * monster.minDamage + 6;
+		monster.maxDamage = 3 * monster.maxDamage + 6;
+		monster.minDamageSpecial = 3 * monster.minDamageSpecial + 6;
+		monster.maxDamageSpecial = 3 * monster.maxDamageSpecial + 6;
 		monster.armorClass += NightmareAcBonus;
 	} else if (sgGameInitInfo.nDifficulty == DIFF_HELL) {
 		monster.maxHitPoints = 4 * monster.maxHitPoints;
-		if (gbIsHellfire)
-			monster.maxHitPoints += (gbIsMultiplayer ? 200 : 100) << 6;
-		else
-			monster.maxHitPoints += 192;
+		monster.maxHitPoints += (gbIsMultiplayer ? 300 : 150) << 6;
 		monster.hitPoints = monster.maxHitPoints;
 		monster.toHit += HellToHitBonus;
-		monster.minDamage = 4 * monster.minDamage + 6;
-		monster.maxDamage = 4 * monster.maxDamage + 6;
-		monster.minDamageSpecial = 4 * monster.minDamageSpecial + 6;
-		monster.maxDamageSpecial = 4 * monster.maxDamageSpecial + 6;
+		monster.minDamage = 6 * monster.minDamage + 9;
+		monster.maxDamage = 6 * monster.maxDamage + 9;
+		monster.minDamageSpecial = 6 * monster.minDamageSpecial + 9;
+		monster.maxDamageSpecial = 6 * monster.maxDamageSpecial + 9;
 		monster.armorClass += HellAcBonus;
 		monster.resistance = monster.data().resistanceHell;
 	}
@@ -593,7 +587,7 @@ void StartMonsterGotHit(Monster &monster)
 {
 	if (monster.type().type != MT_GOLEM) {
 		auto animationFlags = gGameLogicStep < GameLogicStep::ProcessMonsters ? AnimationDistributionFlags::ProcessAnimationPending : AnimationDistributionFlags::None;
-		int8_t numSkippedFrames = (gbIsHellfire && monster.type().type == MT_DIABLO) ? 4 : 0;
+		int8_t numSkippedFrames = (monster.type().type == MT_DIABLO) ? 4 : 0;
 		NewMonsterAnim(monster, MonsterGraphic::GotHit, monster.direction, animationFlags, numSkippedFrames);
 		monster.mode = MonsterMode::HitRecovery;
 	}
@@ -1178,18 +1172,8 @@ void MonsterAttackPlayer(Monster &monster, Player &player, int hit, int minDam, 
 		return;
 	}
 	if (monster.type().type == MT_YZOMBIE && &player == MyPlayer) {
-		if (player._pMaxHP > 64) {
-			if (player._pMaxHPBase > 64) {
-				player._pMaxHP -= 64;
-				if (player._pHitPoints > player._pMaxHP) {
-					player._pHitPoints = player._pMaxHP;
-				}
-				player._pMaxHPBase -= 64;
-				if (player._pHPBase > player._pMaxHPBase) {
-					player._pHPBase = player._pMaxHPBase;
-				}
-			}
-		}
+		if (player.GetBaseAttributeValue(CharacterAttribute::Vitality) > 0)
+			ModifyPlrVit(player, -1);
 	}
 	int dam = (minDam << 6) + GenerateRnd(((maxDam - minDam) << 6) + 1);
 	dam = std::max(dam + (player._pIGetHit << 6), 64);
@@ -3143,26 +3127,20 @@ void PrepareUniqueMonst(Monster &monster, UniqueMonsterType monsterType, size_t 
 
 	if (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE) {
 		monster.maxHitPoints = 3 * monster.maxHitPoints;
-		if (gbIsHellfire)
-			monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
-		else
-			monster.maxHitPoints += 64;
+		monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
 		monster.hitPoints = monster.maxHitPoints;
-		monster.minDamage = 2 * (monster.minDamage + 2);
-		monster.maxDamage = 2 * (monster.maxDamage + 2);
-		monster.minDamageSpecial = 2 * (monster.minDamageSpecial + 2);
-		monster.maxDamageSpecial = 2 * (monster.maxDamageSpecial + 2);
+		monster.minDamage = 3 * monster.minDamage + 6;
+		monster.maxDamage = 3 * monster.maxDamage + 6;
+		monster.minDamageSpecial = 3 * monster.minDamageSpecial + 6;
+		monster.maxDamageSpecial = 3 * monster.maxDamageSpecial + 6;
 	} else if (sgGameInitInfo.nDifficulty == DIFF_HELL) {
 		monster.maxHitPoints = 4 * monster.maxHitPoints;
-		if (gbIsHellfire)
-			monster.maxHitPoints += (gbIsMultiplayer ? 200 : 100) << 6;
-		else
-			monster.maxHitPoints += 192;
+		monster.maxHitPoints += (gbIsMultiplayer ? 300 : 150) << 6;
 		monster.hitPoints = monster.maxHitPoints;
-		monster.minDamage = 4 * monster.minDamage + 6;
-		monster.maxDamage = 4 * monster.maxDamage + 6;
-		monster.minDamageSpecial = 4 * monster.minDamageSpecial + 6;
-		monster.maxDamageSpecial = 4 * monster.maxDamageSpecial + 6;
+		monster.minDamage = 6 * monster.minDamage + 9;
+		monster.maxDamage = 6 * monster.maxDamage + 9;
+		monster.minDamageSpecial = 6 * monster.minDamageSpecial + 9;
+		monster.maxDamageSpecial = 6 * monster.maxDamageSpecial + 9;
 	}
 
 	InitTRNForUniqueMonster(monster);
@@ -3470,7 +3448,7 @@ void InitMonsters()
 					na++;
 			}
 		}
-		int numplacemonsters = na / 30;
+		int numplacemonsters = na / 20;
 		if (gbIsMultiplayer)
 			numplacemonsters += numplacemonsters / 2;
 		if (ActiveMonsterCount + numplacemonsters > MaxMonsters - 10)
@@ -4210,10 +4188,6 @@ void PrintMonstHistory(int mt)
 	if (MonsterKillCounts[mt] >= 30) {
 		int minHP = MonstersData[mt].hitPointsMinimum;
 		int maxHP = MonstersData[mt].hitPointsMaximum;
-		if (!gbIsHellfire && mt == MT_DIABLO) {
-			minHP /= 2;
-			maxHP /= 2;
-		}
 		if (!gbIsMultiplayer) {
 			minHP /= 2;
 			maxHP /= 2;
@@ -4225,10 +4199,8 @@ void PrintMonstHistory(int mt)
 
 		int hpBonusNightmare = 1;
 		int hpBonusHell = 3;
-		if (gbIsHellfire) {
-			hpBonusNightmare = (!gbIsMultiplayer ? 50 : 100);
-			hpBonusHell = (!gbIsMultiplayer ? 100 : 200);
-		}
+		hpBonusNightmare = (!gbIsMultiplayer ? 50 : 100);
+		hpBonusHell = (!gbIsMultiplayer ? 150 : 300);
 		if (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE) {
 			minHP = 3 * minHP + hpBonusNightmare;
 			maxHP = 3 * maxHP + hpBonusNightmare;
@@ -4629,7 +4601,7 @@ bool Monster::isResistant(MissileID missileType) const
 	    || ((resistance & RESIST_FIRE) != 0 && missileElement == DamageType::Fire)
 	    || ((resistance & RESIST_LIGHTNING) != 0 && missileElement == DamageType::Lightning))
 		return true;
-	if (gbIsHellfire && missileType == MissileID::HolyBolt && IsAnyOf(type().type, MT_DIABLO, MT_BONEDEMN))
+	if (missileType == MissileID::HolyBolt && IsAnyOf(type().type, MT_DIABLO, MT_BONEDEMN))
 		return true;
 	return false;
 }

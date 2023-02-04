@@ -32,7 +32,7 @@ namespace devilution {
 struct Missile;
 struct Player;
 
-constexpr size_t MaxMonsters = 200;
+constexpr size_t MaxMonsters = 250;
 constexpr size_t MaxLvlMTypes = 24;
 
 enum monster_flag : uint16_t {

@@ -170,7 +170,8 @@ If you want to help test the latest development stage of the next version (make 
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
-   * The textbox for item labels and chat messages has been made transparent.
+   * The textbox for item labels has been resized.
+   * Chat message texbox has been made transparent.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
    * The speed settings have been removed.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):

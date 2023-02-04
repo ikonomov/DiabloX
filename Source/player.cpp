@@ -815,7 +815,7 @@ bool PlrHitMonst(Player &player, Monster &monster, bool adjacentDamage = false)
 		break;
 	case MonsterClass::Demon:
 		if (HasAnyOf(player._pIFlags, ItemSpecialEffect::TripleDemonDamage)) {
-			dam *= 3;
+			dam += dam / 2;
 		}
 		break;
 	}

@@ -590,8 +590,7 @@ StartUpOptions::StartUpOptions()
 }
 std::vector<OptionEntryBase *> StartUpOptions::GetEntries()
 {
-	return {
-	};
+	return;
 }
 
 DiabloOptions::DiabloOptions()
@@ -616,8 +615,7 @@ HellfireOptions::HellfireOptions()
 }
 std::vector<OptionEntryBase *> HellfireOptions::GetEntries()
 {
-	return {
-	};
+	return;
 }
 
 AudioOptions::AudioOptions()

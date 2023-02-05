@@ -786,12 +786,12 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 		*mind = AddClassHealingBonus(myPlayer._pLevel + sl + 1, myPlayer._pClass) - 1;
 		*maxd = AddClassHealingBonus((4 * myPlayer._pLevel) + (6 * sl) + 10, myPlayer._pClass) - 1;
 		break;
-	case SPL_RUNELIGHT:
-	case SPL_LIGHTNING:
+	case SpellID::RuneOfLight:
+	case SpellID::Lightning:
 		*mind = (6 + sl / 2);
 		*maxd = ((5 + myPlayer._pLevel) / 3) * (6 + sl / 2);
 		break;
-	case SPL_FLASH:
+	case SpellID::Flash:
 		*mind = ScaleSpellEffect(myPlayer._pLevel + 1, sl) * 57 / 512;
 		*maxd = ScaleSpellEffect(myPlayer._pLevel * 20 + 20, sl) * 57 / 512;
 		break;
@@ -821,9 +821,9 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 		*mind = -1;
 		*maxd = -1;
 		break;
-	case SPL_FIREWALL:
-	case SPL_LIGHTWALL:
-	case SPL_FIRERING:
+	case SpellID::FireWall:
+	case SpellID::LightningWall:
+	case SpellID::RingOfFire:
 		*mind = (myPlayer._pLevel + 2) * 5 / 4;
 		*maxd = (myPlayer._pLevel + 20) * 5 / 4;
 		break;
@@ -838,11 +838,11 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 		*mind = ScaleSpellEffect(base, sl) / 3;
 		*maxd = ScaleSpellEffect(base + 9, sl) / 3;
 	} break;
-	case SPL_CHAIN:
+	case SpellID::ChainLightning:
 		*mind = (6 + sl / 2);
 		*maxd = ((5 + myPlayer._pLevel) / 3) * (6 + sl / 2);
 		break;
-	case SPL_WAVE:
+	case SpellID::FlameWave:
 		*mind = myPlayer._pLevel + 1;
 		*maxd = *mind + 9;
 		break;
@@ -853,11 +853,11 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 		*mind = ScaleSpellEffect((myPlayer._pLevel + 5) / 2, sl) * 5;
 		*maxd = ScaleSpellEffect((myPlayer._pLevel + 30) / 2, sl) * 5;
 		break;
-	case SPL_FLAME:
+	case SpellID::Inferno:
 		*mind = 15 / 2;
 		*maxd = (45 * myPlayer._pLevel + 90) / 8;
 		break;
-	case SPL_GOLEM:
+	case SpellID::Golem:
 		*mind = 8 + 2 * sl;
 		*maxd = *mind + 8;
 		break;
@@ -865,7 +865,7 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 		*mind = myPlayer._pLevel;
 		*maxd = *mind * 3;
 		break;
-	case SPL_ELEMENT:
+	case SpellID::Elemental:
 		*mind = ScaleSpellEffect(2 * myPlayer._pLevel + 4, sl) / 8;
 		*maxd = ScaleSpellEffect(2 * myPlayer._pLevel + 40, sl) / 8;
 		break;

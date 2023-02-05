@@ -3505,7 +3505,7 @@ void ProcessChainLightning(Missile &missile)
 	Direction dir = GetDirection(position, dst);
 	AddMissile(position, dst, dir, MissileID::LightningControl, TARGET_MONSTERS, id, 1, missile._mispllvl);
 	int rad = std::min<int>(missile._mispllvl + 3, MaxCrawlRadius);
-	int maxTargets = 2 + missile._mispllvl / 4;
+	int maxTargets = 1 + missile._mispllvl / 5;
 	int targetCount = 0;
 	Crawl(1, rad, [&](Displacement displacement) {
 		Point target = position + displacement;

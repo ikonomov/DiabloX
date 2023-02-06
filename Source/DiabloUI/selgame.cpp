@@ -445,7 +445,6 @@ void selgame_Diff_Select(int value)
 		return;
 	}
 
-	selgame_GameSpeedSelection();
 	vecSelGameDlgItems[0]->m_value = 20;
 	selgame_Speed_Select(0);
 }

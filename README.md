@@ -60,7 +60,7 @@ If you want to help test the latest development stage of the next version (make 
    * Apocalypse only works on monsters within the line of sight.
    * Stone Curse does not affect unique monsters.
    * Mana cost:
-      * Town Portal initial: 53 [35]; minimum: 36 [18]
+      * Town Portal initial: 50 [35]; minimum: 35 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]
       * Stone Curse initial: 120 [60]; minimum: 80 [40]; decrease per slvl: 6 [3]
@@ -162,16 +162,15 @@ If you want to help test the latest development stage of the next version (make 
    * Damage has been increased by 50% in Nightmare and Hell difficulty.
    * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player, and 50 in Nightmare and 150 in Hell for single player.
    * Number per dlvl has been increased by 50% with a maximum of 250 [200].
-   * Mlvl for item drops has been increased by 8 in nightmare and 16 in hell.
+   * Mlvl for item drops has been increased by 8 in Nightmare and 16 in Hell.
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Interface:
-   * The lock-on target functionality has been replaced by rapid fire when playing with keyboard and mouse.
+   * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
-   * The textbox for item labels has been resized.
-   * Chat message texbox has been made transparent.
+   * The textbox has been resized for item labels and made transparent for chat messages.
    * Town automap has been disabled.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
    * The speed settings have been removed.

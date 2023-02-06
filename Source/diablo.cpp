@@ -854,7 +854,7 @@ void RunGameLoop(interface_mode uMsg)
 		discord_manager::UpdateGame();
 
 		// auto-clicker
-		if (ControlMode == ControlTypes::KeyboardAndMouse && (sgbMouseDown == CLICK_LEFT || sgbMouseDown == CLICK_RIGHT)) {
+		if (sgbMouseDown == CLICK_LEFT || sgbMouseDown == CLICK_RIGHT) {
 
 			int currentTickCount = SDL_GetTicks();
 			int ticksElapsed = currentTickCount - mouseHeldDownFor; // calculate how long a mouse button has been held down

@@ -2335,11 +2335,11 @@ void OperateShrineHidden(Player &player)
 			if (!item.isEmpty()
 			    && item._iMaxDur != DUR_INDESTRUCTIBLE
 			    && item._iMaxDur != 0) {
-				if (item._iDurability >= 240)
+				if (item._iDurability > 240)
 					item._iDurability = 250;
 				else
 					item._iDurability += 10;
-				if (item._iMaxDur >= 240)
+				if (item._iMaxDur > 240)
 					item._iMaxDur = 250;
 				else
 					item._iMaxDur += 10;

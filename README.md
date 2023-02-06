@@ -172,6 +172,7 @@ If you want to help test the latest development stage of the next version (make 
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
    * The textbox for item labels has been resized.
    * Chat message texbox has been made transparent.
+   * Town automap has been disabled.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
    * The speed settings have been removed.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):

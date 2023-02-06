@@ -856,11 +856,13 @@ void RunGameLoop(interface_mode uMsg)
 		// auto-clicker
 		if (sgbMouseDown == CLICK_LEFT || sgbMouseDown == CLICK_RIGHT) {
 
+			// calculate how long a mouse button has been held down
 			int currentTickCount = SDL_GetTicks();
-			int ticksElapsed = currentTickCount - mouseHeldDownFor; // calculate how long a mouse button has been held down
+			int ticksElapsed = currentTickCount - mouseHeldDownFor;
 
-			if (ticksElapsed > gnTickDelay * 6 && (pcursmonst != -1 || pcursplr != -1)) { // check if 6 ticks have elapsed
-				mouseHeldDownFor = SDL_GetTicks();                                        // reset timer
+			// check if 6 ticks have elapsed
+			if (ticksElapsed > gnTickDelay * 6 && (pcursmonst != -1 || pcursplr != -1)) {
+				mouseHeldDownFor = SDL_GetTicks(); // reset timer
 
 				// re-press mouse button
 				if (sgbMouseDown == CLICK_LEFT) {

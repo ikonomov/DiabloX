@@ -1081,7 +1081,7 @@ std::vector<OptionEntryBase *> ChatOptions::GetEntries()
 }
 
 OptionEntryLanguageCode::OptionEntryLanguageCode()
-    : OptionEntryListBase("Code", OptionEntryFlags::CantChangeInGame | OptionEntryFlags::RecreateUI, N_("Language"), N_("Define what language to use in game."))
+    : OptionEntryListBase("Code", OptionEntryFlags::Invisible, N_("Language"), N_("Define what language to use in game."))
 {
 }
 void OptionEntryLanguageCode::LoadFromIni(string_view category)
@@ -1203,9 +1203,7 @@ LanguageOptions::LanguageOptions()
 }
 std::vector<OptionEntryBase *> LanguageOptions::GetEntries()
 {
-	return {
-		&code,
-	};
+	return {};
 }
 
 KeymapperOptions::KeymapperOptions()

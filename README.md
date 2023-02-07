@@ -10,9 +10,7 @@ DiabloX is a mod for Diablo 1 and a fork of [DevilutionX](https://github.com/dia
 Note: You'll need access to the data from the original game. If you don't have an original CD then you can [buy Diablo from GoG.com](https://www.gog.com/game/diablo).
 
    * Download the latest [DiabloX release](https://github.com/ikonomov/DiabloX/releases) and extract the contents to a location of your choosing.
-   * Copy `DIABDAT.MPQ` from the CD or GOG-installation (or [extract it from the GoG installer](https://github.com/diasurgical/devilutionX/wiki/Extracting-the-.MPQs-from-the-GoG-installer)) to the DiabloX folder.
-
-More detailed instructions can be found by following the [Installation Instructions](./docs/installing.md) for DevilutionX.  
+   * Copy `DIABDAT.MPQ` from the CD or GOG-installation to the DiabloX folder.
 
 ## Test builds
 
@@ -182,6 +180,7 @@ If you want to help test the latest development stage of the next version (make 
       * unbound: Quick Load, increase/decrease gamma
    * DevilutionX settings:
       * disabled support for Spawned Diablo and Diablo: Hellfire
+      * disabled multi-language support
       * disabled friendly damage from spells and ranged attacks to other players
       * disabled run in town
       * disabled Adria refilling mana

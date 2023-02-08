@@ -1950,9 +1950,9 @@ void OperateBook(Player &player, Object &book)
 	}
 
 	if (setlvlnum == SL_BONECHAMB) {
-		player._pMemSpells |= GetSpellBitmask(SPL_GUARDIAN);
-		if (player._pSplLvl[SPL_GUARDIAN] < MaxSpellLevel)
-			player._pSplLvl[SPL_GUARDIAN]++;
+		player._pMemSpells |= GetSpellBitmask(SpellID::Guardian);
+		if (player._pSplLvl[static_cast<int8_t>(SpellID::Guardian)] < MaxSpellLevel)
+			player._pSplLvl[static_cast<int8_t>(SpellID::Guardian)]++;
 		Quests[Q_SCHAMB]._qactive = QUEST_DONE;
 		PlaySfxLoc(IS_QUESTDN, book.position);
 		InitDiabloMsg(EMSG_BONECHAMB);
@@ -2140,8 +2140,13 @@ void OperateMushroomPatch(const Player &player, Object &mushroomPatch)
 
 	PlaySfxLoc(IS_CHEST, mushroomPatch.position);
 	Point pos = GetSuperItemLoc(mushroomPatch.position);
-	SpawnQuestItem(IDI_MUSHROOM, pos, 0, 0, true);
-	Quests[Q_MUSHROOM]._qvar1 = QS_MUSHSPAWNED;
+
+	if (&player == MyPlayer) {
+		SpawnQuestItem(IDI_MUSHROOM, pos, 0, 0, true);
+		Quests[Q_MUSHROOM]._qvar1 = QS_MUSHSPAWNED;
+		NetSendCmdQuest(true, Quests[Q_MUSHROOM]);
+		NetSendCmdLoc(MyPlayerId, false, CMD_OPERATEOBJ, mushroomPatch.position);
+	}
 }
 
 void OperateInnSignChest(const Player &player, Object &questContainer, bool sendmsg)
@@ -2185,7 +2190,7 @@ void OperateSlainHero(const Player &player, Object &corpse)
 	} else if (player._pClass == HeroClass::Rogue) {
 		CreateMagicWeapon(corpse.position, ItemType::Bow, ICURS_LONG_BATTLE_BOW, true, false);
 	} else if (player._pClass == HeroClass::Sorcerer) {
-		CreateSpellBook(corpse.position, SPL_LIGHTNING, true, false);
+		CreateSpellBook(corpse.position, SpellID::Lightning, true, false);
 	} else if (player._pClass == HeroClass::Monk) {
 		CreateMagicWeapon(corpse.position, ItemType::Staff, ICURS_WAR_STAFF, true, false);
 	} else if (player._pClass == HeroClass::Bard) {
@@ -2491,7 +2496,7 @@ void OperateShrineEnchanted(Player &player)
 	}
 	if (cnt > 1) {
 		spell = 1;
-		for (int j = SPL_FIREBOLT; j < maxSpells; j++) { // BUGFIX: < MAX_SPELLS, there is no spell with MAX_SPELLS index (fixed)
+		for (int j = static_cast<int8_t>(SpellID::Firebolt); j < maxSpells; j++) { // BUGFIX: < MAX_SPELLS, there is no spell with MAX_SPELLS index (fixed)
 			if ((player._pMemSpells & spell) != 0) {
 				if (player._pSplLvl[j] < MaxSpellLevel)
 					player._pSplLvl[j]++;
@@ -2501,7 +2506,7 @@ void OperateShrineEnchanted(Player &player)
 		int r;
 		do {
 			r = GenerateRnd(maxSpells);
-		} while ((player._pMemSpells & GetSpellBitmask(r + 1)) == 0);
+		} while ((player._pMemSpells & GetSpellBitmask(static_cast<SpellID>(r + 1))) == 0);
 		if (player._pSplLvl[r + 1] >= 2)
 			player._pSplLvl[r + 1] -= 2;
 		else
@@ -2528,17 +2533,17 @@ void OperateShrineThaumaturgic(const Player &player)
 	InitDiabloMsg(EMSG_SHRINE_THAUMATURGIC);
 }
 
-void OperateShrineCostOfWisdom(Player &player, spell_id spellId, diablo_message message)
+void OperateShrineCostOfWisdom(Player &player, SpellID spellId, diablo_message message)
 {
 	if (&player != MyPlayer)
 		return;
 
 	player._pMemSpells |= GetSpellBitmask(spellId);
 
-	if (player._pSplLvl[spellId] < MaxSpellLevel)
-		player._pSplLvl[spellId]++;
-	if (player._pSplLvl[spellId] < MaxSpellLevel)
-		player._pSplLvl[spellId]++;
+	if (player._pSplLvl[static_cast<int8_t>(spellId)] < MaxSpellLevel)
+		player._pSplLvl[static_cast<int8_t>(spellId)]++;
+	if (player._pSplLvl[static_cast<int8_t>(spellId)] < MaxSpellLevel)
+		player._pSplLvl[static_cast<int8_t>(spellId)]++;
 
 	uint32_t t = player._pMaxManaBase / 10;
 	int v1 = player._pMana - player._pManaBase;
@@ -3049,7 +3054,7 @@ void OperateShrine(Player &player, Object &shrine, _sfx_id sType)
 		OperateShrineThaumaturgic(player);
 		break;
 	case ShrineFascinating:
-		OperateShrineCostOfWisdom(player, SPL_FIREBOLT, EMSG_SHRINE_FASCINATING);
+		OperateShrineCostOfWisdom(player, SpellID::Firebolt, EMSG_SHRINE_FASCINATING);
 		break;
 	case ShrineCryptic:
 		OperateShrineCryptic(player);
@@ -3067,7 +3072,7 @@ void OperateShrine(Player &player, Object &shrine, _sfx_id sType)
 		OperateShrineHoly(player);
 		break;
 	case ShrineSacred:
-		OperateShrineCostOfWisdom(player, SPL_CBOLT, EMSG_SHRINE_SACRED);
+		OperateShrineCostOfWisdom(player, SpellID::ChargedBolt, EMSG_SHRINE_SACRED);
 		break;
 	case ShrineSpiritual:
 		OperateShrineSpiritual(player);
@@ -3088,7 +3093,7 @@ void OperateShrine(Player &player, Object &shrine, _sfx_id sType)
 		OperateShrineSecluded(player);
 		break;
 	case ShrineOrnate:
-		OperateShrineCostOfWisdom(player, SPL_HBOLT, EMSG_SHRINE_ORNATE);
+		OperateShrineCostOfWisdom(player, SpellID::HolyBolt, EMSG_SHRINE_ORNATE);
 		break;
 	case ShrineGlimmering:
 		OperateShrineGlimmering(player);
@@ -3810,7 +3815,7 @@ void InitObjects()
 		AdvanceRndSeed();
 		if (currlevel == 9 && !gbIsMultiplayer)
 			AddSlainHero();
-		if (currlevel == Quests[Q_MUSHROOM]._qlevel && Quests[Q_MUSHROOM]._qactive == QUEST_INIT)
+		if (Quests[Q_MUSHROOM].IsAvailable())
 			AddMushPatch();
 
 		if (currlevel == 4 || currlevel == 8 || currlevel == 12)
@@ -4538,7 +4543,7 @@ void DeltaSyncOpObject(Object &object)
 		UpdateState(object, 3);
 		break;
 	case OBJ_MUSHPATCH:
-		if (Quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE) {
+		if (Quests[Q_MUSHROOM]._qvar1 >= QS_MUSHSPAWNED) {
 			UpdateState(object, object._oAnimFrame + 1);
 		}
 		break;

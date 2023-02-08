@@ -176,8 +176,9 @@ If you want to help test the latest development stage of the next version (make 
       * Help: H [F1]
       * Quick Save: G [F2]
       * Quick Spells: F1-F8 [F5-F8]
-      * Pause: Pause [Pause or P]
+      * Pause: Pause [P]
       * unbound: Quick Load, increase/decrease gamma
+      * removed: auto-select when using health and mana potions from belt, quit game
    * DevilutionX settings:
       * disabled support for Spawned Diablo and Diablo: Hellfire
       * disabled multi-language support

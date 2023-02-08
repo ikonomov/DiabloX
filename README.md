@@ -163,35 +163,36 @@ Note: You must be logged into GitHub to download the attachments.
    * Mlvl for item drops has been increased by 8 in Nightmare and 16 in Hell.
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
-#### Interface:
+#### Engine:
+   * Removed:
+      * support for Spawned Diablo and Diablo: Hellfire
+      * multi-language support
+      * speed settings
+      * run in town
+      * friendly damage from spells and ranged attacks to other players
+      * Adria refilling mana
+      * option to disable randomized quests
+      * option to disable harmful shrines
+      * town automap
+   * Disabled automation options:
+      * pickup except for gold (configurable for gold)
+      * equip except for weapons and shields (configurable for weapons and shields)
+      * refilling belt
+      * using health and mana potions from belt
+      * quick cast
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
    * The textbox has been resized for item labels and made transparent for chat messages.
-   * Town automap has been disabled.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
-   * The speed settings have been removed.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
       * Help: H [F1]
       * Quick Save: G [F2]
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [P]
-      * unbound: Quick Load, increase/decrease gamma
-      * removed: auto-select when using health and mana potions from belt, quit game
-   * DevilutionX settings:
-      * disabled support for Spawned Diablo and Diablo: Hellfire
-      * disabled multi-language support
-      * disabled friendly damage from spells and ranged attacks to other players
-      * disabled run in town
-      * disabled Adria refilling mana
-      * enabled randomized quests
-      * enabled all shrines
-      * disabled quick cast
-      * disabled auto refilling belt
-      * disabled auto pickup except for gold (configurable for gold)
-      * disabled auto equip except for weapons and shields (configurable for weapons and shields)
-      * enabled zoom on start by default with a resolution of 1280x960
+      * unbound: Quick Load, Increase/Decrease Gamma
+      * removed: Quit Game
 
 ## Credits
 

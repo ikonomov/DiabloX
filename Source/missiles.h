@@ -99,7 +99,7 @@ struct Missile {
 	int _mispllvl;
 	bool _miDelFlag; // Indicate whether the missile should be deleted
 	MissileGraphicID _miAnimType;
-	MissileDataFlags _miAnimFlags;
+	MissileGraphicsFlags _miAnimFlags;
 	OptionalClxSpriteList _miAnimData;
 	int _miAnimDelay; // Tick length of each frame in the current animation
 	int _miAnimLen;   // Number of frames in current animation
@@ -175,7 +175,7 @@ struct Missile {
 extern std::list<Missile> Missiles;
 extern bool MissilePreFlag;
 
-void GetDamageAmt(spell_id i, int *mind, int *maxd);
+void GetDamageAmt(SpellID i, int *mind, int *maxd);
 
 /**
  * @brief Returns the direction a vector from p1(x1, y1) to p2(x2, y2) is pointing to.

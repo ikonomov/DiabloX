@@ -173,6 +173,7 @@ If you want to help test the latest development stage of the next version (make 
       * Adria refilling mana
       * option to disable randomized quests
       * option to disable harmful shrines
+      * arena support
       * town automap
    * Disabled automation options:
       * pickup except for gold (configurable for gold)

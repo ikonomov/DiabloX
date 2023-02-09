@@ -335,7 +335,7 @@ void LeftMouseDown(uint16_t modState)
 		return;
 	}
 
-	if (stextflag != STORE_NONE) {
+	if (stextflag != TalkID::None) {
 		CheckStoreBtn();
 		return;
 	}
@@ -399,7 +399,7 @@ void LeftMouseUp(uint16_t modState)
 	}
 	if (lvlbtndown)
 		ReleaseLvlBtn();
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		ReleaseStoreBtn();
 }
 
@@ -415,7 +415,7 @@ void RightMouseDown(bool isShiftHeld)
 		doom_close();
 		return;
 	}
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		return;
 	if (spselflag) {
 		SetSpell();
@@ -552,7 +552,7 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 		if ((modState & KMOD_ALT) != 0) {
 			sgOptions.Graphics.fullscreen.SetValue(!IsFullScreen());
 			SaveOptions();
-		} else if (stextflag != STORE_NONE) {
+		} else if (stextflag != TalkID::None) {
 			StoreEnter();
 		} else if (QuestLogIsOpen) {
 			QuestlogEnter();
@@ -561,7 +561,7 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 		}
 		return;
 	case SDLK_UP:
-		if (stextflag != STORE_NONE) {
+		if (stextflag != TalkID::None) {
 			StoreUp();
 		} else if (QuestLogIsOpen) {
 			QuestlogUp();
@@ -576,7 +576,7 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 		}
 		return;
 	case SDLK_DOWN:
-		if (stextflag != STORE_NONE) {
+		if (stextflag != TalkID::None) {
 			StoreDown();
 		} else if (QuestLogIsOpen) {
 			QuestlogDown();
@@ -591,14 +591,14 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 		}
 		return;
 	case SDLK_PAGEUP:
-		if (stextflag != STORE_NONE) {
+		if (stextflag != TalkID::None) {
 			StorePrior();
 		} else if (ChatLogFlag) {
 			ChatLogScrollTop();
 		}
 		return;
 	case SDLK_PAGEDOWN:
-		if (stextflag != STORE_NONE) {
+		if (stextflag != TalkID::None) {
 			StoreNext();
 		} else if (ChatLogFlag) {
 			ChatLogScrollBottom();
@@ -622,7 +622,7 @@ static uint32_t modStateLast = 0;               // auto-clicker remember argumen
 
 void HandleMouseButtonDown(Uint8 button, uint16_t modState)
 {
-	if (stextflag != STORE_NONE && (button == SDL_BUTTON_X1
+	if (stextflag != TalkID::None && (button == SDL_BUTTON_X1
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	        || button == 8
 #endif
@@ -1460,7 +1460,7 @@ void HelpKeyPressed()
 {
 	if (HelpFlag) {
 		HelpFlag = false;
-	} else if (stextflag != STORE_NONE) {
+	} else if (stextflag != TalkID::None) {
 		InfoString = {};
 		AddPanelString(_("No help available")); /// BUGFIX: message isn't displayed
 		AddPanelString(_("while in stores"));
@@ -1484,7 +1484,7 @@ void HelpKeyPressed()
 
 void InventoryKeyPressed()
 {
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		return;
 	invflag = !invflag;
 	if (!IsLeftPanelOpen() && CanPanelsCoverView()) {
@@ -1505,7 +1505,7 @@ void InventoryKeyPressed()
 
 void CharacterSheetKeyPressed()
 {
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		return;
 	chrflag = !chrflag;
 	if (!IsRightPanelOpen() && CanPanelsCoverView()) {
@@ -1526,7 +1526,7 @@ void CharacterSheetKeyPressed()
 
 void QuestLogKeyPressed()
 {
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		return;
 	if (!QuestLogIsOpen) {
 		StartQuestlog();
@@ -1551,7 +1551,7 @@ void QuestLogKeyPressed()
 
 void DisplaySpellsKeyPressed()
 {
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		return;
 	chrflag = false;
 	QuestLogIsOpen = false;
@@ -1567,7 +1567,7 @@ void DisplaySpellsKeyPressed()
 
 void SpellBookKeyPressed()
 {
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		return;
 	sbookflag = !sbookflag;
 	if (!IsLeftPanelOpen() && CanPanelsCoverView()) {
@@ -1661,7 +1661,7 @@ void InitKeymapActions()
 	    SDLK_UNKNOWN,
 	    [] { gamemenu_load_game(false); },
 	    nullptr,
-	    [&]() { return !gbIsMultiplayer && gbValidSaveFile && stextflag == STORE_NONE && IsGameRunning(); });
+	    [&]() { return !gbIsMultiplayer && gbValidSaveFile && stextflag == TalkID::None && IsGameRunning(); });
 	sgOptions.Keymapper.AddAction(
 	    "StopHero",
 	    N_("Stop hero"),
@@ -2204,7 +2204,7 @@ void InitPadmapActions()
 	    ControllerButton_NONE,
 	    [] { gamemenu_load_game(false); },
 	    nullptr,
-	    [&]() { return !gbIsMultiplayer && gbValidSaveFile && stextflag == STORE_NONE && IsGameRunning(); });
+	    [&]() { return !gbIsMultiplayer && gbValidSaveFile && stextflag == TalkID::None && IsGameRunning(); });
 	sgOptions.Padmapper.AddAction(
 	    "Item Highlighting",
 	    N_("Item highlighting"),
@@ -2621,7 +2621,7 @@ bool PressEscKey()
 		rv = true;
 	}
 
-	if (stextflag != STORE_NONE) {
+	if (stextflag != TalkID::None) {
 		StoreESC();
 		rv = true;
 	}

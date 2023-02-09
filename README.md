@@ -173,6 +173,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Adria refilling mana
       * option to disable randomized quests
       * option to disable harmful shrines
+      * arena support
       * town automap
    * Disabled automation options:
       * pickup except for gold (configurable for gold)

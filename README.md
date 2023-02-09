@@ -88,6 +88,10 @@ Note: You must be logged into GitHub to download the attachments.
       * Elixir of Strength, Magic and Dexterity: 20 [15]
       * Apocalypse staff: 30 [15]
       * Affix
+         * titans: 25 [23]
+         * wizardry: 25 [23]
+         * perfection: 25 [23]
+         * life: 25 [23]
          * moon: 13 [11]
          * stars: 24 [17]
          * heavens: 35 [25]

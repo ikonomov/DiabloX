@@ -248,7 +248,7 @@ bool MonsterMHit(int pnum, int monsterId, int mindam, int maxdam, int dist, Miss
 		else
 			dam += player._pDamageMod / 2;
 		if (monster.data().monsterClass == MonsterClass::Demon && HasAnyOf(player._pIFlags, ItemSpecialEffect::TripleDemonDamage))
-			dam *= 3;
+			dam += dam / 2;
 	}
 	bool resist = monster.isResistant(t);
 	if (!shift)

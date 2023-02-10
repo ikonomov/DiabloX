@@ -1939,7 +1939,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 	dexterity += dexterity / 5;
 	magic += magic / 5;
 
-	plvl = clamp(plvl, 1, 30);
+	plvl = clamp(plvl, 1, 36);
 
 	int count = 0;
 
@@ -3047,6 +3047,15 @@ void SpawnItem(Monster &monster, Point position, bool sendmsg)
 	int8_t mLevel = monster.data().level;
 	if (!gbIsHellfire && monster.type().type == MT_DIABLO)
 		mLevel -= 15;
+
+	switch (sgGameInitInfo.nDifficulty) {
+	case DIFF_NIGHTMARE:
+		mLevel += 8;
+		break;
+	case DIFF_HELL:
+		mLevel += 16;
+		break;
+	}
 
 	SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), mLevel, uper, onlygood, false, false);
 

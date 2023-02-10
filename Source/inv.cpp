@@ -897,6 +897,7 @@ void CheckQuestItem(Player &player, Item &questItem)
 	if (questItem.IDidx == IDI_MUSHROOM && Quests[Q_MUSHROOM]._qactive == QUEST_ACTIVE && Quests[Q_MUSHROOM]._qvar1 == QS_MUSHSPAWNED) {
 		player.Say(HeroSpeech::NowThatsOneBigMushroom, 10); // BUGFIX: Voice for this quest might be wrong in MP
 		Quests[Q_MUSHROOM]._qvar1 = QS_MUSHPICKED;
+		NetSendCmdQuest(true, Quests[Q_MUSHROOM]);
 	}
 
 	if (questItem.IDidx == IDI_ANVIL && Quests[Q_ANVIL]._qactive != QUEST_NOTAVAIL) {
@@ -967,7 +968,7 @@ void CleanupItems(int ii)
 	}
 }
 
-bool CanUseStaff(Item &staff, spell_id spell)
+bool CanUseStaff(Item &staff, SpellID spell)
 {
 	return !staff.isEmpty()
 	    && IsAnyOf(staff._iMiscId, IMISC_STAFF, IMISC_UNIQUE)
@@ -1057,7 +1058,7 @@ bool CanBePlacedOnBelt(const Item &item)
 	return FitsInBeltSlot(item)
 	    && item._itype != ItemType::Gold
 	    && MyPlayer->CanUseItem(item)
-	    && AllItemsList[item.IDidx].iUsable;
+	    && item.isUsable();
 }
 
 void FreeInvGFX()
@@ -1209,7 +1210,7 @@ void DrawInvBelt(const Surface &out)
 
 		DrawItem(myPlayer.SpdList[i], out, position, sprite);
 
-		if (AllItemsList[myPlayer.SpdList[i].IDidx].iUsable
+		if (myPlayer.SpdList[i].isUsable()
 		    && myPlayer.SpdList[i]._itype != ItemType::Gold) {
 			DrawString(out, StrCat(i + 1), { position - Displacement { 0, 12 }, InventorySlotSizeInPixels }, UiFlags::ColorWhite | UiFlags::AlignRight);
 		}
@@ -1937,7 +1938,7 @@ int8_t CheckInvHLight()
 
 void ConsumeScroll(Player &player)
 {
-	const spell_id spellId = player.executedSpell.spellId;
+	const SpellID spellId = player.executedSpell.spellId;
 
 	const auto isCurrentSpell = [spellId](const Item &item) {
 		return item.isScrollOf(spellId) || item.isRuneOf(spellId);
@@ -1968,9 +1969,9 @@ void ConsumeScroll(Player &player)
 	RemoveInventoryOrBeltItem(player, isCurrentSpell);
 }
 
-bool CanUseScroll(Player &player, spell_id spell)
+bool CanUseScroll(Player &player, SpellID spell)
 {
-	if (leveltype == DTYPE_TOWN && !spelldata[spell].sTownSpell)
+	if (leveltype == DTYPE_TOWN && !GetSpellData(spell).isAllowedInTown())
 		return false;
 
 	return HasInventoryOrBeltItem(player, [spell](const Item &item) {
@@ -1989,7 +1990,7 @@ void ConsumeStaffCharge(Player &player)
 	CalcPlrStaff(player);
 }
 
-bool CanUseStaff(Player &player, spell_id spellId)
+bool CanUseStaff(Player &player, SpellID spellId)
 {
 	return CanUseStaff(player.InvBody[INVLOC_HAND_LEFT], spellId);
 }
@@ -2013,7 +2014,7 @@ bool UseInvItem(size_t pnum, int cii)
 		return true;
 	if (pcurs != CURSOR_HAND)
 		return true;
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		return true;
 	if (cii < INVITEM_INV_FIRST)
 		return false;
@@ -2081,7 +2082,7 @@ bool UseInvItem(size_t pnum, int cii)
 		}
 	}
 
-	if (!AllItemsList[item->IDidx].iUsable)
+	if (!item->isUsable())
 		return false;
 
 	if (!player.CanUseItem(*item)) {
@@ -2099,7 +2100,7 @@ bool UseInvItem(size_t pnum, int cii)
 		dropGoldValue = 0;
 	}
 
-	if (item->isScroll() && leveltype == DTYPE_TOWN && !spelldata[item->_iSpell].sTownSpell) {
+	if (item->isScroll() && leveltype == DTYPE_TOWN && !GetSpellData(item->_iSpell).isAllowedInTown()) {
 		return true;
 	}
 

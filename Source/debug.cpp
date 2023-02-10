@@ -87,12 +87,12 @@ uint32_t glMid2Seed[NUMLEVELS];
 uint32_t glMid3Seed[NUMLEVELS];
 uint32_t glEndSeed[NUMLEVELS];
 
-void SetSpellLevelCheat(spell_id spl, int spllvl)
+void SetSpellLevelCheat(SpellID spl, int spllvl)
 {
 	Player &myPlayer = *MyPlayer;
 
 	myPlayer._pMemSpells |= GetSpellBitmask(spl);
-	myPlayer._pSplLvl[spl] = spllvl;
+	myPlayer._pSplLvl[static_cast<int8_t>(spl)] = spllvl;
 }
 
 void PrintDebugMonster(const Monster &monster)
@@ -407,7 +407,7 @@ std::string DebugCmdVisitTowner(const string_view parameter)
 
 		CastSpell(
 		    MyPlayerId,
-		    SPL_TELEPORT,
+		    SpellID::Teleport,
 		    myPlayer.position.tile.x,
 		    myPlayer.position.tile.y,
 		    towner.position.x,
@@ -556,9 +556,9 @@ std::string DebugCmdMinStats(const string_view parameter)
 std::string DebugCmdSetSpellsLevel(const string_view parameter)
 {
 	int level = std::max(0, atoi(parameter.data()));
-	for (int i = SPL_FIREBOLT; i < MAX_SPELLS; i++) {
-		if (GetSpellBookLevel((spell_id)i) != -1) {
-			SetSpellLevelCheat((spell_id)i, level);
+	for (int i = static_cast<int8_t>(SpellID::Firebolt); i < MAX_SPELLS; i++) {
+		if (GetSpellBookLevel(static_cast<SpellID>(i)) != -1) {
+			SetSpellLevelCheat(static_cast<SpellID>(i), level);
 		}
 	}
 	if (level == 0)
@@ -1008,24 +1008,24 @@ std::string DebugCmdChangeTRN(const string_view parameter)
 
 std::vector<DebugCmdItem> DebugCmdList = {
 	{ "help", "Prints help overview or help for a specific command.", "({command})", &DebugCmdHelp },
-	{ "give gold", "Fills the inventory with gold.", "", &DebugCmdGiveGoldCheat },
-	{ "give xp", "Levels the player up (min 1 level or {levels}).", "({levels})", &DebugCmdLevelUp },
+	{ "givegold", "Fills the inventory with gold.", "", &DebugCmdGiveGoldCheat },
+	{ "givexp", "Levels the player up (min 1 level or {levels}).", "({levels})", &DebugCmdLevelUp },
 	{ "maxstats", "Sets all stat values to maximum.", "", &DebugCmdMaxStats },
 	{ "minstats", "Sets all stat values to minimum.", "", &DebugCmdMinStats },
 	{ "setspells", "Set spell level to {level} for all spells.", "{level}", &DebugCmdSetSpellsLevel },
-	{ "take gold", "Removes all gold from inventory.", "", &DebugCmdTakeGoldCheat },
-	{ "give quest", "Enable a given quest.", "({id})", &DebugCmdQuest },
-	{ "give map", "Reveal the map.", "", &DebugCmdMapReveal },
-	{ "take map", "Hide the map.", "", &DebugCmdMapHide },
-	{ "changelevel", "Moves to specifided {level} (use 0 for town).", "{level}", &DebugCmdWarpToLevel },
+	{ "takegold", "Removes all gold from inventory.", "", &DebugCmdTakeGoldCheat },
+	{ "givequest", "Enable a given quest.", "({id})", &DebugCmdQuest },
+	{ "givemap", "Reveal the map.", "", &DebugCmdMapReveal },
+	{ "takemap", "Hide the map.", "", &DebugCmdMapHide },
+	{ "goto", "Moves to specifided {level} (use 0 for town).", "{level}", &DebugCmdWarpToLevel },
 	{ "questmap", "Load a quest level {level}.", "{level}", &DebugCmdLoadQuestMap },
 	{ "map", "Load custom level from a given {path}.dun.", "{path} {type} {x} {y}", &DebugCmdLoadMap },
 	{ "exportdun", "Save the current level as a dun-file.", "", &ExportDun },
 	{ "visit", "Visit a towner.", "{towner}", &DebugCmdVisitTowner },
 	{ "restart", "Resets specified {level}.", "{level} ({seed})", &DebugCmdResetLevel },
 	{ "god", "Toggles godmode.", "", &DebugCmdGodMode },
-	{ "r_drawvision", "Toggles vision debug rendering.", "", &DebugCmdVision },
-	{ "r_fullbright", "Toggles whether light shading is in effect.", "", &DebugCmdLighting },
+	{ "drawvision", "Toggles vision debug rendering.", "", &DebugCmdVision },
+	{ "fullbright", "Toggles whether light shading is in effect.", "", &DebugCmdLighting },
 	{ "fill", "Refills health and mana.", "", &DebugCmdRefillHealthMana },
 	{ "changehp", "Changes health by {value} (Use a negative value to remove health).", "{value}", &DebugCmdChangeHealth },
 	{ "changemp", "Changes mana by {value} (Use a negative value to remove mana).", "{value}", &DebugCmdChangeMana },

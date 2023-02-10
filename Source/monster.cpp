@@ -889,7 +889,7 @@ void SpawnLoot(Monster &monster, bool sendmsg)
 		CreateMagicWeapon(monster.position.tile, ItemType::Sword, ICURS_GREAT_SWORD, sendmsg, false);
 		CreateMagicWeapon(monster.position.tile, ItemType::Staff, ICURS_WAR_STAFF, sendmsg, false);
 		CreateMagicWeapon(monster.position.tile, ItemType::Bow, ICURS_LONG_WAR_BOW, sendmsg, false);
-		CreateSpellBook(monster.position.tile, SPL_APOCA, sendmsg, false);
+		CreateSpellBook(monster.position.tile, SpellID::Apocalypse, sendmsg, false);
 	} else if (!monster.isPlayerMinion()) {
 		SpawnItem(monster, monster.position.tile, sendmsg);
 	}
@@ -4609,7 +4609,7 @@ bool Monster::isWalking() const
 
 bool Monster::isImmune(MissileID missileType) const
 {
-	DamageType missileElement = GetMissileData(missileType).damageType;
+	DamageType missileElement = GetMissileData(missileType).damageType();
 
 	if (((resistance & IMMUNE_MAGIC) != 0 && missileElement == DamageType::Magic)
 	    || ((resistance & IMMUNE_FIRE) != 0 && missileElement == DamageType::Fire)
@@ -4623,7 +4623,7 @@ bool Monster::isImmune(MissileID missileType) const
 
 bool Monster::isResistant(MissileID missileType) const
 {
-	DamageType missileElement = GetMissileData(missileType).damageType;
+	DamageType missileElement = GetMissileData(missileType).damageType();
 
 	if (((resistance & RESIST_MAGIC) != 0 && missileElement == DamageType::Magic)
 	    || ((resistance & RESIST_FIRE) != 0 && missileElement == DamageType::Fire)

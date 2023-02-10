@@ -451,7 +451,7 @@ bool UseStashItem(uint16_t c)
 		return true;
 	if (pcurs != CURSOR_HAND)
 		return true;
-	if (stextflag != STORE_NONE)
+	if (stextflag != TalkID::None)
 		return true;
 
 	Item *item = &Stash.stashList[c];
@@ -467,7 +467,7 @@ bool UseStashItem(uint16_t c)
 		return true;
 	}
 
-	if (!AllItemsList[item->IDidx].iUsable)
+	if (!item->isUsable())
 		return false;
 
 	if (!MyPlayer->CanUseItem(*item)) {

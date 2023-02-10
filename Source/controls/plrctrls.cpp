@@ -64,7 +64,7 @@ quest_id pcursquest = Q_INVALID;
  */
 bool InGameMenu()
 {
-	return stextflag != STORE_NONE
+	return stextflag != TalkID::None
 	    || HelpFlag
 	    || ChatLogFlag
 	    || talkflag
@@ -231,8 +231,8 @@ bool HasRangedSpell()
 	return spl != SpellID::Invalid
 	    && spl != SpellID::TownPortal
 	    && spl != SpellID::Teleport
-	    && GetSpellData(spl).sTargeted
-	    && !GetSpellData(spl).sTownSpell;
+	    && GetSpellData(spl).isTargeted()
+	    && !GetSpellData(spl).isAllowedInTown();
 }
 
 bool CanTargetMonster(const Monster &monster)
@@ -1377,7 +1377,7 @@ HandleLeftStickOrDPadFn GetLeftStickOrDPadGameUIHandler()
 	if (QuestLogIsOpen) {
 		return &QuestLogMove;
 	}
-	if (stextflag != STORE_NONE) {
+	if (stextflag != TalkID::None) {
 		return &StoreMove;
 	}
 	return nullptr;
@@ -2049,7 +2049,7 @@ void CtrlUseInvItem()
 		if (TargetsMonster(item._iSpell)) {
 			return;
 		}
-		if (GetSpellData(item._iSpell).sTargeted) {
+		if (GetSpellData(item._iSpell).isTargeted()) {
 			UpdateSpellTarget(item._iSpell);
 		}
 	}
@@ -2076,7 +2076,7 @@ void CtrlUseStashItem()
 		if (TargetsMonster(item._iSpell)) {
 			return;
 		}
-		if (GetSpellData(item._iSpell).sTargeted) {
+		if (GetSpellData(item._iSpell).isTargeted()) {
 			UpdateSpellTarget(item._iSpell);
 		}
 	}

@@ -2340,8 +2340,14 @@ void OperateShrineHidden(Player &player)
 			if (!item.isEmpty()
 			    && item._iMaxDur != DUR_INDESTRUCTIBLE
 			    && item._iMaxDur != 0) {
-				item._iDurability += 10;
-				item._iMaxDur += 10;
+				if (item._iDurability > 240)
+					item._iDurability = 250;
+				else
+					item._iDurability += 10;
+				if (item._iMaxDur > 240)
+					item._iMaxDur = 250;
+				else
+					item._iMaxDur += 10;
 				if (item._iDurability > item._iMaxDur)
 					item._iDurability = item._iMaxDur;
 			}
@@ -2545,21 +2551,9 @@ void OperateShrineCostOfWisdom(Player &player, SpellID spellId, diablo_message m
 	if (player._pSplLvl[static_cast<int8_t>(spellId)] < MaxSpellLevel)
 		player._pSplLvl[static_cast<int8_t>(spellId)]++;
 
-	uint32_t t = player._pMaxManaBase / 10;
-	int v1 = player._pMana - player._pManaBase;
-	int v2 = player._pMaxMana - player._pMaxManaBase;
-	player._pManaBase -= t;
-	player._pMana -= t;
-	player._pMaxMana -= t;
-	player._pMaxManaBase -= t;
-	if (player._pMana >> 6 <= 0) {
-		player._pMana = v1;
-		player._pManaBase = 0;
-	}
-	if (player._pMaxMana >> 6 <= 0) {
-		player._pMaxMana = v2;
-		player._pMaxManaBase = 0;
-	}
+	int magicLoss = player.GetBaseAttributeValue(CharacterAttribute::Magic) / 10;
+	if (magicLoss > 0)
+		ModifyPlrMag(player, -magicLoss);
 
 	RedrawEverything();
 
@@ -2627,7 +2621,7 @@ void OperateShrineEerie(Player &player)
 	if (&player != MyPlayer)
 		return;
 
-	ModifyPlrMag(player, 2);
+	ModifyPlrMag(player, 1);
 	CheckStats(player);
 	CalcPlrInv(player, true);
 	RedrawEverything();
@@ -2717,7 +2711,7 @@ void OperateShrineAbandoned(Player &player)
 	if (&player != MyPlayer)
 		return;
 
-	ModifyPlrDex(player, 2);
+	ModifyPlrDex(player, 1);
 	CheckStats(player);
 	CalcPlrInv(player, true);
 	RedrawEverything();
@@ -2730,7 +2724,7 @@ void OperateShrineCreepy(Player &player)
 	if (&player != MyPlayer)
 		return;
 
-	ModifyPlrStr(player, 2);
+	ModifyPlrStr(player, 1);
 	CheckStats(player);
 	CalcPlrInv(player, true);
 	RedrawEverything();
@@ -2743,7 +2737,7 @@ void OperateShrineQuiet(Player &player)
 	if (&player != MyPlayer)
 		return;
 
-	ModifyPlrVit(player, 2);
+	ModifyPlrVit(player, 1);
 	CheckStats(player);
 	CalcPlrInv(player, true);
 	RedrawEverything();

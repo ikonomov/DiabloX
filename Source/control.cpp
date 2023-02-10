@@ -385,7 +385,6 @@ std::string TextCmdArena(const string_view parameter)
 
 std::vector<TextCmdItem> TextCmdList = {
 	{ N_("/help"), N_("Prints help overview or help for a specific command."), N_("({command})"), &TextCmdHelp },
-	{ N_("/arena"), N_("Enter a PvP Arena."), N_("{arena-number}"), &TextCmdArena }
 };
 
 bool CheckTextCommand(const string_view text)

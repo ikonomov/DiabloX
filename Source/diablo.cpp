@@ -466,10 +466,6 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 	if (vkey == SDLK_UNKNOWN)
 		return;
 
-	if (vkey == SDLK_PAUSE) {
-		diablo_pause_game();
-		return;
-	}
 	if (gmenu_presskeys(vkey) || control_presskeys(vkey)) {
 		return;
 	}
@@ -1601,7 +1597,7 @@ void InitKeymapActions()
 		    "QuickSpell{}",
 		    N_("Quick spell {}"),
 		    N_("Hotkey for skill or spell."),
-		    i < 4 ? static_cast<uint32_t>(SDLK_F5) + i : static_cast<uint32_t>(SDLK_UNKNOWN),
+		    i < 8 ? static_cast<uint32_t>(SDLK_F1) + i : static_cast<uint32_t>(SDLK_UNKNOWN),
 		    [i]() {
 			    if (spselflag) {
 				    SetSpeedSpell(i);
@@ -1617,22 +1613,6 @@ void InitKeymapActions()
 		    i + 1);
 	}
 	sgOptions.Keymapper.AddAction(
-	    "UseHealthPotion",
-	    N_("Use health potion"),
-	    N_("Use health potions from belt."),
-	    SDLK_UNKNOWN,
-	    [] { UseBeltItem(BLT_HEALING); },
-	    nullptr,
-	    CanPlayerTakeAction);
-	sgOptions.Keymapper.AddAction(
-	    "UseManaPotion",
-	    N_("Use mana potion"),
-	    N_("Use mana potions from belt."),
-	    SDLK_UNKNOWN,
-	    [] { UseBeltItem(BLT_MANA); },
-	    nullptr,
-	    CanPlayerTakeAction);
-	sgOptions.Keymapper.AddAction(
 	    "DisplaySpells",
 	    N_("Speedbook"),
 	    N_("Open Speedbook."),
@@ -1644,7 +1624,7 @@ void InitKeymapActions()
 	    "QuickSave",
 	    N_("Quick save"),
 	    N_("Saves the game."),
-	    SDLK_F2,
+	    'G',
 	    [] { gamemenu_save_game(false); },
 	    nullptr,
 	    [&]() { return !gbIsMultiplayer && CanPlayerTakeAction(); });
@@ -1652,18 +1632,10 @@ void InitKeymapActions()
 	    "QuickLoad",
 	    N_("Quick load"),
 	    N_("Loads the game."),
-	    SDLK_F3,
+	    SDLK_UNKNOWN,
 	    [] { gamemenu_load_game(false); },
 	    nullptr,
 	    [&]() { return !gbIsMultiplayer && gbValidSaveFile && stextflag == TalkID::None && IsGameRunning(); });
-#ifndef NOEXIT
-	sgOptions.Keymapper.AddAction(
-	    "QuitGame",
-	    N_("Quit game"),
-	    N_("Closes the game."),
-	    SDLK_UNKNOWN,
-	    [] { gamemenu_quit_game(false); });
-#endif
 	sgOptions.Keymapper.AddAction(
 	    "StopHero",
 	    N_("Stop hero"),
@@ -1774,13 +1746,13 @@ void InitKeymapActions()
 	    "Pause Game",
 	    N_("Pause Game"),
 	    N_("Pauses the game."),
-	    'P',
+	    SDLK_PAUSE,
 	    diablo_pause_game);
 	sgOptions.Keymapper.AddAction(
 	    "DecreaseGamma",
 	    N_("Decrease Gamma"),
 	    N_("Reduce screen brightness."),
-	    'G',
+	    SDLK_UNKNOWN,
 	    DecreaseGamma,
 	    nullptr,
 	    CanPlayerTakeAction);
@@ -1788,7 +1760,7 @@ void InitKeymapActions()
 	    "IncreaseGamma",
 	    N_("Increase Gamma"),
 	    N_("Increase screen brightness."),
-	    'F',
+	    SDLK_UNKNOWN,
 	    IncreaseGamma,
 	    nullptr,
 	    CanPlayerTakeAction);
@@ -1796,7 +1768,7 @@ void InitKeymapActions()
 	    "Help",
 	    N_("Help"),
 	    N_("Open Help Screen."),
-	    SDLK_F1,
+	    'H',
 	    HelpKeyPressed,
 	    nullptr,
 	    CanPlayerTakeAction);

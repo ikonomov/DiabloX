@@ -3120,6 +3120,9 @@ void ProcessPlayers()
 				CheckNewPath(player, tplayer);
 			} while (tplayer);
 
+			if (HasNoneOf(player._pIFlags, ItemSpecialEffect::NoMana) && player._pMana < player._pMaxMana && player._pMaxMana > 0)
+				player.RegenerateMana();
+
 			player.previewCelSprite = std::nullopt;
 			if (player._pmode != PM_DEATH || player.AnimInfo.tickCounterOfCurrentFrame != 40)
 				player.AnimInfo.processAnimation();

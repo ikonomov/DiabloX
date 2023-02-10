@@ -61,7 +61,6 @@ TMenuItem sgOptionsMenu[] = {
 	{ GMENU_ENABLED | GMENU_SLIDER, nullptr,             &GamemenuMusicVolume  },
 	{ GMENU_ENABLED | GMENU_SLIDER, nullptr,             &GamemenuSoundVolume  },
 	{ GMENU_ENABLED | GMENU_SLIDER, N_("Gamma"),         &GamemenuGamma        },
-	{ GMENU_ENABLED | GMENU_SLIDER, N_("Speed"),         &GamemenuSpeed        },
 	{ GMENU_ENABLED               , N_("Previous Menu"), &GamemenuPrevious     },
 	{ GMENU_ENABLED               , nullptr,             nullptr               },
 	// clang-format on
@@ -185,7 +184,6 @@ void GamemenuOptions(bool /*bActivate*/)
 	GamemenuGetMusic();
 	GamemenuGetSound();
 	GamemenuGetGamma();
-	GamemenuGetSpeed();
 	gmenu_set_items(sgOptionsMenu, nullptr);
 }
 

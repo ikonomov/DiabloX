@@ -753,22 +753,6 @@ void DrawAutomapText(const Surface &out)
 	}
 
 	DrawString(out, description, linePosition);
-	linePosition.y += 15;
-	string_view difficulty;
-	switch (sgGameInitInfo.nDifficulty) {
-	case DIFF_NORMAL:
-		difficulty = _("Normal");
-		break;
-	case DIFF_NIGHTMARE:
-		difficulty = _("Nightmare");
-		break;
-	case DIFF_HELL:
-		difficulty = _("Hell");
-		break;
-	}
-
-	std::string difficultyString = fmt::format(fmt::runtime(_(/* TRANSLATORS: {:s} means: Game Difficulty. */ "Difficulty: {:s}")), difficulty);
-	DrawString(out, difficultyString, linePosition);
 }
 
 std::unique_ptr<AutomapTile[]> LoadAutomapData(size_t &tileCount)
@@ -869,6 +853,10 @@ void AutomapZoomOut()
 
 void DrawAutomap(const Surface &out)
 {
+	if (leveltype == DTYPE_TOWN) {
+		DrawAutomapText(out);
+		return;
+	}
 	Automap = { (ViewPosition.x - 8) / 2, (ViewPosition.y - 8) / 2 };
 	if (leveltype != DTYPE_TOWN) {
 		Automap += { -4, -4 };

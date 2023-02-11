@@ -133,7 +133,7 @@ Note: You must be logged into GitHub to download the attachments.
          * amber: 14 [12]
          * jade: 23 [18]
          * obsidian: 35 [24]
-         * emerald: 43 [31]
+         * emerald: 40 [31]
          * swiftness: 16 [10]
          * speed: 24 [19]
          * haste: 37 [27]

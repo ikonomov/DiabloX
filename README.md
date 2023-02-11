@@ -86,8 +86,7 @@ Note: You must be logged into GitHub to download the attachments.
 
    * Qlvl:
       * Elixir of Strength, Magic and Dexterity: 20 [15]
-      * Apocalypse staff: 30 [15]
-      * Affix
+      * Affix:
          * giants: 18 [17]
          * titans: 25 [23]
          * sorcery: 18 [17]

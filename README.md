@@ -66,7 +66,6 @@ Note: You must be logged into GitHub to download the attachments.
 #### Items:
    * Potions cost 100% more gold.
    * Long War Bow has been restored to its original Diablo graphic.
-   * The maximum ilvl for affixes of premium items sold by Griswold has been increased to 36 [30].
    * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
    * Set to maximum values:
@@ -81,6 +80,10 @@ Note: You must be logged into GitHub to download the attachments.
    * Renamed affixes:
       * sturdy to stout
       * burgundy to russet
+   * Maximum affix ilvl:
+      * premium items sold by Griswold: 36 [30]
+      * dungeon drops: +1 in Normal; +5 in Nightmare; +9 in Hell
+      * monster drops: +8 in Nightmare; +16 in Hell
 <details>
   <summary>Qlvl (click to expand)</summary>
 
@@ -108,8 +111,8 @@ Note: You must be logged into GitHub to download the attachments.
          * hydra: 50 [60]
          * godly: 44 [60]
          * steel: 8 [6]
-         * silver: 12 [9]
-         * gold: 17 [12]
+         * silver: 13 [9]
+         * gold: 18 [12]
          * platinum: 22 [16]
          * mithril: 28 [20]
          * meteoric: 35 [23]
@@ -169,7 +172,6 @@ Note: You must be logged into GitHub to download the attachments.
    * Damage has been increased by 50% in Nightmare and Hell difficulty.
    * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player, and 50 in Nightmare and 150 in Hell for single player.
    * Number per dlvl has been increased by 50% with a maximum of 250 [200].
-   * Mlvl for item drops has been increased by 8 in Nightmare and 16 in Hell.
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:

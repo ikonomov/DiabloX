@@ -1522,7 +1522,16 @@ void SetupBaseItem(Point position, _item_indexes idx, bool onlygood, bool sendms
 	GetSuperItemSpace(position, ii);
 	int curlv = ItemsGetCurrlevel();
 
-	SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), 2 * curlv, 1, onlygood, false, delta);
+	switch (sgGameInitInfo.nDifficulty) {
+	case DIFF_NIGHTMARE:
+		curlv += 2;
+		break;
+	case DIFF_HELL:
+		curlv += 4;
+		break;
+	}
+
+	SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), 2 * curlv + 1, 1, onlygood, false, delta);
 
 	if (sendmsg)
 		NetSendCmdPItem(false, CMD_DROPITEM, item.position, item);

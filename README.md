@@ -34,7 +34,7 @@ Note: You must be logged into GitHub to download the attachments.
 *The original values are listed in [square brackets].*
 #### Characters:
    * The required experience points for each clvl have been increased by 100%.
-   * Regenerate 2% of max mana per second.
+   * Regenerate 1.5% of max mana per second.
    * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Maximum stats:

@@ -573,7 +573,7 @@ struct Player {
 
 	void RegenerateMana()
 	{
-		int regenDivisor = 1000;
+		int regenDivisor = 1333;
 		_pRegenOverflow += _pMaxMana % regenDivisor;
 		int regenMana = _pMaxMana / regenDivisor + _pRegenOverflow / regenDivisor;
 		_pRegenOverflow %= regenDivisor;

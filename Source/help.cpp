@@ -25,75 +25,40 @@ namespace {
 unsigned int SkipLines;
 
 const char *const HelpText[] = {
-	N_("$Keyboard Shortcuts:"),
-	N_("F1:    Open Help Screen"),
-	N_("Esc:   Display Main Menu"),
-	N_("Tab:   Display Auto-map"),
-	N_("Space: Hide all info screens"),
-	N_("S: Open Speedbook"),
-	N_("B: Open Spellbook"),
-	N_("I: Open Inventory screen"),
-	N_("C: Open Character screen"),
-	N_("Q: Open Quest log"),
-	N_("F: Reduce screen brightness"),
-	N_("G: Increase screen brightness"),
-	N_("Z: Zoom Game Screen"),
-	N_("+ / -: Zoom Automap"),
-	N_("1 - 8: Use Belt item"),
-	N_("F5, F6, F7, F8:     Set hotkey for skill or spell"),
-	N_("Shift + Left Mouse Button: Attack without moving"),
-	N_("Shift + Left Mouse Button (on character screen): Assign all stat points"),
-	N_("Shift + Left Mouse Button (on inventory): Move item to belt or equip/unequip item"),
-	N_("Shift + Left Mouse Button (on belt): Move item to inventory"),
+	N_("$Shrines:"),
+	N_("Abandoned: +2 dexterity"),
+	N_("Creepy: +2 strength"),
+	N_("Cryptic: casts Nova and restores mana"),
+	N_("Divine: restores health and mana and gives two potions"),
+	N_("Eerie: +2 magic"),
+	N_("Eldritch: all potions become rejuvenation potions"),
+	N_("Enchanted: -1 slvl to one spell, +1 to all other known spells"),
+	N_("Fascinating: lose 10% of base magic, +2 slvl to Firebolt"),
+	N_("Glimmering: identifies all items"),
+	N_("Gloomy: +2 AC to all armor and -1 max damage to all weapons"),
+	N_("Hidden: -10 durability to one equipped item, +10 to all others"),
+	N_("Holy: casts Phasing"),
+	N_("Magical: casts Mana Shield"),
+	N_("Mysterious: +5 to one attribute, -1 to all others"),
+	N_("Ornate: lose 10% of base magic, +2 slvl to Holy Bolt"),
+	N_("Quiet: +2 vitality"),
+	N_("Religious: restores durability of all items"),
+	N_("Sacred: lose 10% of base magic, +2 slvl to Charged Bolt"),
+	N_("Secluded: reveals map of current level"),
+	N_("Spiritual: fills inventory with gold"),
+	N_("Spooky: restores life and mana of other players"),
+	N_("Stone: restores charges of all staves"),
+	N_("Tainted: other players get +1 to one attribute, -1 to all others"),
+	N_("Thaumaturgic: refills chests on current level"),
+	N_("Weird: +1 max damage to all weapons"),
 	"",
-	N_("$Movement:"),
-	N_("If you hold the mouse button down while moving, the character "
-	   "will continue to move in that direction."),
-	"",
-	N_("$Combat:"),
-	N_("Holding down the shift key and then left-clicking allows the "
-	   "character to attack without moving."),
-	"",
-	N_("$Auto-map:"),
-	N_("To access the auto-map, click the 'MAP' button on the "
-	   "Information Bar or press 'TAB' on the keyboard. Zooming in and "
-	   "out of the map is done with the + and - keys. Scrolling the map "
-	   "uses the arrow keys."),
-	"",
-	N_("$Picking up Objects:"),
-	N_("Useable items that are small in size, such as potions or scrolls, "
-	   "are automatically placed in your 'belt' located at the top of "
-	   "the Interface bar . When an item is placed in the belt, a small "
-	   "number appears in that box. Items may be used by either pressing "
-	   "the corresponding number or right-clicking on the item."),
-	"",
-	N_("$Gold:"),
-	N_("You can select a specific amount of gold to drop by "
-	   "right-clicking on a pile of gold in your inventory."),
-	"",
-	N_("$Skills & Spells:"),
-	N_("You can access your list of skills and spells by left-clicking on "
-	   "the 'SPELLS' button in the interface bar. Memorized spells and "
-	   "those available through staffs are listed here. Left-clicking on "
-	   "the spell you wish to cast will ready the spell. A readied spell "
-	   "may be cast by simply right-clicking in the play area."),
-	"",
-	N_("$Using the Speedbook for Spells:"),
-	N_("Left-clicking on the 'readied spell' button will open the 'Speedbook' "
-	   "which allows you to select a skill or spell for immediate use. "
-	   "To use a readied skill or spell, simply right-click in the main play "
-	   "area."),
-	N_("Shift + Left-clicking on the 'select current spell' button will clear the readied spell."),
-	"",
-	N_("$Setting Spell Hotkeys:"),
-	N_("You can assign up to four Hotkeys for skills, spells or scrolls. "
-	   "Start by opening the 'speedbook' as described in the section above. "
-	   "Press the F5, F6, F7 or F8 keys after highlighting the spell you "
-	   "wish to assign."),
-	"",
-	N_("$Spell Books:"),
-	N_("Reading more than one book increases your knowledge of that "
-	   "spell, allowing you to cast the spell more effectively."),
+	N_("$Other Objects:"),
+	N_("Blood Fountain: restores life"),
+	N_("Cauldron: random shrine effect"),
+	N_("Fountain of Tears: +1 to one attribute, -1 to another"),
+	N_("Goat Shrine: random shrine effect"),
+	N_("Murky Pool: casts Infravision"),
+	N_("Purifying Spring: restores mana"),
 };
 
 std::vector<std::string> HelpTextLines;
@@ -199,7 +164,7 @@ void DrawHelp(const Surface &out)
 	if (gbIsHellfire)
 		title = gbIsSpawn ? _("Shareware Hellfire Help") : _("Hellfire Help");
 	else
-		title = gbIsSpawn ? _("Shareware Diablo Help") : _("Diablo Help");
+		title = gbIsSpawn ? _("Shareware Diablo Help") : _("Shrine List");
 
 	const Point uiPosition = GetUIRectangle().position;
 	const int sx = uiPosition.x + PaddingLeft;

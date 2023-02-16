@@ -1791,9 +1791,9 @@ void InitKeymapActions()
 	    nullptr,
 	    CanPlayerTakeAction);
 	sgOptions.Keymapper.AddAction(
-	    "Help",
-	    N_("Help"),
-	    N_("Open Help Screen."),
+	    "Shrine List",
+	    N_("Shrine List"),
+	    N_("Opens a list of shrine descriptions."),
 	    'H',
 	    HelpKeyPressed,
 	    nullptr,
@@ -2274,9 +2274,9 @@ void InitPadmapActions()
 	    nullptr,
 	    CanPlayerTakeAction);
 	sgOptions.Padmapper.AddAction(
-	    "Help",
-	    N_("Help"),
-	    N_("Open Help Screen."),
+	    "Shrine List",
+	    N_("Shrine List"),
+	    N_("Opens a list of shrine descriptions."),
 	    ControllerButton_NONE,
 	    HelpKeyPressed,
 	    nullptr,

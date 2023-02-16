@@ -198,8 +198,9 @@ Note: You must be logged into GitHub to download the attachments.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
    * The textbox has been resized for item labels and made transparent for chat messages.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
+   * Help menu has been replaced by a list of shrine descriptions.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
-      * Help: H [F1]
+      * Shrine List: H [F1]
       * Quick Save: G [F2]
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [P]

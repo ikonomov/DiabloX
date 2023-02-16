@@ -29,7 +29,7 @@ const char *const HelpText[] = {
 	N_("Abandoned: +2 dexterity"),
 	N_("Creepy: +2 strength"),
 	N_("Cryptic: casts Nova and restores mana"),
-	N_("Divine: restores health and mana and gives two potions"),
+	N_("Divine: restores health and mana, gives two potions"),
 	N_("Eerie: +2 magic"),
 	N_("Eldritch: all potions become rejuvenation potions"),
 	N_("Enchanted: -1 slvl to one spell, +1 to all other known spells"),

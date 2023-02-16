@@ -35,7 +35,7 @@ const char *const HelpText[] = {
 	N_("Enchanted: -1 slvl to one spell, +1 to all other known spells"),
 	N_("Fascinating: lose 10% of base magic, +2 slvl to Firebolt"),
 	N_("Glimmering: identifies all items"),
-	N_("Gloomy: +2 AC to all armor and -1 max damage to all weapons"),
+	N_("Gloomy: +2 AC to all armor, -1 max damage to all weapons"),
 	N_("Hidden: -10 durability to one equipped item, +10 to all others"),
 	N_("Holy: casts Phasing"),
 	N_("Magical: casts Mana Shield"),

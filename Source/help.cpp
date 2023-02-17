@@ -26,11 +26,11 @@ unsigned int SkipLines;
 
 const char *const HelpText[] = {
 	N_("$Shrines:"),
-	N_("Abandoned: +2 dexterity"),
-	N_("Creepy: +2 strength"),
+	N_("Abandoned: +1 dexterity"),
+	N_("Creepy: +1 strength"),
 	N_("Cryptic: casts Nova and restores mana"),
 	N_("Divine: restores health and mana, gives two potions"),
-	N_("Eerie: +2 magic"),
+	N_("Eerie: +1 magic"),
 	N_("Eldritch: all potions become rejuvenation potions"),
 	N_("Enchanted: -1 slvl to one spell, +1 to all other known spells"),
 	N_("Fascinating: lose 10% of base magic, +2 slvl to Firebolt"),
@@ -41,7 +41,7 @@ const char *const HelpText[] = {
 	N_("Magical: casts Mana Shield"),
 	N_("Mysterious: +5 to one attribute, -1 to all others"),
 	N_("Ornate: lose 10% of base magic, +2 slvl to Holy Bolt"),
-	N_("Quiet: +2 vitality"),
+	N_("Quiet: +1 vitality"),
 	N_("Religious: restores durability of all items"),
 	N_("Sacred: lose 10% of base magic, +2 slvl to Charged Bolt"),
 	N_("Secluded: reveals map of current level"),

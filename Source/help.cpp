@@ -52,7 +52,7 @@ const char *const HelpText[] = {
 	N_("Thaumaturgic: refills chests on current level"),
 	N_("Weird: +1 max damage to all weapons"),
 	"",
-	N_("$Other Objects:"),
+	N_("$Others:"),
 	N_("Blood Fountain: restores life"),
 	N_("Cauldron: random shrine effect"),
 	N_("Fountain of Tears: +1 to one attribute, -1 to another"),

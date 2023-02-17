@@ -3945,32 +3945,19 @@ void UseItem(size_t pnum, item_misc_id mid, SpellID spl)
 		NewCursor(CURSOR_OIL);
 		break;
 	case IMISC_SPECELIX:
-		switch (static_cast<CharacterAttribute>(GenerateRnd(4))) {
-		case CharacterAttribute::Strength:
-			ModifyPlrStr(player, -1);
-			ModifyPlrMag(player, 1);
-			ModifyPlrDex(player, 1);
-			ModifyPlrVit(player, 1);
-			break;
-		case CharacterAttribute::Magic:
-			ModifyPlrStr(player, 1);
-			ModifyPlrMag(player, -1);
-			ModifyPlrDex(player, 1);
-			ModifyPlrVit(player, 1);
-			break;
-		case CharacterAttribute::Dexterity:
-			ModifyPlrStr(player, 1);
-			ModifyPlrMag(player, 1);
-			ModifyPlrDex(player, -1);
-			ModifyPlrVit(player, 1);
-			break;
-		case CharacterAttribute::Vitality:
-			ModifyPlrStr(player, 1);
-			ModifyPlrMag(player, 1);
-			ModifyPlrDex(player, 1);
-			ModifyPlrVit(player, -1);
-			break;
-		}
+
+		int r = GenerateRnd(4);
+
+		int v1 = r == 0 ? -1 : 1;
+		int v2 = r == 1 ? -1 : 1;
+		int v3 = r == 2 ? -1 : 1;
+		int v4 = r == 3 ? -1 : 1;
+
+		ModifyPlrStr(player, v1);
+		ModifyPlrMag(player, v2);
+		ModifyPlrDex(player, v3);
+		ModifyPlrVit(player, v4);
+
 		CheckStats(player);
 		CalcPlrInv(player, true);
 		RedrawEverything();

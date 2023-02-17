@@ -168,6 +168,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
+   * Enchanted reduces a slvl 15 spell by -1 [-2].
 #### Monsters:
    * Damage has been increased by 50%.
    * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player, and 50 in Nightmare and 150 in Hell for single player.

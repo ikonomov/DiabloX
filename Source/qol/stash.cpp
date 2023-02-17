@@ -96,6 +96,8 @@ void CheckStashPaste(Point cursorPosition)
 	}
 
 	if (player.HoldItem._itype == ItemType::Gold) {
+		if (Stash.gold > std::numeric_limits<int>::max() - player.HoldItem._ivalue)
+			return;
 		Stash.gold += player.HoldItem._ivalue;
 		player.HoldItem.clear();
 		PlaySFX(IS_GOLD);
@@ -355,10 +357,11 @@ void DrawStash(const Surface &out)
 
 	for (auto slot : StashGridRange) {
 		StashStruct::StashCell itemId = Stash.GetItemIdAtPosition(slot);
-		Item &item = Stash.stashList[itemId];
-		if (Stash.IsItemAtPosition(slot)) {
-			InvDrawSlotBack(out, GetStashSlotCoord(slot) + offset, InventorySlotSizeInPixels, item._iMagical);
+		if (itemId == StashStruct::EmptyCell) {
+			continue; // No item in the given slot
 		}
+		Item &item = Stash.stashList[itemId];
+		InvDrawSlotBack(out, GetStashSlotCoord(slot) + offset, InventorySlotSizeInPixels, item._iMagical);
 	}
 
 	for (auto slot : StashGridRange) {
@@ -668,6 +671,8 @@ void GoldWithdrawNewText(string_view text)
 bool AutoPlaceItemInStash(Player &player, const Item &item, bool persistItem)
 {
 	if (item._itype == ItemType::Gold) {
+		if (Stash.gold > std::numeric_limits<int>::max() - item._ivalue)
+			return false;
 		if (persistItem) {
 			Stash.gold += item._ivalue;
 			Stash.dirty = true;

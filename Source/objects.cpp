@@ -2522,13 +2522,14 @@ void OperateShrineEnchanted(Player &player)
 		do {
 			r = GenerateRnd(maxSpells);
 		} while ((player._pMemSpells & GetSpellBitmask(static_cast<SpellID>(r + 1))) == 0);
-		if (player._pSplLvl[r + 1] >= 2)
+		if (player._pSplLvl[r + 1] >= 2) {
 			if (player._pSplLvl[r + 1] == MaxSpellLevel)
 				player._pSplLvl[r + 1] -= 1;
 			else
 				player._pSplLvl[r + 1] -= 2;
-		else
+		} else {
 			player._pSplLvl[r + 1] = 0;
+		}
 	}
 
 	InitDiabloMsg(EMSG_SHRINE_ENCHANTED);

@@ -3945,7 +3945,6 @@ void UseItem(size_t pnum, item_misc_id mid, SpellID spl)
 		NewCursor(CURSOR_OIL);
 		break;
 	case IMISC_SPECELIX:
-
 		switch (static_cast<CharacterAttribute>(GenerateRnd(4))) {
 		case CharacterAttribute::Strength:
 			ModifyPlrStr(player, -1);
@@ -3972,7 +3971,6 @@ void UseItem(size_t pnum, item_misc_id mid, SpellID spl)
 			ModifyPlrVit(player, -1);
 			break;
 		}
-
 		CheckStats(player);
 		CalcPlrInv(player, true);
 		RedrawEverything();

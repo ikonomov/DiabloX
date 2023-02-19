@@ -110,7 +110,7 @@ Note: You must be logged into GitHub to download the attachments.
          * dragon: 38 [27]
          * wyrm: 42 [35]
          * hydra: 45 [60]
-         * godly: 45 [60]
+         * godly: 46 [60]
          * steel: 8 [6]
          * silver: 13 [9]
          * gold: 18 [12]

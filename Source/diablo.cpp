@@ -1131,7 +1131,7 @@ void CheckArchivesUpToDate()
 	}
 }
 
-void DiabloInit()
+void ApplicationInit()
 {
 	if (*sgOptions.Graphics.showFPS)
 		EnableFrameCount();
@@ -1152,6 +1152,11 @@ void DiabloInit()
 
 	SetApplicationVersions();
 
+	ReadOnlyTest();
+}
+
+void DiabloInit()
+{
 	for (size_t i = 0; i < QUICK_MESSAGE_OPTIONS; i++) {
 		auto &messages = sgOptions.Chat.szHotKeyMsgs[i];
 		if (messages.empty()) {
@@ -1165,8 +1170,6 @@ void DiabloInit()
 
 	UiInitialize();
 	was_ui_init = true;
-
-	ReadOnlyTest();
 
 	if (gbIsHellfire && !forceHellfire && *sgOptions.StartUp.gameMode == StartUpGameMode::Ask) {
 		UiSelStartUpGameOption();
@@ -2424,6 +2427,9 @@ int DiabloMain(int argc, char **argv)
 	LoadOptions();
 	// Then look for a voice pack file based on the selected translation
 	LoadLanguageArchive();
+
+	ApplicationInit();
+	SaveOptions();
 
 	// Finally load game data
 	LoadGameArchives();

@@ -78,9 +78,7 @@ Note: You must be logged into GitHub to download the attachments.
          * Tower Shield: 15 [12-20]
          * Gothic Plate: 55 [50-60]
          * Full Plate Mail: 60 [60-75]
-   * Renamed affixes:
-      * sturdy to stout
-      * burgundy to russet
+   * Burgundy affix has been renamed to russet.
    * Maximum affix ilvl:
       * premium items sold by Griswold: 35 [30]
       * dungeon drops: +1 in Normal; +5 in Nightmare; +9 in Hell

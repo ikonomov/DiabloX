@@ -1962,7 +1962,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 		GetItemBonus(player, premiumItem, plvl / 2, plvl, true, !gbIsHellfire);
 
 		if (!gbIsHellfire) {
-			if (premiumItem._iIvalue > 220000) {
+			if (premiumItem._iIvalue > 216000) {
 				keepGoing = true; // prevent breaking the do/while loop too early by failing hellfire's condition in while
 				continue;
 			}
@@ -4033,7 +4033,7 @@ void SpawnSmith(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
 
-	int maxValue = 220000;
+	int maxValue = 216000;
 	int maxItems = 20;
 	if (gbIsHellfire) {
 		maxValue = 200000;
@@ -4105,7 +4105,7 @@ void SpawnWitch(int lvl)
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
 	const int reservedItems = gbIsHellfire ? 10 : 17;
 	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 10;
-	const int maxValue = gbIsHellfire ? 200000 : 220000;
+	const int maxValue = gbIsHellfire ? 200000 : 216000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
 		Item &item = witchitem[i];
@@ -4190,7 +4190,7 @@ void SpawnBoy(int lvl)
 		GetItemBonus(*MyPlayer, boyitem, lvl, 2 * lvl, true, true);
 
 		if (!gbIsHellfire) {
-			if (boyitem._iIvalue > 146667) {
+			if (boyitem._iIvalue > 144000) {
 				keepgoing = true; // prevent breaking the do/while loop too early by failing hellfire's condition in while
 				continue;
 			}

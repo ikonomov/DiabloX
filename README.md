@@ -65,7 +65,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Fire Wall initial: 60 [28]; minimum: 40 [16]; decrease per slvl: 3 [2]
 #### Items:
    * Potions cost 100% more gold.
-   * The maximum price at stores has been increased to 220,000 [140,000] gold.
+   * The maximum price at stores has been increased to 220,000 [140,000/135,000] gold.
    * Long War Bow has been restored to its original Diablo graphic.
    * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].

@@ -1948,7 +1948,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 	dexterity += dexterity / 5;
 	magic += magic / 5;
 
-	plvl = clamp(plvl, 1, 36);
+	plvl = clamp(plvl, 1, 35);
 
 	int count = 0;
 
@@ -4190,7 +4190,7 @@ void SpawnBoy(int lvl)
 		GetItemBonus(*MyPlayer, boyitem, lvl, 2 * lvl, true, true);
 
 		if (!gbIsHellfire) {
-			if (boyitem._iIvalue > 90000) {
+			if (boyitem._iIvalue > 220000) {
 				keepgoing = true; // prevent breaking the do/while loop too early by failing hellfire's condition in while
 				continue;
 			}

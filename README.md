@@ -65,6 +65,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Fire Wall initial: 60 [28]; minimum: 40 [16]; decrease per slvl: 3 [2]
 #### Items:
    * Potions cost 100% more gold.
+   * The maximum price at Wirt has been increased to 220,000.
    * Long War Bow has been restored to its original Diablo graphic.
    * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
@@ -81,7 +82,7 @@ Note: You must be logged into GitHub to download the attachments.
       * sturdy to stout
       * burgundy to russet
    * Maximum affix ilvl:
-      * premium items sold by Griswold: 36 [30]
+      * premium items sold by Griswold: 35 [30]
       * dungeon drops: +1 in Normal; +5 in Nightmare; +9 in Hell
       * monster drops: +8 in Nightmare; +16 in Hell
 <details>
@@ -90,13 +91,13 @@ Note: You must be logged into GitHub to download the attachments.
    * Qlvl:
       * Elixir of Strength, Magic and Dexterity: 20 [15]
       * Affix:
-         * giants: 18 [17]
+         * giants: 19 [17]
          * titans: 25 [23]
-         * sorcery: 18 [17]
+         * sorcery: 19 [17]
          * wizardry: 25 [23]
-         * precision: 18 [17]
+         * precision: 19 [17]
          * perfection: 25 [23]
-         * vigor: 18 [17]
+         * vigor: 19 [17]
          * life: 25 [23]
          * moon: 13 [11]
          * stars: 24 [17]
@@ -117,7 +118,7 @@ Note: You must be logged into GitHub to download the attachments.
          * mithril: 27 [20]
          * meteoric: 32 [23]
          * weird: 40 [35]
-         * strange: 45 [60]
+         * strange: 50 [60]
          * champion: 35 [40]
          * king: 44 [28]
          * jagged: 1 [4]
@@ -132,7 +133,7 @@ Note: You must be logged into GitHub to download the attachments.
          * gore: 24 [25]
          * slaughter: 45 [60]
          * osmosis: 30 [50]
-         * thunder: 45 [60]
+         * thunder: 50 [60]
          * blood: 24 [19]
          * vampires: 24 [19]
          * amber: 14 [12]
@@ -142,7 +143,7 @@ Note: You must be logged into GitHub to download the attachments.
          * readiness: 5 [1]
          * swiftness: 17 [10]
          * speed: 24 [19]
-         * haste: 36 [27]
+         * haste: 35 [27]
          * harmony: 24 [20]
          * ages: 24 [25]
       * Unique item:

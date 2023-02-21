@@ -137,7 +137,7 @@ Note: You must be logged into GitHub to download the attachments.
          * vampires: 24 [19]
          * amber: 14 [12]
          * jade: 22 [18]
-         * obsidian: 33 [24]
+         * obsidian: 32 [24]
          * emerald: 42 [31]
          * readiness: 5 [1]
          * swiftness: 17 [10]

@@ -3151,19 +3151,24 @@ void PrepareUniqueMonst(Monster &monster, UniqueMonsterType monsterType, size_t 
 		monster.maxHitPoints = 3 * monster.maxHitPoints;
 		monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
 		monster.hitPoints = monster.maxHitPoints;
-		monster.minDamage = 3 * monster.minDamage + 6;
-		monster.maxDamage = 3 * monster.maxDamage + 6;
-		monster.minDamageSpecial = 3 * monster.minDamageSpecial + 6;
-		monster.maxDamageSpecial = 3 * monster.maxDamageSpecial + 6;
+		monster.minDamage = 2 * (monster.minDamage + 2);
+		monster.maxDamage = 2 * (monster.maxDamage + 2);
+		monster.minDamageSpecial = 2 * (monster.minDamageSpecial + 2);
+		monster.maxDamageSpecial = 2 * (monster.maxDamageSpecial + 2);
 	} else if (sgGameInitInfo.nDifficulty == DIFF_HELL) {
 		monster.maxHitPoints = 4 * monster.maxHitPoints;
 		monster.maxHitPoints += (gbIsMultiplayer ? 300 : 150) << 6;
 		monster.hitPoints = monster.maxHitPoints;
-		monster.minDamage = 6 * monster.minDamage + 9;
-		monster.maxDamage = 6 * monster.maxDamage + 9;
-		monster.minDamageSpecial = 6 * monster.minDamageSpecial + 9;
-		monster.maxDamageSpecial = 6 * monster.maxDamageSpecial + 9;
+		monster.minDamage = 4 * monster.minDamage + 6;
+		monster.maxDamage = 4 * monster.maxDamage + 6;
+		monster.minDamageSpecial = 4 * monster.minDamageSpecial + 6;
+		monster.maxDamageSpecial = 4 * monster.maxDamageSpecial + 6;
 	}
+
+	monster.minDamage = monster.minDamage * 3 / 2;
+	monster.maxDamage = monster.maxDamage * 3 / 2;
+	monster.minDamageSpecial = monster.minDamageSpecial * 3 / 2;
+	monster.maxDamageSpecial = monster.maxDamageSpecial * 3 / 2;
 
 	InitTRNForUniqueMonster(monster);
 	monster.uniqTrans = uniquetrans++;

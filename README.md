@@ -48,10 +48,10 @@ Note: You must be logged into GitHub to download the attachments.
 #### Spells:
    * Damage:
       * Apocalypse max: 3·clvl [6·clvl]
-      * Fire Wall: 1/2 of the original
-      * Guardian: 1/3 of the original
       * Lightning, Chain Lightning min: 1 [2], max: (5+clvl)/3 [2+clvl]
       * Chain Lightning: creates 2+slvl/5 number of bolts
+      * Fire Wall: 1/2 of the original
+      * Guardian: 1/3 of the original
       * Flash, Elemental, Fireball: 1/4 of the original
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
@@ -66,7 +66,6 @@ Note: You must be logged into GitHub to download the attachments.
 #### Items:
    * Potions cost 100% more gold.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
-   * Long War Bow has been restored to its original Diablo graphic.
    * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
    * Set to maximum values:
@@ -195,7 +194,6 @@ Note: You must be logged into GitHub to download the attachments.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
-   * The textbox has been resized for item labels and made transparent for chat messages.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
    * Help menu has been replaced by a list of shrine descriptions.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
@@ -203,8 +201,6 @@ Note: You must be logged into GitHub to download the attachments.
       * Quick Save: G [F2]
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [P]
-      * unbound: Quick Load, Increase/Decrease Gamma
-      * removed: Quit Game
 
 ## Credits
 

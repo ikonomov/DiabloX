@@ -16,8 +16,6 @@ Note: You'll need access to the data from the original game. If you don't have a
 
 DiabloX is made publicly available and released under the Sustainable Use License https://github.com/ikonomov/DiabloX/blob/master/LICENSE.md.
 
-The source code in this repository is for non-commercial use only. If you use the source code you may not charge others for access to it or any derivative work thereof.
-
 Diablo® - Copyright © 1996 Blizzard Entertainment, Inc. All rights reserved. Diablo and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries.
 
 DiabloX and any of its maintainers are in no way associated with or endorsed by Blizzard Entertainment®.

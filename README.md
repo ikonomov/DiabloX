@@ -163,7 +163,7 @@ Note: You must be logged into GitHub to download the attachments.
 </details>
 
 #### Shrines:
-   * Fascinating, Ornate and Sacred reduce magic instead of mana by 10%.
+   * Fascinating, Ornate and Sacred reduce magic instead of mana by 2% [10%].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
    * Enchanted reduces slvl 15 spell by -1 [-2].
@@ -189,7 +189,7 @@ Note: You must be logged into GitHub to download the attachments.
       * pickup except for gold (configurable for gold)
       * equip except for weapons and shields (configurable for weapons and shields)
       * refilling belt
-      * using health and mana potions from belt
+      * key binding for using health and mana potions from belt 
       * quick cast
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].

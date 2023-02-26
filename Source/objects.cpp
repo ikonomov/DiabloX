@@ -2565,7 +2565,7 @@ void OperateShrineCostOfWisdom(Player &player, SpellID spellId, diablo_message m
 	if (player._pSplLvl[static_cast<int8_t>(spellId)] < MaxSpellLevel)
 		player._pSplLvl[static_cast<int8_t>(spellId)]++;
 
-	int magicLoss = player.GetBaseAttributeValue(CharacterAttribute::Magic) / 10;
+	int magicLoss = player.GetBaseAttributeValue(CharacterAttribute::Magic) / 50;
 	if (magicLoss > 0)
 		ModifyPlrMag(player, -magicLoss);
 

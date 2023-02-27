@@ -2,8 +2,8 @@
 
 Note: You'll need access to the data from the original game. If you don't have an original CD then you can buy Diablo from GoG.com https://www.gog.com/game/diablo.
 
-   * Download the latest DiabloX release https://github.com/ikonomov/DiabloX/releases and extract the contents to a location of your choosing.
-   * Copy `DIABDAT.MPQ` from the CD or GOG-installation to the DiabloX folder.
+   * Download the latest DiabloX release https://github.com/ikonomov/DiabloX/releases and extract the contents to a folder of your choosing.
+   * Copy `DIABDAT.MPQ` from the CD or GOG-installation to the same folder.
 
 ## Multiplayer:
    * ZeroTier does not need port forwarding or an extra application.

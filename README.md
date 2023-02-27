@@ -9,8 +9,8 @@ DiabloX is a mod for Diablo 1 and a fork of [DevilutionX](https://github.com/dia
 
 Note: You'll need access to the data from the original game. If you don't have an original CD then you can [buy Diablo from GoG.com](https://www.gog.com/game/diablo).
 
-   * Download the latest [DiabloX release](https://github.com/ikonomov/DiabloX/releases) and extract the contents to a location of your choosing.
-   * Copy `DIABDAT.MPQ` from the CD or GOG-installation to the DiabloX folder.
+   * Download the latest [DiabloX release](https://github.com/ikonomov/DiabloX/releases) and extract the contents to a folder of your choosing.
+   * Copy `DIABDAT.MPQ` from the CD or GOG-installation to the same folder.
 
 ## Test builds
 
@@ -203,10 +203,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [P]
 
-## Credits
-
-   * [DevilutionX](https://github.com/diasurgical/devilutionX#credits)
-   * [DiabloX](https://github.com/ikonomov/DiabloX/graphs/contributors)
+## [Credits](https://github.com/ikonomov/DiabloX/graphs/contributors)
 
 ## Legal
 

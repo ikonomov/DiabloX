@@ -1066,7 +1066,6 @@ std::vector<OptionEntryBase *> GameplayOptions::GetEntries()
 {
 	return {
 		&grabInput,
-		&multiplayerFullQuests,
 		&experienceBar,
 		&enemyHealthBar,
 		&showMonsterType,

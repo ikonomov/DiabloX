@@ -38,10 +38,10 @@
 
 namespace devilution {
 
-#define PASSWORD_SPAWN_SINGLE "adslhfb1"
-#define PASSWORD_SPAWN_MULTI "lshbkfg1"
-#define PASSWORD_SINGLE "xrgyrkj1"
-#define PASSWORD_MULTI "szqnlsk1"
+#define PASSWORD_SPAWN_SINGLE "gjtp9mzj"
+#define PASSWORD_SPAWN_MULTI "cy4jalk4"
+#define PASSWORD_SINGLE "48v7we43"
+#define PASSWORD_MULTI "t1yx99ah"
 
 bool gbValidSaveFile;
 
@@ -54,8 +54,8 @@ std::string GetSavePath(uint32_t saveNum, string_view savePrefix = {})
 {
 	return StrCat(paths::PrefPath(), savePrefix,
 	    gbIsSpawn
-	        ? (gbIsMultiplayer ? "share_" : "spawn_")
-	        : (gbIsMultiplayer ? "multi_" : "single_"),
+	        ? (gbIsMultiplayer ? "dx_share_" : "dx_spawn_")
+	        : (gbIsMultiplayer ? "dx_multi_" : "dx_single_"),
 	    saveNum,
 #ifdef UNPACKED_SAVES
 	    gbIsHellfire ? "_hsv" DIRECTORY_SEPARATOR_STR : "_sv" DIRECTORY_SEPARATOR_STR
@@ -68,7 +68,7 @@ std::string GetSavePath(uint32_t saveNum, string_view savePrefix = {})
 std::string GetStashSavePath()
 {
 	return StrCat(paths::PrefPath(),
-	    gbIsSpawn ? "stash_spawn" : "stash",
+	    gbIsSpawn ? "dx_stash_spawn" : "dx_stash",
 #ifdef UNPACKED_SAVES
 	    gbIsHellfire ? "_hsv" DIRECTORY_SEPARATOR_STR : "_sv" DIRECTORY_SEPARATOR_STR
 #else

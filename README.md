@@ -80,8 +80,8 @@ Note: You must be logged into GitHub to download the attachments.
    * Burgundy affix has been renamed to russet.
    * Maximum affix ilvl:
       * premium items sold by Griswold: 35 [30]
-      * dungeon drops: +1 in Normal; +5 in Nightmare; +9 in Hell
-      * monster drops: +8 in Nightmare; +16 in Hell
+      * dungeon drops: +1 in Normal difficulty; +5 in Nightmare; +9 in Hell
+      * monster drops: +8 in Nightmare difficulty; +16 in Hell
 <details>
   <summary>Qlvl (click to expand)</summary>
 
@@ -196,9 +196,9 @@ Note: You must be logged into GitHub to download the attachments.
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
-   * Help menu has been replaced by a list of shrine descriptions.
+   * Help menu will be replaced by a list of shrine descriptions for each character that kills Diablo at least once.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
-      * Shrine List: H [F1]
+      * Help: H [F1]
       * Quick Save: G [F2]
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [P]

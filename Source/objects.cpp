@@ -4168,7 +4168,7 @@ bool UpdateTrapState(Object &trap)
 	case OBJ_L3RDOOR:
 	case OBJ_L5LDOOR:
 	case OBJ_L5RDOOR:
-		if (trigger._oVar4 == DOOR_CLOSED)
+		if (trigger._oVar4 == DOOR_CLOSED && trigger._oTrapFlag)
 			return false;
 		break;
 	case OBJ_LEVER:
@@ -4179,7 +4179,7 @@ bool UpdateTrapState(Object &trap)
 	case OBJ_SARC:
 	case OBJ_L5LEVER:
 	case OBJ_L5SARC:
-		if (trigger._oSelFlag != 0)
+		if (trigger._oSelFlag != 0 && trigger._oTrapFlag)
 			return false;
 		break;
 	default:
@@ -4568,6 +4568,13 @@ void DeltaSyncOpObject(Object &object)
 	default:
 		break;
 	}
+}
+
+void DeltaSyncCloseObj(Object &object)
+{
+	// Object was closed.
+	// That means it was opened once, so all traps have been activated.
+	object._oTrapFlag = false;
 }
 
 void SyncOpObject(Player &player, int cmd, Object &object)

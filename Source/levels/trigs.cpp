@@ -79,7 +79,7 @@ bool IsWarpOpen(dungeon_type type)
 
 	if ((type == DTYPE_CATACOMBS && (myPlayer.pTownWarps & 1) != 0)
 	    || (sgGameInitInfo.nDifficulty == DIFF_NORMAL && myPlayer.pDiabloKillLevel >= 1)
-		|| (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE && myPlayer.pDiabloKillLevel >= 2)
+	    || (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE && myPlayer.pDiabloKillLevel >= 2)
 	    || (sgGameInitInfo.nDifficulty == DIFF_HELL && myPlayer.pDiabloKillLevel == 3))
 		return true;
 	if ((type == DTYPE_CAVES && (myPlayer.pTownWarps & 2) != 0)

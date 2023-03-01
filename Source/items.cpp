@@ -1919,14 +1919,12 @@ bool PremiumItemOk(const Player &player, const ItemData &item)
 	if (!gbIsHellfire && item.itype == ItemType::Staff)
 		return false;
 
-	if (gbIsMultiplayer) {
-		if (item.iMiscId == IMISC_OILOF)
-			return false;
-		if (item.itype == ItemType::Ring)
-			return false;
-		if (item.itype == ItemType::Amulet)
-			return false;
-	}
+	if (item.iMiscId == IMISC_OILOF)
+		return false;
+	if (item.itype == ItemType::Ring)
+		return false;
+	if (item.itype == ItemType::Amulet)
+		return false;
 
 	return true;
 }
@@ -2112,7 +2110,7 @@ void RecreateBoyItem(const Player &player, Item &item, int lvl, int iseed)
 	SetRndSeed(iseed);
 	_item_indexes itype = RndBoyItem(player, lvl);
 	GetItemAttrs(item, itype, lvl);
-	GetItemBonus(player, item, lvl, 2 * lvl, true, true);
+	GetItemBonus(player, item, lvl, 2 * lvl + 1, true, true);
 
 	item._iSeed = iseed;
 	item._iCreateInfo = lvl | CF_BOY;
@@ -2133,9 +2131,9 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 		GetItemAttrs(item, itype, lvl);
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl + 1;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl + 1;
 		if (iblvl != -1)
 			GetItemBonus(player, item, iblvl / 2, iblvl, true, true);
 	}
@@ -4152,9 +4150,9 @@ void SpawnWitch(int lvl)
 			GetItemAttrs(item, itemData, lvl);
 			int maxlvl = -1;
 			if (GenerateRnd(100) <= 5)
-				maxlvl = 2 * lvl;
+				maxlvl = 2 * lvl + 1;
 			if (maxlvl == -1 && item._iMiscId == IMISC_STAFF)
-				maxlvl = 2 * lvl;
+				maxlvl = 2 * lvl + 1;
 			if (maxlvl != -1)
 				GetItemBonus(*MyPlayer, item, maxlvl / 2, maxlvl, true, true);
 		} while (item._iIvalue > maxValue);
@@ -4191,7 +4189,7 @@ void SpawnBoy(int lvl)
 		SetRndSeed(boyitem._iSeed);
 		_item_indexes itype = RndBoyItem(*MyPlayer, lvl);
 		GetItemAttrs(boyitem, itype, lvl);
-		GetItemBonus(*MyPlayer, boyitem, lvl, 2 * lvl, true, true);
+		GetItemBonus(*MyPlayer, boyitem, lvl, 2 * lvl + 1, true, true);
 
 		if (!gbIsHellfire) {
 			if (boyitem._iIvalue > 144000) {

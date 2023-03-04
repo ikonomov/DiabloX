@@ -1918,7 +1918,6 @@ bool PremiumItemOk(const Player &player, const ItemData &item)
 		return false;
 	if (!gbIsHellfire && item.itype == ItemType::Staff)
 		return false;
-
 	if (item.iMiscId == IMISC_OILOF)
 		return false;
 	if (item.itype == ItemType::Ring)

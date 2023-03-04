@@ -135,6 +135,7 @@ void InitHelp()
 		return;
 
 	HelpFlag = false;
+
 	for (const auto *text : HelpText) {
 		const std::string paragraph = WordWrapString(_(text), ContentTextWidth);
 

@@ -178,7 +178,7 @@ Note: You must be logged into GitHub to download the attachments.
       * base item ilvl at stores is calculated using character level
       * stores don't sell jewelry
       * new game difficulty level restriction based on character level
-      * when starting a new game entrances to the catacombs, caves and hell are enabled if Diablo has been previously killed at the current difficulty level
+      * when starting a new game entrances to the catacombs, caves and hell are enabled if Diablo has been previously killed at the same difficulty level
    * Removed:
       * support for Spawned Diablo and Diablo: Hellfire
       * multi-language support

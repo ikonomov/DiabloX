@@ -65,6 +65,7 @@ Note: You must be logged into GitHub to download the attachments.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: -2 to one attribute, +1 to all others [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
+   * Helm of Spirits has been removed with The Undead Crown as a replacement.
    * Set to maximum values:
       * Affixes with a range of values.
       * Staff charges.
@@ -152,7 +153,6 @@ Note: You must be logged into GitHub to download the attachments.
          * The Blackoak Bow: 8 [5]
          * Deadly Hunter: 10 [3]
          * Civerb’s Cudgel: 10 [1]
-         * Helm of Spirits: 14 [1]
          * The Bleeder: 9 [2]
          * Bramble: 7 [1]
          * Constricting Ring: 15 [5]

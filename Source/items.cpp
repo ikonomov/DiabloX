@@ -2271,7 +2271,7 @@ uint8_t GetOutlineColor(const Item &item, bool checkReq)
 
 bool IsUniqueAvailable(int i)
 {
-	return gbIsHellfire || i <= 89;
+	return gbIsHellfire || i <= 88;
 }
 
 void InitItemGFX()

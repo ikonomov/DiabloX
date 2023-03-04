@@ -175,9 +175,9 @@ Note: You must be logged into GitHub to download the attachments.
 #### Engine:
    * Single player functions like multi player:
       * experience cap
-      * base item ilvl at stores is calculated using character level
+      * base item ilvl at stores is calculated using clvl
       * stores don't sell jewelry
-      * new game difficulty level restriction based on character level
+      * new game difficulty level restriction based on clvl
       * when starting a new game entrances to the catacombs, caves and hell are enabled if Diablo has been previously killed at the same difficulty level
    * Removed:
       * support for Spawned Diablo and Diablo: Hellfire
@@ -201,7 +201,7 @@ Note: You must be logged into GitHub to download the attachments.
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
-   * Help menu has been replaced by a list of shrine descriptions available after reaching character level 17.
+   * Help menu has been replaced by a list of shrine descriptions available after reaching clvl 17.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
       * Shrine List: D [Help: F1]
       * Quick Save: G [F2]

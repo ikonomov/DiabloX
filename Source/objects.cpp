@@ -2308,23 +2308,30 @@ void OperateShrineMysterious(Player &player)
 	if (&player != MyPlayer)
 		return;
 
-	ModifyPlrStr(player, -1);
-	ModifyPlrMag(player, -1);
-	ModifyPlrDex(player, -1);
-	ModifyPlrVit(player, -1);
-
 	switch (static_cast<CharacterAttribute>(GenerateRnd(4))) {
 	case CharacterAttribute::Strength:
-		ModifyPlrStr(player, 6);
+		ModifyPlrStr(player, 5);
+		ModifyPlrMag(player, -1);
+		ModifyPlrDex(player, -1);
+		ModifyPlrVit(player, -1);
 		break;
 	case CharacterAttribute::Magic:
-		ModifyPlrMag(player, 6);
+		ModifyPlrStr(player, -1);
+		ModifyPlrMag(player, 5);
+		ModifyPlrDex(player, -1);
+		ModifyPlrVit(player, -1);
 		break;
 	case CharacterAttribute::Dexterity:
-		ModifyPlrDex(player, 6);
+		ModifyPlrStr(player, -1);
+		ModifyPlrMag(player, -1);
+		ModifyPlrDex(player, 5);
+		ModifyPlrVit(player, -1);
 		break;
 	case CharacterAttribute::Vitality:
-		ModifyPlrVit(player, 6);
+		ModifyPlrStr(player, -1);
+		ModifyPlrMag(player, -1);
+		ModifyPlrDex(player, -1);
+		ModifyPlrVit(player, 5);
 		break;
 	}
 
@@ -2350,14 +2357,11 @@ void OperateShrineHidden(Player &player)
 			if (!item.isEmpty()
 			    && item._iMaxDur != DUR_INDESTRUCTIBLE
 			    && item._iMaxDur != 0) {
-				if (item._iDurability > 240)
-					item._iDurability = 250;
-				else
-					item._iDurability += 10;
-				if (item._iMaxDur > 240)
-					item._iMaxDur = 250;
+				if (item._iMaxDur == 245)
+					item._iMaxDur += 20;
 				else
 					item._iMaxDur += 10;
+				item._iDurability += 10;
 				if (item._iDurability > item._iMaxDur)
 					item._iDurability = item._iMaxDur;
 			}
@@ -2375,13 +2379,25 @@ void OperateShrineHidden(Player &player)
 			if (player.InvBody[r].isEmpty() || player.InvBody[r]._iMaxDur == DUR_INDESTRUCTIBLE || player.InvBody[r]._iMaxDur == 0)
 				continue;
 
+			if (player.InvBody[r]._iMaxDur == 265)
+				player.InvBody[r]._iMaxDur -= 30;
+			else
+				player.InvBody[r]._iMaxDur -= 20;
 			player.InvBody[r]._iDurability -= 20;
-			player.InvBody[r]._iMaxDur -= 20;
 			if (player.InvBody[r]._iDurability <= 0)
 				player.InvBody[r]._iDurability = 1;
 			if (player.InvBody[r]._iMaxDur <= 0)
 				player.InvBody[r]._iMaxDur = 1;
 			break;
+		}
+		for (auto &item : player.InvBody) {
+			if (!item.isEmpty()
+			    && item._iMaxDur != DUR_INDESTRUCTIBLE
+			    && item._iMaxDur > 250) {
+				item._iMaxDur = 250;
+				if (item._iDurability > 250)
+					item._iDurability = 250;
+			}
 		}
 	}
 

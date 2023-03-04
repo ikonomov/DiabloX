@@ -194,10 +194,6 @@ void InitMonster(Monster &monster, Direction rd, size_t typeIndex, Point positio
 		monster.armorClass += HellAcBonus;
 		monster.resistance = monster.data().resistanceHell;
 	}
-	monster.minDamage = monster.minDamage * 3 / 2;
-	monster.maxDamage = monster.maxDamage * 3 / 2;
-	monster.minDamageSpecial = monster.minDamageSpecial * 3 / 2;
-	monster.maxDamageSpecial = monster.maxDamageSpecial * 3 / 2;
 }
 
 bool CanPlaceMonster(Point position)
@@ -3165,11 +3161,6 @@ void PrepareUniqueMonst(Monster &monster, UniqueMonsterType monsterType, size_t 
 		monster.maxDamageSpecial = 4 * monster.maxDamageSpecial + 6;
 	}
 
-	monster.minDamage = monster.minDamage * 3 / 2;
-	monster.maxDamage = monster.maxDamage * 3 / 2;
-	monster.minDamageSpecial = monster.minDamageSpecial * 3 / 2;
-	monster.maxDamageSpecial = monster.maxDamageSpecial * 3 / 2;
-
 	InitTRNForUniqueMonster(monster);
 	monster.uniqTrans = uniquetrans++;
 
@@ -3475,7 +3466,7 @@ void InitMonsters()
 					na++;
 			}
 		}
-		int numplacemonsters = na / 20;
+		int numplacemonsters = na / 24;
 		if (gbIsMultiplayer)
 			numplacemonsters += numplacemonsters / 2;
 		if (ActiveMonsterCount + numplacemonsters > MaxMonsters - 10)

@@ -3949,28 +3949,28 @@ void UseItem(size_t pnum, item_misc_id mid, SpellID spl)
 	case IMISC_SPECELIX:
 		switch (static_cast<CharacterAttribute>(GenerateRnd(4))) {
 		case CharacterAttribute::Strength:
-			ModifyPlrStr(player, -1);
+			ModifyPlrStr(player, -2);
 			ModifyPlrMag(player, 1);
 			ModifyPlrDex(player, 1);
 			ModifyPlrVit(player, 1);
 			break;
 		case CharacterAttribute::Magic:
 			ModifyPlrStr(player, 1);
-			ModifyPlrMag(player, -1);
+			ModifyPlrMag(player, -2);
 			ModifyPlrDex(player, 1);
 			ModifyPlrVit(player, 1);
 			break;
 		case CharacterAttribute::Dexterity:
 			ModifyPlrStr(player, 1);
 			ModifyPlrMag(player, 1);
-			ModifyPlrDex(player, -1);
+			ModifyPlrDex(player, -2);
 			ModifyPlrVit(player, 1);
 			break;
 		case CharacterAttribute::Vitality:
 			ModifyPlrStr(player, 1);
 			ModifyPlrMag(player, 1);
 			ModifyPlrDex(player, 1);
-			ModifyPlrVit(player, -1);
+			ModifyPlrVit(player, -2);
 			break;
 		}
 		CheckStats(player);

@@ -408,9 +408,9 @@ bool IsDifficultyAllowed(int value)
 	selgame_Free();
 
 	if (value == 1)
-		UiSelOkDialog(title, _("Your character must reach level 20 before you can enter a multiplayer game of Nightmare difficulty.").data(), false);
+		UiSelOkDialog(title, _("Your character must reach level 20 before you can enter a game of Nightmare difficulty.").data(), false);
 	if (value == 2)
-		UiSelOkDialog(title, _("Your character must reach level 30 before you can enter a multiplayer game of Hell difficulty.").data(), false);
+		UiSelOkDialog(title, _("Your character must reach level 30 before you can enter a game of Hell difficulty.").data(), false);
 
 	selgame_Init();
 
@@ -419,7 +419,7 @@ bool IsDifficultyAllowed(int value)
 
 void selgame_Diff_Select(int value)
 {
-	if (selhero_isMultiPlayer && !IsDifficultyAllowed(vecSelGameDlgItems[value]->m_value)) {
+	if (!IsDifficultyAllowed(vecSelGameDlgItems[value]->m_value)) {
 		selgame_GameSelection_Select(0);
 		return;
 	}

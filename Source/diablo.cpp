@@ -1461,27 +1461,31 @@ void TimeoutCursor(bool bTimeout)
 
 void HelpKeyPressed()
 {
-	if (HelpFlag) {
-		HelpFlag = false;
-	} else if (stextflag != TalkID::None) {
-		InfoString = {};
-		AddPanelString(_("No help available")); /// BUGFIX: message isn't displayed
-		AddPanelString(_("while in stores"));
-		LastMouseButtonAction = MouseActionType::None;
+	if (MyPlayer->_pLevel < 17) {
+		InitDiabloMsg(EMSG_REQUIRES_LVL_17);
 	} else {
-		CloseInventory();
-		chrflag = false;
-		sbookflag = false;
-		spselflag = false;
-		if (qtextflag && leveltype == DTYPE_TOWN) {
-			qtextflag = false;
-			stream_stop();
+		if (HelpFlag) {
+			HelpFlag = false;
+		} else if (stextflag != TalkID::None) {
+			InfoString = {};
+			AddPanelString(_("Shrine List not available")); /// BUGFIX: message isn't displayed
+			AddPanelString(_("while in stores"));
+			LastMouseButtonAction = MouseActionType::None;
+		} else {
+			CloseInventory();
+			chrflag = false;
+			sbookflag = false;
+			spselflag = false;
+			if (qtextflag && leveltype == DTYPE_TOWN) {
+				qtextflag = false;
+				stream_stop();
+			}
+			QuestLogIsOpen = false;
+			CancelCurrentDiabloMsg();
+			gamemenu_off();
+			DisplayHelp();
+			doom_close();
 		}
-		QuestLogIsOpen = false;
-		CancelCurrentDiabloMsg();
-		gamemenu_off();
-		DisplayHelp();
-		doom_close();
 	}
 }
 
@@ -1794,10 +1798,10 @@ void InitKeymapActions()
 	    nullptr,
 	    CanPlayerTakeAction);
 	sgOptions.Keymapper.AddAction(
-	    "Help",
-	    N_("Help"),
-	    N_("Open Help Screen."),
-	    'H',
+	    "Shrine List",
+	    N_("Shrine List"),
+	    N_("Open a list of shrine descriptions available after reaching character level 17."),
+	    'D',
 	    HelpKeyPressed,
 	    nullptr,
 	    CanPlayerTakeAction);
@@ -2277,9 +2281,9 @@ void InitPadmapActions()
 	    nullptr,
 	    CanPlayerTakeAction);
 	sgOptions.Padmapper.AddAction(
-	    "Help",
-	    N_("Help"),
-	    N_("Open Help Screen."),
+	    "Shrine List",
+	    N_("Shrine List"),
+	    N_("Open a list of shrine descriptions available after reaching character level 17."),
 	    ControllerButton_NONE,
 	    HelpKeyPressed,
 	    nullptr,

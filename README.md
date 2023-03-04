@@ -34,25 +34,22 @@ Note: You must be logged into GitHub to download the attachments.
 *The original values are listed in [square brackets].*
 #### Characters:
    * The required experience points for each clvl have been increased by 100%.
+   * Stop receiving 5 level up points after clvl 25.
    * Regenerate 1.5% of max mana per second.
    * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
+   * Block bonus: 0 [30/20/10]
    * Maximum stats:
       * Warrior's strength: 150 [250]
       * Rogue's dexterity: 150 [250]
       * Sorcerer's magic: 150 [250]
-   * Block bonuses:
-      * Warrior: 20 [30]
-      * Rogue: 10 [20]
-      * Sorcerer: 0 [10]
 #### Spells:
    * Damage:
-      * Apocalypse max: 3·clvl [6·clvl]
       * Lightning, Chain Lightning min: 1 [2], max: (5+clvl)/3 [2+clvl]
       * Chain Lightning: creates 2+slvl/5 number of bolts
-      * Fire Wall: 1/2 of the original
+      * Apocalypse, Fire Wall: 1/2 of the original
       * Guardian: 1/3 of the original
-      * Flash, Elemental, Fireball: 1/4 of the original
+      * Elemental, Fireball, Flash: 1/4 of the original
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
@@ -66,7 +63,7 @@ Note: You must be logged into GitHub to download the attachments.
 #### Items:
    * Potions cost 100% more gold.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
-   * Effects of drinking Spectral Elixir: -1 to one attribute, +1 to all others [+3 to all attributes].
+   * Effects of drinking Spectral Elixir: -2 to one attribute, +1 to all others [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
    * Set to maximum values:
       * Affixes with a range of values.
@@ -75,10 +72,13 @@ Note: You must be logged into GitHub to download the attachments.
          * Kite Shield: 12 [8-15]
          * Gothic Shield: 14 [14-18]
          * Tower Shield: 15 [12-20]
-         * Gothic Plate: 55 [50-60]
-         * Full Plate Mail: 60 [60-75]
+         * Field Plate: 40 [40-45]
+         * Plate Mail: 42 [42-50]
+         * Gothic Plate: 45 [50-60]
+         * Full Plate Mail: 50 [60-75]
    * Burgundy affix has been renamed to russet.
    * Maximum affix ilvl:
+      * items sold by Wirt and Adria: +1
       * premium items sold by Griswold: 35 [30]
       * dungeon drops: +1 in Normal difficulty; +5 in Nightmare; +9 in Hell
       * monster drops: +8 in Nightmare difficulty; +16 in Hell
@@ -168,12 +168,17 @@ Note: You must be logged into GitHub to download the attachments.
    * Hidden increases durability of items to a maximum of 250 [255].
    * Enchanted reduces slvl 15 spell by -1 [-2].
 #### Monsters:
-   * Damage has been increased by 50%.
    * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player, and 50 in Nightmare and 150 in Hell for single player.
-   * Number per dlvl has been increased by 50% with a maximum of 250 [200].
+   * Number per dlvl has been increased by 25% with a maximum of 250 [200].
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:
+   * Changes in single player to function like multi player:
+      * experience cap
+      * base item ilvl at stores is calculated using character level
+      * stores don't sell jewelry
+      * new game difficulty level restriction based on character level
+      * when starting a new game entrances to the catacombs, caves and hell are enabled if Diablo has been previously killed at the current difficulty level
    * Removed:
       * support for Spawned Diablo and Diablo: Hellfire
       * multi-language support
@@ -196,9 +201,9 @@ Note: You must be logged into GitHub to download the attachments.
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
-   * Help menu will be replaced by a list of shrine descriptions for each character that kills Diablo at least once.
+   * Help menu has been replaced by a list of shrine descriptions available after reaching character level 17.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
-      * Help: H [F1]
+      * Shrine List: D [Help: F1]
       * Quick Save: G [F2]
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [P]

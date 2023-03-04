@@ -2427,10 +2427,12 @@ void NextPlrLevel(Player &player)
 
 	CalcPlrInv(player, true);
 
-	if (CalcStatDiff(player) < 5) {
-		player._pStatPts = CalcStatDiff(player);
-	} else {
-		player._pStatPts += 5;
+	if (player._pLevel <= 25) {
+		if (CalcStatDiff(player) < 5) {
+			player._pStatPts = CalcStatDiff(player);
+		} else {
+			player._pStatPts += 5;
+		}
 	}
 
 	player._pNextExper = ExpLvlsTbl[player._pLevel];

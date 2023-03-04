@@ -34,7 +34,7 @@ Note: You must be logged into GitHub to download the attachments.
 *The original values are listed in [square brackets].*
 #### Characters:
    * The required experience points for each clvl have been increased by 100%.
-   * Stop receiving 5 level up points after clvl 25.
+   * Stop gaining level up attribute points after clvl 25.
    * Regenerate 1.5% of max mana per second.
    * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
@@ -173,7 +173,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:
-   * Changes in single player to function like multi player:
+   * Single player functions like multi player:
       * experience cap
       * base item ilvl at stores is calculated using character level
       * stores don't sell jewelry

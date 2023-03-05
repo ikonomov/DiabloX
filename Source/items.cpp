@@ -1377,6 +1377,16 @@ _item_indexes RndAllItems()
 		return IDI_GOLD;
 
 	int itemMaxLevel = ItemsGetCurrlevel() * 2;
+
+	switch (sgGameInitInfo.nDifficulty) {
+	case DIFF_NIGHTMARE:
+		itemMaxLevel += 15;
+		break;
+	case DIFF_HELL:
+		itemMaxLevel += 30;
+		break;
+	}
+
 	return GetItemIndexForDroppableItem(false, [&itemMaxLevel](const ItemData &item) {
 		if (itemMaxLevel < item.iMinMLvl)
 			return false;
@@ -1524,10 +1534,10 @@ void SetupBaseItem(Point position, _item_indexes idx, bool onlygood, bool sendms
 
 	switch (sgGameInitInfo.nDifficulty) {
 	case DIFF_NIGHTMARE:
-		curlv += 2;
+		curlv += 4;
 		break;
 	case DIFF_HELL:
-		curlv += 4;
+		curlv += 8;
 		break;
 	}
 

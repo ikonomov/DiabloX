@@ -78,10 +78,11 @@ Note: You must be logged into GitHub to download the attachments.
          * Gothic Plate: 45 [50-60]
          * Full Plate Mail: 50 [60-75]
    * Burgundy affix has been renamed to russet.
+   * Maximum base item ilvl for dungeon drops: +15 in Nightmare difficulty; +30 in Hell
    * Maximum affix ilvl:
       * items sold by Wirt and Adria: +1
       * premium items sold by Griswold: 35 [30]
-      * dungeon drops: +1 in Normal difficulty; +5 in Nightmare; +9 in Hell
+      * dungeon drops: +1 in Normal difficulty; +9 in Nightmare; +17 in Hell
       * monster drops: +8 in Nightmare difficulty; +16 in Hell
 <details>
   <summary>Qlvl (click to expand)</summary>

@@ -1432,6 +1432,7 @@ _unique_items CheckUnique(Item &item, int lvl, int uper, bool recreate)
 
 	AdvanceRndSeed();
 	uint8_t itemData = 0;
+	numu = GenerateRnd(numu) + 1;
 	while (numu > 0) {
 		if (uok[itemData])
 			numu--;

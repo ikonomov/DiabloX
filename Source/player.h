@@ -491,7 +491,7 @@ struct Player {
 	 */
 	int GetArmor() const
 	{
-		return _pIBonusAC + _pIAC;
+		return _pIBonusAC + _pIAC + _pDexterity / 5;
 	}
 
 	/**

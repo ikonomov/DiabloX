@@ -36,7 +36,6 @@ Note: You must be logged into GitHub to download the attachments.
    * The required experience points for each clvl have been increased by 100%.
    * Stop gaining level up attribute points after clvl 25.
    * Regenerate 1.5% of max mana per second.
-   * +100% dexterity modifier to armor class formula when using melee weapons and no shield.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Block bonus: 0 [30/20/10]
    * Maximum stats:
@@ -147,20 +146,6 @@ Note: You must be logged into GitHub to download the attachments.
          * speed: 27 [19]
          * haste: 38 [27]
          * harmony: 24 [20]
-      * Unique item:
-         * Bloodslayer: 10 [3]
-         * The Mangler: 9 [2]
-         * Wicked Axe: 12 [5]
-         * The Blackoak Bow: 8 [5]
-         * Deadly Hunter: 10 [3]
-         * Civerb’s Cudgel: 10 [1]
-         * The Bleeder: 9 [2]
-         * Bramble: 7 [1]
-         * Constricting Ring: 15 [5]
-         * Split Skull Shield: 4 [1]
-         * Immolator: 7 [4]
-         * Gonnagal’s Dirk: 5 [1]
-         * Shadowhawk: 12 [8]
 </details>
 
 #### Shrines:

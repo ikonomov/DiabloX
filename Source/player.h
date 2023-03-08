@@ -573,7 +573,9 @@ struct Player {
 
 	void RegenerateMana()
 	{
-		int regenDivisor = 1333;
+		int regenDivisor = 2000;
+		if (_pClass == HeroClass::Sorcerer)
+			regenDivisor = 1000;
 		_pRegenOverflow += _pMaxMana % regenDivisor;
 		int regenMana = _pMaxMana / regenDivisor + _pRegenOverflow / regenDivisor;
 		_pRegenOverflow %= regenDivisor;

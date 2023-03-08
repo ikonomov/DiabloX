@@ -35,7 +35,7 @@ Note: You must be logged into GitHub to download the attachments.
 #### Characters:
    * The required experience points for each clvl have been increased by 100%.
    * Stop gaining level up attribute points after clvl 25.
-   * Regenerate 1.5% of max mana per second.
+   * Regenerate 1% (Sorcerer 2%) of max mana per second.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Block bonus: 0 [30/20/10]
    * Maximum stats:

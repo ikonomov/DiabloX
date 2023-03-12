@@ -162,7 +162,6 @@ Note: You must be logged into GitHub to download the attachments.
       * experience cap
       * base item ilvl at stores is calculated using clvl
       * stores don't sell jewelry
-      * new game difficulty level restriction based on clvl
       * when starting a new game entrances to the catacombs, caves and hell are enabled if Diablo has been previously killed at the same difficulty level
    * Removed:
       * support for Spawned Diablo and Diablo: Hellfire

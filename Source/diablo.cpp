@@ -427,7 +427,7 @@ void RightMouseDown(bool isShiftHeld)
 		return;
 	if (pcursinvitem != -1 && UseInvItem(MyPlayerId, pcursinvitem))
 		return;
-	if (pcursstashitem != uint16_t(-1) && UseStashItem(pcursstashitem))
+	if (pcursstashitem != StashStruct::EmptyCell && UseStashItem(pcursstashitem))
 		return;
 	if (pcurs == CURSOR_HAND) {
 		CheckPlrSpell(isShiftHeld);
@@ -2483,7 +2483,7 @@ bool TryIconCurs()
 	if (pcurs == CURSOR_IDENTIFY) {
 		if (pcursinvitem != -1)
 			CheckIdentify(myPlayer, pcursinvitem);
-		else if (pcursstashitem != uint16_t(-1)) {
+		else if (pcursstashitem != StashStruct::EmptyCell) {
 			Item &item = Stash.stashList[pcursstashitem];
 			item._iIdentified = true;
 		}
@@ -2494,7 +2494,7 @@ bool TryIconCurs()
 	if (pcurs == CURSOR_REPAIR) {
 		if (pcursinvitem != -1)
 			DoRepair(myPlayer, pcursinvitem);
-		else if (pcursstashitem != uint16_t(-1)) {
+		else if (pcursstashitem != StashStruct::EmptyCell) {
 			Item &item = Stash.stashList[pcursstashitem];
 			RepairItem(item, myPlayer._pLevel);
 		}
@@ -2505,7 +2505,7 @@ bool TryIconCurs()
 	if (pcurs == CURSOR_RECHARGE) {
 		if (pcursinvitem != -1)
 			DoRecharge(myPlayer, pcursinvitem);
-		else if (pcursstashitem != uint16_t(-1)) {
+		else if (pcursstashitem != StashStruct::EmptyCell) {
 			Item &item = Stash.stashList[pcursstashitem];
 			RechargeItem(item, myPlayer);
 		}
@@ -2517,7 +2517,7 @@ bool TryIconCurs()
 		bool changeCursor = true;
 		if (pcursinvitem != -1)
 			changeCursor = DoOil(myPlayer, pcursinvitem);
-		else if (pcursstashitem != uint16_t(-1)) {
+		else if (pcursstashitem != StashStruct::EmptyCell) {
 			Item &item = Stash.stashList[pcursstashitem];
 			changeCursor = ApplyOilToItem(item, myPlayer);
 		}

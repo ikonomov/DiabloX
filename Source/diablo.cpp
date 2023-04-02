@@ -2004,8 +2004,8 @@ void InitPadmapActions()
 	    N_("Toggle stand ground"),
 	    N_("Toggle whether the player moves."),
 	    ControllerButton_NONE,
-	    [] { StandToggle = true; },
-	    [] { StandToggle = false; },
+	    [] { StandToggle = !StandToggle; },
+	    nullptr,
 	    CanPlayerTakeAction);
 	sgOptions.Padmapper.AddAction(
 	    "UseHealthPotion",

@@ -19,7 +19,6 @@ If you want to help test the latest development stage of the next version (make 
 Note: You must be logged into GitHub to download the attachments.
 
 [![Windows MinGW x64](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x64.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x64.yml?query=branch%3Amaster)
-[![Windows MinGW x86](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x86.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x86.yml?query=branch%3Amaster)
 
 ## Multiplayer:
    * ZeroTier does not need port forwarding or an extra application.

@@ -1563,9 +1563,9 @@ void UpdateObjectLight(Object &light, int lightRadius)
 
 void UpdateCircle(Object &circle)
 {
-	Player &myPlayer = *MyPlayer;
+	Player *playerOnCircle = PlayerAtPosition(circle.position);
 
-	if (myPlayer.position.tile != circle.position) {
+	if (!playerOnCircle) {
 		if (circle._otype == OBJ_MCIRCLE1)
 			circle._oAnimFrame = 1;
 		if (circle._otype == OBJ_MCIRCLE2)
@@ -1589,14 +1589,16 @@ void UpdateCircle(Object &circle)
 		circle._oVar6 = 4;
 		if (Quests[Q_BETRAYER]._qvar1 <= 4) {
 			ObjChangeMap(circle._oVar1, circle._oVar2, circle._oVar3, circle._oVar4);
-			if (Quests[Q_BETRAYER]._qactive == QUEST_ACTIVE)
-				Quests[Q_BETRAYER]._qvar1 = 4;
+			Quests[Q_BETRAYER]._qvar1 = 4;
+			NetSendCmdQuest(true, Quests[Q_BETRAYER]);
 		}
-		AddMissile(myPlayer.position.tile, { 35, 46 }, Direction::South, MissileID::Phasing, TARGET_BOTH, MyPlayerId, 0, 0);
-		LastMouseButtonAction = MouseActionType::None;
-		sgbMouseDown = CLICK_NONE;
-		ClrPlrPath(myPlayer);
-		StartStand(myPlayer, Direction::South);
+		AddMissile(playerOnCircle->position.tile, { 35, 46 }, Direction::South, MissileID::Phasing, TARGET_BOTH, playerOnCircle->getId(), 0, 0);
+		if (playerOnCircle == MyPlayer) {
+			LastMouseButtonAction = MouseActionType::None;
+			sgbMouseDown = CLICK_NONE;
+		}
+		ClrPlrPath(*playerOnCircle);
+		StartStand(*playerOnCircle, Direction::South);
 	}
 }
 
@@ -1913,32 +1915,26 @@ void OperateBook(Player &player, Object &book, bool sendmsg)
 	}
 
 	if (setlevel && setlvlnum == SL_VILEBETRAYER) {
-		bool missileAdded = false;
-		for (int j = 0; j < ActiveObjectCount; j++) {
-			Object &questObject = Objects[ActiveObjects[j]];
-
-			Point target {};
-			bool doAddMissile = false;
-
-			if (questObject._otype == OBJ_MCIRCLE2 && questObject._oVar6 == 1) {
-				target = { 27, 29 };
-				doAddMissile = true;
-			}
-			if (questObject._otype == OBJ_MCIRCLE2 && questObject._oVar6 == 2) {
-				target = { 43, 29 };
-				doAddMissile = true;
-			}
-
-			if (doAddMissile) {
-				questObject._oVar6 = 4;
-				ObjectAtPosition({ 35, 36 })._oVar5++;
-				AddMissile(player.position.tile, target, Direction::South, MissileID::Phasing, TARGET_BOTH, player.getId(), 0, 0);
-				missileAdded = true;
-			}
-		}
-		if (!missileAdded) {
+		Point target {};
+		if (book.position == Point { 26, 45 }) {
+			target = { 27, 29 };
+		} else if (book.position == Point { 45, 46 }) {
+			target = { 43, 29 };
+		} else {
 			return;
 		}
+
+		Object &circle = ObjectAtPosition(book.position + Direction::SouthWest);
+		assert(circle._otype == OBJ_MCIRCLE2);
+
+		// Only verfiy that the player stands on the circle when it's the local player (sendmsg), cause for remote players the position could be desynced
+		if (sendmsg && circle.position != player.position.tile) {
+			return;
+		}
+
+		circle._oVar6 = 4;
+		ObjectAtPosition({ 35, 36 })._oVar5++;
+		AddMissile(player.position.tile, target, Direction::South, MissileID::Phasing, TARGET_BOTH, player.getId(), 0, 0);
 	}
 
 	book._oSelFlag = 0;
@@ -2188,28 +2184,30 @@ void OperateInnSignChest(const Player &player, Object &questContainer, bool send
 	}
 }
 
-void OperateSlainHero(const Player &player, Object &corpse)
+void OperateSlainHero(const Player &player, Object &corpse, bool sendmsg)
 {
 	if (corpse._oSelFlag == 0) {
 		return;
 	}
 	corpse._oSelFlag = 0;
 
+	SetRndSeed(corpse._oRndSeed);
+
 	if (player._pClass == HeroClass::Warrior) {
-		CreateMagicArmor(corpse.position, ItemType::HeavyArmor, ICURS_BREAST_PLATE, true, false);
+		CreateMagicArmor(corpse.position, ItemType::HeavyArmor, ICURS_BREAST_PLATE, sendmsg, false);
 	} else if (player._pClass == HeroClass::Rogue) {
-		CreateMagicWeapon(corpse.position, ItemType::Bow, ICURS_LONG_WAR_BOW, true, false);
+		CreateMagicWeapon(corpse.position, ItemType::Bow, ICURS_LONG_WAR_BOW, sendmsg, false);
 	} else if (player._pClass == HeroClass::Sorcerer) {
-		CreateSpellBook(corpse.position, SpellID::Lightning, true, false);
+		CreateSpellBook(corpse.position, SpellID::Lightning, sendmsg, false);
 	} else if (player._pClass == HeroClass::Monk) {
-		CreateMagicWeapon(corpse.position, ItemType::Staff, ICURS_WAR_STAFF, true, false);
+		CreateMagicWeapon(corpse.position, ItemType::Staff, ICURS_WAR_STAFF, sendmsg, false);
 	} else if (player._pClass == HeroClass::Bard) {
-		CreateMagicWeapon(corpse.position, ItemType::Sword, ICURS_BASTARD_SWORD, true, false);
+		CreateMagicWeapon(corpse.position, ItemType::Sword, ICURS_BASTARD_SWORD, sendmsg, false);
 	} else if (player._pClass == HeroClass::Barbarian) {
-		CreateMagicWeapon(corpse.position, ItemType::Axe, ICURS_BATTLE_AXE, true, false);
+		CreateMagicWeapon(corpse.position, ItemType::Axe, ICURS_BATTLE_AXE, sendmsg, false);
 	}
 	MyPlayer->Say(HeroSpeech::RestInPeaceMyFriend);
-	if (&player == MyPlayer)
+	if (sendmsg)
 		NetSendCmdLoc(MyPlayerId, false, CMD_OPERATEOBJ, corpse.position);
 }
 
@@ -3835,7 +3833,7 @@ void InitObjects()
 	} else {
 		ApplyObjectLighting = true;
 		AdvanceRndSeed();
-		if (currlevel == 9 && !gbIsMultiplayer)
+		if (currlevel == 9 && !UseMultiplayerQuests())
 			AddSlainHero();
 		if (Quests[Q_MUSHROOM].IsAvailable())
 			AddMushPatch();
@@ -4120,6 +4118,7 @@ Object *AddObject(_object_id objType, Point objPos)
 	case OBJ_GOATSHRINE:
 	case OBJ_CAULDRON:
 	case OBJ_TEARFTN:
+	case OBJ_SLAINHERO:
 		object._oRndSeed = AdvanceRndSeed();
 		break;
 	case OBJ_DECAP:
@@ -4416,7 +4415,8 @@ void OperateObject(Player &player, Object &object)
 		OperateLever(object, sendmsg);
 		break;
 	case OBJ_BOOK2L:
-		OperateBook(player, object, sendmsg);
+		if (sendmsg)
+			OperateBook(player, object, sendmsg);
 		break;
 	case OBJ_BOOK2R:
 		OperateChamberOfBoneBook(object, sendmsg);
@@ -4493,7 +4493,7 @@ void OperateObject(Player &player, Object &object)
 			OperateLazStand(object);
 		break;
 	case OBJ_SLAINHERO:
-		OperateSlainHero(player, object);
+		OperateSlainHero(player, object, sendmsg);
 		break;
 	case OBJ_SIGNCHEST:
 		OperateInnSignChest(player, object, sendmsg);
@@ -4617,6 +4617,10 @@ void SyncOpObject(Player &player, int cmd, Object &object)
 	case OBJ_SWITCHSKL:
 		OperateLever(object, sendmsg);
 		break;
+	case OBJ_BOOK2L:
+		if (!sendmsg)
+			OperateBook(player, object, sendmsg);
+		break;
 	case OBJ_CHEST1:
 	case OBJ_CHEST2:
 	case OBJ_CHEST3:
@@ -4680,7 +4684,7 @@ void SyncOpObject(Player &player, int cmd, Object &object)
 		OperateMushroomPatch(player, object);
 		break;
 	case OBJ_SLAINHERO:
-		OperateSlainHero(player, object);
+		OperateSlainHero(player, object, sendmsg);
 		break;
 	case OBJ_SIGNCHEST:
 		OperateInnSignChest(player, object, sendmsg);

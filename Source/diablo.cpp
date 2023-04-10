@@ -2725,7 +2725,14 @@ void LoadGameLevel(bool firstflag, lvl_entry lvldir)
 		InitStores();
 		InitAutomapOnce();
 	}
-	SetRndSeed(glSeedTbl[currlevel]);
+	if (!setlevel) {
+		SetRndSeed(glSeedTbl[currlevel]);
+	} else {
+		// Maps are not randomly generated, but the monsters max hitpoints are.
+		// So we need to ensure that we have a stable seed when generating quest/set-maps.
+		// For this purpose we reuse the normal dungeon seeds.
+		SetRndSeed(glSeedTbl[static_cast<size_t>(setlvlnum)]);
+	}
 
 	if (leveltype == DTYPE_TOWN) {
 		SetupTownStores();

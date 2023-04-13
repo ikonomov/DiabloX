@@ -42,6 +42,7 @@
 #include "stores.h"
 #include "utils/format_int.hpp"
 #include "utils/language.h"
+#include "utils/log.hpp"
 #include "utils/math.h"
 #include "utils/stdcompat/algorithm.hpp"
 #include "utils/str_cat.hpp"
@@ -351,11 +352,11 @@ int premiumLvlAddHellfire[] = {
 	// clang-format on
 };
 
-bool IsPrefixValidForItemType(int i, AffixItemType flgs)
+bool IsPrefixValidForItemType(int i, AffixItemType flgs, bool hellfireItem)
 {
 	AffixItemType itemTypes = ItemPrefixes[i].PLIType;
 
-	if (!gbIsHellfire) {
+	if (!hellfireItem) {
 		if (i > 82)
 			return false;
 
@@ -366,11 +367,11 @@ bool IsPrefixValidForItemType(int i, AffixItemType flgs)
 	return HasAnyOf(flgs, itemTypes);
 }
 
-bool IsSuffixValidForItemType(int i, AffixItemType flgs)
+bool IsSuffixValidForItemType(int i, AffixItemType flgs, bool hellfireItem)
 {
 	AffixItemType itemTypes = ItemSuffixes[i].PLIType;
 
-	if (!gbIsHellfire) {
+	if (!hellfireItem) {
 		if (i > 94)
 			return false;
 
@@ -648,7 +649,7 @@ void GetBookSpell(Item &item, int lvl)
 		if (s == maxSpells)
 			s = 1;
 	}
-	const string_view spellName = pgettext("spell", GetSpellData(bs).sNameText);
+	const string_view spellName = GetSpellData(bs).sNameText;
 	const size_t iNameLen = string_view(item._iName).size();
 	const size_t iINameLen = string_view(item._iIName).size();
 	CopyUtf8(item._iName + iNameLen, spellName, sizeof(item._iName) - iNameLen);
@@ -1078,14 +1079,14 @@ void SaveItemAffix(const Player &player, Item &item, const PLStruct &affix)
 	}
 }
 
-void GetStaffPower(const Player &player, Item &item, int lvl, SpellID bs, bool onlygood)
+int GetStaffPrefixId(int lvl, bool onlygood, bool hellfireItem)
 {
 	int preidx = -1;
 	if (FlipCoin(10) || onlygood) {
 		int nl = 0;
 		int l[256];
 		for (int j = 0; ItemPrefixes[j].power.type != IPL_INVALID; j++) {
-			if (!IsPrefixValidForItemType(j, AffixItemType::Staff) || ItemPrefixes[j].PLMinLvl > lvl)
+			if (!IsPrefixValidForItemType(j, AffixItemType::Staff, hellfireItem) || ItemPrefixes[j].PLMinLvl > lvl)
 				continue;
 			if (onlygood && !ItemPrefixes[j].PLOk)
 				continue;
@@ -1098,29 +1099,55 @@ void GetStaffPower(const Player &player, Item &item, int lvl, SpellID bs, bool o
 		}
 		if (nl != 0) {
 			preidx = l[GenerateRnd(nl)];
-			item._iMagical = ITEM_QUALITY_MAGIC;
-			SaveItemAffix(player, item, ItemPrefixes[preidx]);
-			item._iPrePower = ItemPrefixes[preidx].power.type;
 		}
 	}
+	return preidx;
+}
 
-	string_view baseName = _(AllItemsList[item.IDidx].iName);
-	string_view shortName = _(AllItemsList[item.IDidx].iSName);
-	string_view spellName = pgettext("spell", GetSpellData(bs).sNameText);
-	string_view normalFmt = pgettext("spell", /* TRANSLATORS: Constructs item names. Format: {Item} of {Spell}. Example: War Staff of Firewall */ "{0} of {1}");
-
-	CopyUtf8(item._iName, fmt::format(fmt::runtime(normalFmt), baseName, spellName), sizeof(item._iName));
-	if (!StringInPanel(item._iName)) {
-		CopyUtf8(item._iName, fmt::format(fmt::runtime(normalFmt), shortName, spellName), sizeof(item._iName));
+std::string GenerateStaffName(const ItemData &baseItemData, SpellID spellId, bool translate)
+{
+	string_view baseName = translate ? _(baseItemData.iName) : baseItemData.iName;
+	string_view spellName = translate ? pgettext("spell", GetSpellData(spellId).sNameText) : GetSpellData(spellId).sNameText;
+	string_view normalFmt = translate ? pgettext("spell", /* TRANSLATORS: Constructs item names. Format: {Item} of {Spell}. Example: War Staff of Firewall */ "{0} of {1}") : "{0} of {1}";
+	std::string name = fmt::format(fmt::runtime(normalFmt), baseName, spellName);
+	if (!StringInPanel(name.c_str())) {
+		string_view shortName = translate ? _(baseItemData.iSName) : baseItemData.iSName;
+		name = fmt::format(fmt::runtime(normalFmt), shortName, spellName);
 	}
+	return name;
+}
 
+std::string GenerateStaffNameMagical(const ItemData &baseItemData, SpellID spellId, int preidx, bool translate, std::optional<bool> forceNameLengthCheck)
+{
+	string_view baseName = translate ? _(baseItemData.iName) : baseItemData.iName;
+	string_view magicFmt = translate ? pgettext("spell", /* TRANSLATORS: Constructs item names. Format: {Prefix} {Item} of {Spell}. Example: King's War Staff of Firewall */ "{0} {1} of {2}") : "{0} {1} of {2}";
+	string_view spellName = translate ? pgettext("spell", GetSpellData(spellId).sNameText) : GetSpellData(spellId).sNameText;
+	string_view prefixName = translate ? _(ItemPrefixes[preidx].PLName) : ItemPrefixes[preidx].PLName;
+
+	std::string identifiedName = fmt::format(fmt::runtime(magicFmt), prefixName, baseName, spellName);
+	if (forceNameLengthCheck ? *forceNameLengthCheck : !StringInPanel(identifiedName.c_str())) {
+		string_view shortName = translate ? _(baseItemData.iSName) : baseItemData.iSName;
+		identifiedName = fmt::format(fmt::runtime(magicFmt), prefixName, shortName, spellName);
+	}
+	return identifiedName;
+}
+
+void GetStaffPower(const Player &player, Item &item, int lvl, SpellID bs, bool onlygood)
+{
+	int preidx = GetStaffPrefixId(lvl, onlygood, gbIsHellfire);
 	if (preidx != -1) {
-		string_view magicFmt = pgettext("spell", /* TRANSLATORS: Constructs item names. Format: {Prefix} {Item} of {Spell}. Example: King's War Staff of Firewall */ "{0} {1} of {2}");
-		string_view prefixName = _(ItemPrefixes[preidx].PLName);
-		CopyUtf8(item._iIName, fmt::format(fmt::runtime(magicFmt), prefixName, baseName, spellName), sizeof(item._iIName));
-		if (!StringInPanel(item._iIName)) {
-			CopyUtf8(item._iIName, fmt::format(fmt::runtime(magicFmt), prefixName, shortName, spellName), sizeof(item._iIName));
-		}
+		item._iMagical = ITEM_QUALITY_MAGIC;
+		SaveItemAffix(player, item, ItemPrefixes[preidx]);
+		item._iPrePower = ItemPrefixes[preidx].power.type;
+	}
+
+	const ItemData &baseItemData = AllItemsList[item.IDidx];
+	std::string staffName = GenerateStaffName(baseItemData, item._iSpell, false);
+
+	CopyUtf8(item._iName, staffName, sizeof(item._iName));
+	if (preidx != -1) {
+		std::string staffNameMagical = GenerateStaffNameMagical(baseItemData, item._iSpell, preidx, false, std::nullopt);
+		CopyUtf8(item._iIName, staffNameMagical, sizeof(item._iIName));
 	} else {
 		CopyUtf8(item._iIName, item._iName, sizeof(item._iIName));
 	}
@@ -1128,24 +1155,27 @@ void GetStaffPower(const Player &player, Item &item, int lvl, SpellID bs, bool o
 	CalcItemValue(item);
 }
 
-std::string GenerateMagicItemName(const string_view &baseNamel, int preidx, int sufidx)
+std::string GenerateMagicItemName(const string_view &baseNamel, const PLStruct *pPrefix, const PLStruct *pSufix, bool translate)
 {
-	if (preidx != -1 && sufidx != -1) {
-		string_view fmt = _(/* TRANSLATORS: Constructs item names. Format: {Prefix} {Item} of {Suffix}. Example: King's Long Sword of the Whale */ "{0} {1} of {2}");
-		return fmt::format(fmt::runtime(fmt), _(ItemPrefixes[preidx].PLName), baseNamel, _(ItemSuffixes[sufidx].PLName));
-	} else if (preidx != -1) {
-		string_view fmt = _(/* TRANSLATORS: Constructs item names. Format: {Prefix} {Item}. Example: King's Long Sword */ "{0} {1}");
-		return fmt::format(fmt::runtime(fmt), _(ItemPrefixes[preidx].PLName), baseNamel);
-	} else if (sufidx != -1) {
-		string_view fmt = _(/* TRANSLATORS: Constructs item names. Format: {Item} of {Suffix}. Example: Long Sword of the Whale */ "{0} of {1}");
-		return fmt::format(fmt::runtime(fmt), baseNamel, _(ItemSuffixes[sufidx].PLName));
+	if (pPrefix != nullptr && pSufix != nullptr) {
+		string_view fmt = translate ? _(/* TRANSLATORS: Constructs item names. Format: {Prefix} {Item} of {Suffix}. Example: King's Long Sword of the Whale */ "{0} {1} of {2}") : "{0} {1} of {2}";
+		return fmt::format(fmt::runtime(fmt), translate ? _(pPrefix->PLName) : pPrefix->PLName, baseNamel, translate ? _(pSufix->PLName) : pSufix->PLName);
+	} else if (pPrefix != nullptr) {
+		string_view fmt = translate ? _(/* TRANSLATORS: Constructs item names. Format: {Prefix} {Item}. Example: King's Long Sword */ "{0} {1}") : "{0} {1}";
+		return fmt::format(fmt::runtime(fmt), translate ? _(pPrefix->PLName) : pPrefix->PLName, baseNamel);
+	} else if (pSufix != nullptr) {
+		string_view fmt = translate ? _(/* TRANSLATORS: Constructs item names. Format: {Item} of {Suffix}. Example: Long Sword of the Whale */ "{0} of {1}") : "{0} of {1}";
+		return fmt::format(fmt::runtime(fmt), baseNamel, translate ? _(pSufix->PLName) : pSufix->PLName);
 	}
 
 	return std::string(baseNamel);
 }
 
-void GetItemPower(const Player &player, Item &item, int minlvl, int maxlvl, AffixItemType flgs, bool onlygood)
+void GetItemPowerPrefixAndSuffix(int minlvl, int maxlvl, AffixItemType flgs, bool onlygood, bool hellfireItem, tl::function_ref<void(const PLStruct &prefix)> prefixFound, tl::function_ref<void(const PLStruct &suffix)> suffixFound)
 {
+	int preidx = -1;
+	int sufidx = -1;
+
 	int l[256];
 	goodorevil goe;
 
@@ -1158,15 +1188,13 @@ void GetItemPower(const Player &player, Item &item, int minlvl, int maxlvl, Affi
 		else
 			allocateSuffix = true;
 	}
-	int preidx = -1;
-	int sufidx = -1;
 	goe = GOE_ANY;
 	if (!onlygood && !FlipCoin(3))
 		onlygood = true;
 	if (allocatePrefix) {
 		int nt = 0;
 		for (int j = 0; ItemPrefixes[j].power.type != IPL_INVALID; j++) {
-			if (!IsPrefixValidForItemType(j, flgs))
+			if (!IsPrefixValidForItemType(j, flgs, hellfireItem))
 				continue;
 			if (ItemPrefixes[j].PLMinLvl < minlvl || ItemPrefixes[j].PLMinLvl > maxlvl)
 				continue;
@@ -1183,16 +1211,14 @@ void GetItemPower(const Player &player, Item &item, int minlvl, int maxlvl, Affi
 		}
 		if (nt != 0) {
 			preidx = l[GenerateRnd(nt)];
-			item._iMagical = ITEM_QUALITY_MAGIC;
-			SaveItemAffix(player, item, ItemPrefixes[preidx]);
-			item._iPrePower = ItemPrefixes[preidx].power.type;
 			goe = ItemPrefixes[preidx].PLGOE;
+			prefixFound(ItemPrefixes[preidx]);
 		}
 	}
 	if (allocateSuffix) {
 		int nl = 0;
 		for (int j = 0; ItemSuffixes[j].power.type != IPL_INVALID; j++) {
-			if (IsSuffixValidForItemType(j, flgs)
+			if (IsSuffixValidForItemType(j, flgs, hellfireItem)
 			    && ItemSuffixes[j].PLMinLvl >= minlvl && ItemSuffixes[j].PLMinLvl <= maxlvl
 			    && !((goe == GOE_GOOD && ItemSuffixes[j].PLGOE == GOE_EVIL) || (goe == GOE_EVIL && ItemSuffixes[j].PLGOE == GOE_GOOD))
 			    && (!onlygood || ItemSuffixes[j].PLOk)) {
@@ -1202,17 +1228,35 @@ void GetItemPower(const Player &player, Item &item, int minlvl, int maxlvl, Affi
 		}
 		if (nl != 0) {
 			sufidx = l[GenerateRnd(nl)];
-			item._iMagical = ITEM_QUALITY_MAGIC;
-			SaveItemAffix(player, item, ItemSuffixes[sufidx]);
-			item._iSufPower = ItemSuffixes[sufidx].power.type;
+			suffixFound(ItemSuffixes[sufidx]);
 		}
 	}
+}
 
-	CopyUtf8(item._iIName, GenerateMagicItemName(item._iName, preidx, sufidx), sizeof(item._iIName));
+void GetItemPower(const Player &player, Item &item, int minlvl, int maxlvl, AffixItemType flgs, bool onlygood)
+{
+	const PLStruct *pPrefix = nullptr;
+	const PLStruct *pSufix = nullptr;
+	GetItemPowerPrefixAndSuffix(
+	    minlvl, maxlvl, flgs, onlygood, gbIsHellfire,
+	    [&item, &player, &pPrefix](const PLStruct &prefix) {
+		    item._iMagical = ITEM_QUALITY_MAGIC;
+		    SaveItemAffix(player, item, prefix);
+		    item._iPrePower = prefix.power.type;
+		    pPrefix = &prefix;
+	    },
+	    [&item, &player, &pSufix](const PLStruct &suffix) {
+		    item._iMagical = ITEM_QUALITY_MAGIC;
+		    SaveItemAffix(player, item, suffix);
+		    item._iSufPower = suffix.power.type;
+		    pSufix = &suffix;
+	    });
+
+	CopyUtf8(item._iIName, GenerateMagicItemName(item._iName, pPrefix, pSufix, false), sizeof(item._iIName));
 	if (!StringInPanel(item._iIName)) {
-		CopyUtf8(item._iIName, GenerateMagicItemName(_(AllItemsList[item.IDidx].iSName), preidx, sufidx), sizeof(item._iIName));
+		CopyUtf8(item._iIName, GenerateMagicItemName(AllItemsList[item.IDidx].iSName, pPrefix, pSufix, false), sizeof(item._iIName));
 	}
-	if (preidx != -1 || sufidx != -1)
+	if (pPrefix != nullptr || pSufix != nullptr)
 		CalcItemValue(item);
 }
 
@@ -1282,8 +1326,8 @@ void GetOilType(Item &item, int maxLvl)
 
 	int8_t t = rnd[GenerateRnd(cnt)];
 
-	CopyUtf8(item._iName, _(OilNames[t]), sizeof(item._iName));
-	CopyUtf8(item._iIName, _(OilNames[t]), sizeof(item._iIName));
+	CopyUtf8(item._iName, OilNames[t], sizeof(item._iName));
+	CopyUtf8(item._iIName, OilNames[t], sizeof(item._iIName));
 	item._iMiscId = OilMagic[t];
 	item._ivalue = OilValues[t];
 	item._iIvalue = OilValues[t];
@@ -1452,7 +1496,7 @@ void GetUniqueItem(const Player &player, Item &item, _unique_items uid)
 		SaveItemPower(player, item, power);
 	}
 
-	CopyUtf8(item._iIName, _(UniqueItems[uid].UIName), sizeof(item._iIName));
+	CopyUtf8(item._iIName, UniqueItems[uid].UIName, sizeof(item._iIName));
 	item._iIvalue = UniqueItems[uid].UIValue;
 
 	if (item._iMiscId == IMISC_UNIQUE)
@@ -1467,6 +1511,20 @@ void ItemRndDur(Item &item)
 {
 	if (item._iDurability > 0 && item._iDurability != DUR_INDESTRUCTIBLE)
 		item._iDurability = GenerateRnd(item._iMaxDur / 2) + (item._iMaxDur / 4) + 1;
+}
+
+int GetItemBLevel(int lvl, item_misc_id miscId, bool onlygood, bool uper15)
+{
+	int iblvl = -1;
+	if (GenerateRnd(100) <= 10
+	    || GenerateRnd(100) <= lvl
+	    || onlygood
+	    || IsAnyOf(miscId, IMISC_STAFF, IMISC_RING, IMISC_AMULET)) {
+		iblvl = lvl;
+	}
+	if (uper15)
+		iblvl = lvl + 4;
+	return iblvl;
 }
 
 void SetupAllItems(const Player &player, Item &item, _item_indexes idx, int iseed, int lvl, int uper, bool onlygood, bool recreate, bool pregen)
@@ -1487,23 +1545,7 @@ void SetupAllItems(const Player &player, Item &item, _item_indexes idx, int isee
 		item._iCreateInfo |= CF_UPER1;
 
 	if (item._iMiscId != IMISC_UNIQUE) {
-		int iblvl = -1;
-		if (GenerateRnd(100) <= 10 || GenerateRnd(100) <= lvl) {
-			iblvl = lvl;
-		}
-		if (iblvl == -1 && item._iMiscId == IMISC_STAFF) {
-			iblvl = lvl;
-		}
-		if (iblvl == -1 && item._iMiscId == IMISC_RING) {
-			iblvl = lvl;
-		}
-		if (iblvl == -1 && item._iMiscId == IMISC_AMULET) {
-			iblvl = lvl;
-		}
-		if (onlygood)
-			iblvl = lvl;
-		if (uper == 15)
-			iblvl = lvl + 4;
+		int iblvl = GetItemBLevel(lvl, item._iMiscId, onlygood, uper == 15);
 		if (iblvl != -1) {
 			_unique_items uid = CheckUnique(item, iblvl, uper, recreate);
 			if (uid == UITEM_INVALID) {
@@ -2233,6 +2275,168 @@ _item_indexes RndItemForMonsterLevel(int8_t monsterLevel)
 	});
 }
 
+StringOrView GetTranslatedItemName(const Item &item)
+{
+	const auto &baseItemData = AllItemsList[static_cast<size_t>(item.IDidx)];
+
+	if (item._iCreateInfo == 0) {
+		return _(baseItemData.iName);
+	} else if (item._iMiscId == IMISC_BOOK) {
+		std::string name;
+		const string_view spellName = pgettext("spell", GetSpellData(item._iSpell).sNameText);
+		StrAppend(name, _(baseItemData.iName));
+		StrAppend(name, spellName);
+		return name;
+	} else if (item._iMiscId == IMISC_EAR) {
+		return fmt::format(fmt::runtime(_(/* TRANSLATORS: {:s} will be a Character Name */ "Ear of {:s}")), item._iIName);
+	} else if (item._iMiscId > IMISC_OILFIRST && item._iMiscId < IMISC_OILLAST) {
+		for (size_t i = 0; i < 10; i++) {
+			if (OilMagic[i] != item._iMiscId)
+				continue;
+			return _(OilNames[i]);
+		}
+		app_fatal("unkown oil");
+	} else if (item._itype == ItemType::Staff && item._iSpell != SpellID::Null && item._iMagical != ITEM_QUALITY_UNIQUE) {
+		return GenerateStaffName(baseItemData, item._iSpell, true);
+	} else {
+		return _(baseItemData.iName);
+	}
+}
+
+std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bool translate, std::optional<bool> forceNameLengthCheck)
+{
+	std::string identifiedName;
+	const auto &baseItemData = AllItemsList[static_cast<size_t>(item.IDidx)];
+
+	int lvl = item._iCreateInfo & CF_LEVEL;
+	bool onlygood = (item._iCreateInfo & (CF_ONLYGOOD | CF_SMITHPREMIUM | CF_BOY | CF_WITCH)) != 0;
+
+	uint32_t currentSeed = GetLCGEngineState();
+	SetRndSeed(item._iSeed);
+
+	int minlvl;
+	int maxlvl;
+	if ((item._iCreateInfo & CF_SMITHPREMIUM) != 0) {
+		AdvanceRndSeed(); // RndVendorItem
+		AdvanceRndSeed(); // GetItemAttrs
+		minlvl = lvl / 2;
+		maxlvl = lvl;
+	} else if ((item._iCreateInfo & CF_BOY) != 0) {
+		AdvanceRndSeed(); // RndVendorItem
+		AdvanceRndSeed(); // GetItemAttrs
+		minlvl = lvl;
+		maxlvl = lvl * 2;
+	} else if ((item._iCreateInfo & CF_WITCH) != 0) {
+		AdvanceRndSeed(); // RndVendorItem
+		AdvanceRndSeed(); // GetItemAttrs
+		int iblvl = -1;
+		if (GenerateRnd(100) <= 5)
+			iblvl = 2 * lvl;
+		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
+			iblvl = 2 * lvl;
+		minlvl = iblvl / 2;
+		maxlvl = iblvl;
+	} else {
+		AdvanceRndSeed(); // GetItemAttrs
+		int iblvl = GetItemBLevel(lvl, item._iMiscId, onlygood, item._iCreateInfo & CF_UPER15);
+		minlvl = iblvl / 2;
+		maxlvl = iblvl;
+		AdvanceRndSeed(); // CheckUnique
+	}
+
+	if (minlvl > 25)
+		minlvl = 25;
+
+	AffixItemType affixItemType = AffixItemType::None;
+
+	switch (item._itype) {
+	case ItemType::Sword:
+	case ItemType::Axe:
+	case ItemType::Mace:
+		affixItemType = AffixItemType::Weapon;
+		break;
+	case ItemType::Bow:
+		affixItemType = AffixItemType::Bow;
+		break;
+	case ItemType::Shield:
+		affixItemType = AffixItemType::Shield;
+		break;
+	case ItemType::LightArmor:
+	case ItemType::Helm:
+	case ItemType::MediumArmor:
+	case ItemType::HeavyArmor:
+		affixItemType = AffixItemType::Armor;
+		break;
+	case ItemType::Staff: {
+		bool allowspells = !hellfireItem || ((item._iCreateInfo & CF_SMITHPREMIUM) == 0);
+
+		if (!allowspells)
+			affixItemType = AffixItemType::Staff;
+		else if (!hellfireItem && FlipCoin(4)) {
+			affixItemType = AffixItemType::Staff;
+		} else {
+			AdvanceRndSeed(); // Spell
+			AdvanceRndSeed(); // Charges
+
+			int preidx = GetStaffPrefixId(maxlvl, onlygood, hellfireItem);
+			if (preidx == -1 || item._iSpell == SpellID::Null) {
+				if (forceNameLengthCheck) {
+					// We generate names to check if it's a diablo or hellfire item. This checks fails => invalid item => don't generate a item name
+					identifiedName.clear();
+				} else {
+					// This can happen, if the item is hacked or a bug in the logic exists
+					LogWarn("GetTranslatedItemNameMagical failed for item '{}' with preidx '{}' and spellid '{}'", item._iIName, preidx, static_cast<std::underlying_type_t<SpellID>>(item._iSpell));
+					identifiedName = item._iIName;
+				}
+			} else {
+				identifiedName = GenerateStaffNameMagical(baseItemData, item._iSpell, preidx, translate, forceNameLengthCheck);
+			}
+		}
+		break;
+	}
+	case ItemType::Ring:
+	case ItemType::Amulet:
+		affixItemType = AffixItemType::Misc;
+		break;
+	case ItemType::None:
+	case ItemType::Misc:
+	case ItemType::Gold:
+		break;
+	}
+
+	if (affixItemType != AffixItemType::None) {
+		const PLStruct *pPrefix = nullptr;
+		const PLStruct *pSufix = nullptr;
+		GetItemPowerPrefixAndSuffix(
+		    minlvl, maxlvl, affixItemType, onlygood, hellfireItem,
+		    [&pPrefix](const PLStruct &prefix) {
+			    pPrefix = &prefix;
+			    // GenerateRnd(prefix.power.param2 - prefix.power.param2 + 1)
+			    AdvanceRndSeed();
+			    switch (pPrefix->power.type) {
+			    case IPL_TOHIT_DAMP:
+				    AdvanceRndSeed();
+				    AdvanceRndSeed();
+				    break;
+			    case IPL_TOHIT_DAMP_CURSE:
+				    AdvanceRndSeed();
+				    break;
+			    }
+		    },
+		    [&pSufix](const PLStruct &suffix) {
+			    pSufix = &suffix;
+		    });
+
+		identifiedName = GenerateMagicItemName(_(baseItemData.iName), pPrefix, pSufix, translate);
+		if (forceNameLengthCheck ? *forceNameLengthCheck : !StringInPanel(identifiedName.c_str())) {
+			identifiedName = GenerateMagicItemName(_(baseItemData.iSName), pPrefix, pSufix, translate);
+		}
+	}
+
+	SetRndSeed(currentSeed);
+	return identifiedName;
+}
+
 } // namespace
 
 bool IsItemAvailable(int i)
@@ -2742,8 +2946,8 @@ void InitializeItem(Item &item, _item_indexes itemData)
 
 	item._itype = pAllItem.itype;
 	item._iCurs = pAllItem.iCurs;
-	CopyUtf8(item._iName, _(pAllItem.iName), sizeof(item._iName));
-	CopyUtf8(item._iIName, _(pAllItem.iName), sizeof(item._iIName));
+	CopyUtf8(item._iName, pAllItem.iName, sizeof(item._iName));
+	CopyUtf8(item._iIName, pAllItem.iName, sizeof(item._iIName));
 	item._iLoc = pAllItem.iLoc;
 	item._iClass = pAllItem.iClass;
 	item._iMinDam = pAllItem.iMinDam;
@@ -2954,8 +3158,8 @@ void GetItemAttrs(Item &item, _item_indexes itemData, int lvl)
 	auto &baseItemData = AllItemsList[static_cast<size_t>(itemData)];
 	item._itype = baseItemData.itype;
 	item._iCurs = baseItemData.iCurs;
-	CopyUtf8(item._iName, _(baseItemData.iName), sizeof(item._iName));
-	CopyUtf8(item._iIName, _(baseItemData.iName), sizeof(item._iIName));
+	CopyUtf8(item._iName, baseItemData.iName, sizeof(item._iName));
+	CopyUtf8(item._iIName, baseItemData.iName, sizeof(item._iIName));
 	item._iLoc = baseItemData.iLoc;
 	item._iClass = baseItemData.iClass;
 	item._iMinDam = baseItemData.iMinDam;
@@ -3196,7 +3400,7 @@ void RecreateEar(Item &item, uint16_t ic, int iseed, uint8_t bCursval, string_vi
 {
 	InitializeItem(item, IDI_EAR);
 
-	std::string itemName = fmt::format(fmt::runtime(_(/* TRANSLATORS: {:s} will be a Character Name */ "Ear of {:s}")), heroName);
+	std::string itemName = fmt::format(fmt::runtime("Ear of {:s}"), heroName);
 
 	CopyUtf8(item._iName, itemName, sizeof(item._iName));
 	CopyUtf8(item._iIName, heroName, sizeof(item._iIName));
@@ -3429,11 +3633,7 @@ void GetItemFrm(Item &item)
 void GetItemStr(Item &item)
 {
 	if (item._itype != ItemType::Gold) {
-		if (item._iIdentified)
-			InfoString = string_view(item._iIName);
-		else
-			InfoString = string_view(item._iName);
-
+		InfoString = item.getName();
 		InfoColor = item.getTextColor();
 	} else {
 		int nGold = item._ivalue;
@@ -4591,6 +4791,20 @@ void Item::updateRequiredStatsCacheForPlayer(const Player &player)
 	_iStatFlag = player.CanUseItem(*this);
 }
 
+StringOrView Item::getName() const
+{
+	if (isEmpty()) {
+		return string_view("");
+	} else if (!_iIdentified || _iCreateInfo == 0 || _iMagical == ITEM_QUALITY_NORMAL) {
+		return GetTranslatedItemName(*this);
+	} else if (_iMagical == ITEM_QUALITY_UNIQUE) {
+		const auto &baseItemData = AllItemsList[static_cast<size_t>(IDidx)];
+		return _(UniqueItems[_iUid].UIName);
+	} else {
+		return GetTranslatedItemNameMagical(*this, dwBuff & CF_HELLFIRE, true, std::nullopt);
+	}
+}
+
 bool CornerStoneStruct::isAvailable()
 {
 	return currlevel == 21 && !gbIsMultiplayer;
@@ -4772,6 +4986,33 @@ bool ApplyOilToItem(Item &item, Player &player)
 		return false;
 	}
 	return true;
+}
+
+void UpdateHellfireFlag(Item &item, const char *identifiedItemName)
+{
+	// DevilutionX support vanilla and hellfire items in one save file and for that introduced CF_HELLFIRE
+	// But vanilla hellfire items don't have CF_HELLFIRE set in Item::dwBuff
+	// This functions tries to set this flag for vanilla hellfire items based on the item name
+	// This ensures that Item::getName() returns the correct translated item name
+	if (item.dwBuff & CF_HELLFIRE)
+		return; // Item is already a hellfire item
+	if (item._iMagical != ITEM_QUALITY_MAGIC)
+		return; // Only magic item's name can differ between diablo and hellfire
+	if (gbIsMultiplayer)
+		return; // Vanilla hellfire multiplayer is not supported in devilutionX, so there can't be items with missing dwBuff from there
+	// We need to test both short and long name, cause StringInPanel can return a different result (other font and some bugfixes)
+	std::string diabloItemNameShort = GetTranslatedItemNameMagical(item, false, false, false);
+	if (diabloItemNameShort == identifiedItemName)
+		return; // Diablo item name is identical => not a hellfire specific item
+	std::string diabloItemNameLong = GetTranslatedItemNameMagical(item, false, false, true);
+	if (diabloItemNameLong == identifiedItemName)
+		return; // Diablo item name is identical => not a hellfire specific item
+	std::string hellfireItemNameShort = GetTranslatedItemNameMagical(item, true, false, false);
+	std::string hellfireItemNameLong = GetTranslatedItemNameMagical(item, true, false, true);
+	if (hellfireItemNameShort == identifiedItemName || hellfireItemNameLong == identifiedItemName) {
+		// This item should be a vanilla hellfire item that has CF_HELLFIRE missing, cause only then the item name matches
+		item.dwBuff |= CF_HELLFIRE;
+	}
 }
 
 } // namespace devilution

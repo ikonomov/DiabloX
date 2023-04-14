@@ -425,7 +425,7 @@ void RightMouseDown(bool isShiftHeld)
 		return;
 	if (TryIconCurs())
 		return;
-	if (pcursinvitem != -1 && UseInvItem(MyPlayerId, pcursinvitem))
+	if (pcursinvitem != -1 && UseInvItem(pcursinvitem))
 		return;
 	if (pcursstashitem != StashStruct::EmptyCell && UseStashItem(pcursstashitem))
 		return;
@@ -454,7 +454,7 @@ void ClosePanels()
 		}
 	}
 	CloseInventory();
-	chrflag = false;
+	CloseCharPanel();
 	sbookflag = false;
 	QuestLogIsOpen = false;
 }
@@ -1473,7 +1473,7 @@ void HelpKeyPressed()
 			LastMouseButtonAction = MouseActionType::None;
 		} else {
 			CloseInventory();
-			chrflag = false;
+			CloseCharPanel();
 			sbookflag = false;
 			spselflag = false;
 			if (qtextflag && leveltype == DTYPE_TOWN) {
@@ -1514,9 +1514,8 @@ void CharacterSheetKeyPressed()
 {
 	if (stextflag != TalkID::None)
 		return;
-	chrflag = !chrflag;
 	if (!IsRightPanelOpen() && CanPanelsCoverView()) {
-		if (!chrflag) { // We closed the character sheet
+		if (chrflag) { // We are closing the character sheet
 			if (MousePosition.x > 160 && MousePosition.y < GetMainPanel().position.y) {
 				SetCursorPos(MousePosition - Displacement { 160, 0 });
 			}
@@ -1526,9 +1525,7 @@ void CharacterSheetKeyPressed()
 			}
 		}
 	}
-	QuestLogIsOpen = false;
-	CloseGoldWithdraw();
-	IsStashOpen = false;
+	ToggleCharPanel();
 }
 
 void QuestLogKeyPressed()
@@ -1551,7 +1548,7 @@ void QuestLogKeyPressed()
 			}
 		}
 	}
-	chrflag = false;
+	CloseCharPanel();
 	CloseGoldWithdraw();
 	IsStashOpen = false;
 }
@@ -1560,7 +1557,7 @@ void DisplaySpellsKeyPressed()
 {
 	if (stextflag != TalkID::None)
 		return;
-	chrflag = false;
+	CloseCharPanel();
 	QuestLogIsOpen = false;
 	CloseInventory();
 	sbookflag = false;
@@ -1618,7 +1615,7 @@ void InitKeymapActions()
 		    [i] {
 			    Player &myPlayer = *MyPlayer;
 			    if (!myPlayer.SpdList[i].isEmpty() && myPlayer.SpdList[i]._itype != ItemType::Gold) {
-				    UseInvItem(MyPlayerId, INVITEM_BELT_FIRST + i);
+				    UseInvItem(INVITEM_BELT_FIRST + i);
 			    }
 		    },
 		    nullptr,
@@ -1871,7 +1868,7 @@ void InitPadmapActions()
 		    [i] {
 			    Player &myPlayer = *MyPlayer;
 			    if (!myPlayer.SpdList[i].isEmpty() && myPlayer.SpdList[i]._itype != ItemType::Gold) {
-				    UseInvItem(MyPlayerId, INVITEM_BELT_FIRST + i);
+				    UseInvItem(INVITEM_BELT_FIRST + i);
 			    }
 		    },
 		    nullptr,
@@ -2479,7 +2476,7 @@ bool TryIconCurs()
 	Player &myPlayer = *MyPlayer;
 
 	if (pcurs == CURSOR_IDENTIFY) {
-		if (pcursinvitem != -1)
+		if (pcursinvitem != -1 && !IsInspectingPlayer())
 			CheckIdentify(myPlayer, pcursinvitem);
 		else if (pcursstashitem != StashStruct::EmptyCell) {
 			Item &item = Stash.stashList[pcursstashitem];
@@ -2490,7 +2487,7 @@ bool TryIconCurs()
 	}
 
 	if (pcurs == CURSOR_REPAIR) {
-		if (pcursinvitem != -1)
+		if (pcursinvitem != -1 && !IsInspectingPlayer())
 			DoRepair(myPlayer, pcursinvitem);
 		else if (pcursstashitem != StashStruct::EmptyCell) {
 			Item &item = Stash.stashList[pcursstashitem];
@@ -2501,7 +2498,7 @@ bool TryIconCurs()
 	}
 
 	if (pcurs == CURSOR_RECHARGE) {
-		if (pcursinvitem != -1)
+		if (pcursinvitem != -1 && !IsInspectingPlayer())
 			DoRecharge(myPlayer, pcursinvitem);
 		else if (pcursstashitem != StashStruct::EmptyCell) {
 			Item &item = Stash.stashList[pcursstashitem];
@@ -2513,7 +2510,7 @@ bool TryIconCurs()
 
 	if (pcurs == CURSOR_OIL) {
 		bool changeCursor = true;
-		if (pcursinvitem != -1)
+		if (pcursinvitem != -1 && !IsInspectingPlayer())
 			changeCursor = DoOil(myPlayer, pcursinvitem);
 		else if (pcursstashitem != StashStruct::EmptyCell) {
 			Item &item = Stash.stashList[pcursstashitem];

@@ -407,6 +407,40 @@ std::string TextCmdArenaPot(const string_view parameter)
 	return ret;
 }
 
+std::string TextCmdInspect(const string_view parameter)
+{
+	std::string ret;
+	if (!gbIsMultiplayer) {
+		StrAppend(ret, _("Inspecting only supported in multiplayer."));
+		return ret;
+	}
+
+	if (parameter.empty()) {
+		StrAppend(ret, _("Stopped inspecting players."));
+		InspectPlayer = MyPlayer;
+		return ret;
+	}
+
+	std::string param { parameter.data() };
+	std::transform(param.begin(), param.end(), param.begin(), [](unsigned char c) { return std::tolower(c); });
+	for (auto &player : Players) {
+		std::string playerName { player._pName };
+		std::transform(playerName.begin(), playerName.end(), playerName.begin(), [](unsigned char c) { return std::tolower(c); });
+		if (playerName.find(param) != std::string::npos) {
+			InspectPlayer = &player;
+			StrAppend(ret, _("Inspecting player: "));
+			StrAppend(ret, player._pName);
+			OpenCharPanel();
+			if (!sbookflag)
+				invflag = true;
+			RedrawEverything();
+			return ret;
+		}
+	}
+	StrAppend(ret, _("No players found with such a name"));
+	return ret;
+}
+
 std::vector<TextCmdItem> TextCmdList = {
 	{ N_("/help"), N_("Prints help overview or help for a specific command."), N_("({command})"), &TextCmdHelp },
 };
@@ -596,6 +630,32 @@ void FocusOnCharInfo()
 	SetCursorPos(ChrBtnsRect[stat].Center());
 }
 
+void OpenCharPanel()
+{
+	QuestLogIsOpen = false;
+	CloseGoldWithdraw();
+	IsStashOpen = false;
+	chrflag = true;
+}
+
+void CloseCharPanel()
+{
+	chrflag = false;
+	if (IsInspectingPlayer()) {
+		InspectPlayer = MyPlayer;
+		RedrawEverything();
+		InitDiabloMsg(_("Stopped inspecting players."));
+	}
+}
+
+void ToggleCharPanel()
+{
+	if (chrflag)
+		CloseCharPanel();
+	else
+		OpenCharPanel();
+}
+
 void AddPanelString(string_view str)
 {
 	if (InfoString.empty())
@@ -740,7 +800,7 @@ void InitControlPan()
 	InfoString = {};
 	RedrawComponent(PanelDrawComponent::Health);
 	RedrawComponent(PanelDrawComponent::Mana);
-	chrflag = false;
+	CloseCharPanel();
 	spselflag = false;
 	sbooktab = 0;
 	sbookflag = false;
@@ -943,13 +1003,10 @@ void CheckBtnUp()
 
 		switch (i) {
 		case PanelButtonCharinfo:
-			QuestLogIsOpen = false;
-			CloseGoldWithdraw();
-			IsStashOpen = false;
-			chrflag = !chrflag;
+			ToggleCharPanel();
 			break;
 		case PanelButtonQlog:
-			chrflag = false;
+			CloseCharPanel();
 			CloseGoldWithdraw();
 			IsStashOpen = false;
 			if (!QuestLogIsOpen)
@@ -1086,10 +1143,7 @@ void ReleaseLvlBtn()
 {
 	const Point mainPanelPosition = GetMainPanel().position;
 	if (MousePosition.x >= 40 + mainPanelPosition.x && MousePosition.x <= 81 + mainPanelPosition.x && MousePosition.y >= -39 + mainPanelPosition.y && MousePosition.y <= -17 + mainPanelPosition.y) {
-		QuestLogIsOpen = false;
-		CloseGoldWithdraw();
-		IsStashOpen = false;
-		chrflag = true;
+		OpenCharPanel();
 	}
 	lvlbtndown = false;
 }

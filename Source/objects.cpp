@@ -2582,6 +2582,8 @@ void OperateShrineCostOfWisdom(Player &player, SpellID spellId, diablo_message m
 	int magicLoss = player.GetBaseAttributeValue(CharacterAttribute::Magic) / 50;
 	if (magicLoss > 0)
 		ModifyPlrMag(player, -magicLoss);
+	else if (player.GetBaseAttributeValue(CharacterAttribute::Magic) > 0)
+		ModifyPlrMag(player, -1);
 
 	RedrawEverything();
 

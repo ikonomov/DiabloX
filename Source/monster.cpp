@@ -173,7 +173,10 @@ void InitMonster(Monster &monster, Direction rd, size_t typeIndex, Point positio
 
 	if (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE) {
 		monster.maxHitPoints = 3 * monster.maxHitPoints;
-		monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
+		if (gbIsHellfire)
+			monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
+		else
+			monster.maxHitPoints += 100 << 6;
 		monster.hitPoints = monster.maxHitPoints;
 		monster.toHit += NightmareToHitBonus;
 		monster.minDamage = 2 * (monster.minDamage + 2);
@@ -183,7 +186,10 @@ void InitMonster(Monster &monster, Direction rd, size_t typeIndex, Point positio
 		monster.armorClass += NightmareAcBonus;
 	} else if (sgGameInitInfo.nDifficulty == DIFF_HELL) {
 		monster.maxHitPoints = 4 * monster.maxHitPoints;
-		monster.maxHitPoints += (gbIsMultiplayer ? 300 : 150) << 6;
+		if (gbIsHellfire)
+			monster.maxHitPoints += (gbIsMultiplayer ? 200 : 100) << 6;
+		else
+			monster.maxHitPoints += 200 << 6;
 		monster.hitPoints = monster.maxHitPoints;
 		monster.toHit += HellToHitBonus;
 		monster.minDamage = 4 * monster.minDamage + 6;
@@ -3145,7 +3151,10 @@ void PrepareUniqueMonst(Monster &monster, UniqueMonsterType monsterType, size_t 
 
 	if (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE) {
 		monster.maxHitPoints = 3 * monster.maxHitPoints;
-		monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
+		if (gbIsHellfire)
+			monster.maxHitPoints += (gbIsMultiplayer ? 100 : 50) << 6;
+		else
+			monster.maxHitPoints += 100 << 6;
 		monster.hitPoints = monster.maxHitPoints;
 		monster.minDamage = 2 * (monster.minDamage + 2);
 		monster.maxDamage = 2 * (monster.maxDamage + 2);
@@ -3153,7 +3162,10 @@ void PrepareUniqueMonst(Monster &monster, UniqueMonsterType monsterType, size_t 
 		monster.maxDamageSpecial = 2 * (monster.maxDamageSpecial + 2);
 	} else if (sgGameInitInfo.nDifficulty == DIFF_HELL) {
 		monster.maxHitPoints = 4 * monster.maxHitPoints;
-		monster.maxHitPoints += (gbIsMultiplayer ? 300 : 150) << 6;
+		if (gbIsHellfire)
+			monster.maxHitPoints += (gbIsMultiplayer ? 200 : 100) << 6;
+		else
+			monster.maxHitPoints += 200 << 6;
 		monster.hitPoints = monster.maxHitPoints;
 		monster.minDamage = 4 * monster.minDamage + 6;
 		monster.maxDamage = 4 * monster.maxDamage + 6;
@@ -4219,10 +4231,12 @@ void PrintMonstHistory(int mt)
 		if (maxHP < 1)
 			maxHP = 1;
 
-		int hpBonusNightmare = 1;
-		int hpBonusHell = 3;
-		hpBonusNightmare = (!gbIsMultiplayer ? 50 : 100);
-		hpBonusHell = (!gbIsMultiplayer ? 150 : 300);
+		int hpBonusNightmare = 100;
+		int hpBonusHell = 200;
+		if (gbIsHellfire) {
+			hpBonusNightmare = (!gbIsMultiplayer ? 50 : 100);
+			hpBonusHell = (!gbIsMultiplayer ? 100 : 200);
+		}
 		if (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE) {
 			minHP = 3 * minHP + hpBonusNightmare;
 			maxHP = 3 * maxHP + hpBonusNightmare;

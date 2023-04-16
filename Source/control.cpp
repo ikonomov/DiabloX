@@ -277,9 +277,12 @@ int CapStatPointsToAdd(int remainingStatPoints, const Player &player, CharacterA
 
 int DrawDurIcon4Item(const Surface &out, Item &pItem, int x, int c)
 {
+	const int durabilityThresholdGold = 5;
+	const int durabilityThresholdRed = 2;
+
 	if (pItem.isEmpty())
 		return x;
-	if (pItem._iDurability > 5)
+	if (pItem._iDurability > durabilityThresholdGold)
 		return x;
 	if (c == 0) {
 		switch (pItem._itype) {
@@ -304,10 +307,27 @@ int DrawDurIcon4Item(const Surface &out, Item &pItem, int x, int c)
 			break;
 		}
 	}
-	if (pItem._iDurability > 2)
-		c += 8;
-	ClxDraw(out, { x, -17 + GetMainPanel().position.y }, (*pDurIcons)[c]);
-	return x - 32 - 8;
+
+	// Calculate how much of the icon should be gold and red
+	int height = (*pDurIcons)[c].height(); // Height of durability icon CEL
+	int partition = 0;
+	if (pItem._iDurability > durabilityThresholdRed) {
+		int current = pItem._iDurability - durabilityThresholdRed;
+		partition = (height * current) / (durabilityThresholdGold - durabilityThresholdRed);
+	}
+
+	// Draw icon
+	int y = -17 + GetMainPanel().position.y;
+	if (partition > 0) {
+		const Surface stenciledBuffer = out.subregionY(y - partition, partition);
+		ClxDraw(stenciledBuffer, { x, partition }, (*pDurIcons)[c + 8]); // Gold icon
+	}
+	if (partition != height) {
+		const Surface stenciledBuffer = out.subregionY(y - height, height - partition);
+		ClxDraw(stenciledBuffer, { x, height }, (*pDurIcons)[c]); // Red icon
+	}
+
+	return x - (*pDurIcons)[c].height() - 8; // Add in spacing for the next durability icon
 }
 
 struct TextCmdItem {
@@ -1339,15 +1359,23 @@ void DrawTalkPan(const Surface &out)
 		UiFlags color = player.friendlyMode ? UiFlags::ColorWhitegold : UiFlags::ColorRed;
 		const Point talkPanPosition = mainPanelPosition + Displacement { 172, 84 + 18 * talkBtn };
 		if (WhisperList[i]) {
+			// the normal (unpressed) voice button is pre-rendered on the panel, only need to draw over it when the button is held
 			if (TalkButtonsDown[talkBtn]) {
-				ClxDraw(out, talkPanPosition, (*talkButtons)[talkBtn != 0 ? 3 : 2]);
+				unsigned spriteIndex = talkBtn == 0 ? 2 : 3; // the first button sprite includes a tip from the devils wing so is different to the rest.
+				ClxDraw(out, talkPanPosition, (*talkButtons)[spriteIndex]);
+
+				// Draw the translated string over the top of the default (english) button. This graphic is inset to avoid overlapping the wingtip, letting
+				// the first button be treated the same as the other two further down the panel.
 				RenderClxSprite(out, (*TalkButton)[2], talkPanPosition + Displacement { 4, -15 });
 			}
 		} else {
-			int nCel = talkBtn != 0 ? 1 : 0;
+			unsigned spriteIndex = talkBtn == 0 ? 0 : 1; // the first button sprite includes a tip from the devils wing so is different to the rest.
 			if (TalkButtonsDown[talkBtn])
-				nCel += 4;
-			ClxDraw(out, talkPanPosition, (*talkButtons)[nCel]);
+				spriteIndex += 4; // held button sprites are at index 4 and 5 (with and without wingtip respectively)
+			ClxDraw(out, talkPanPosition, (*talkButtons)[spriteIndex]);
+
+			// Draw the translated string over the top of the default (english) button. This graphic is inset to avoid overlapping the wingtip, letting
+			// the first button be treated the same as the other two further down the panel.
 			RenderClxSprite(out, (*TalkButton)[TalkButtonsDown[talkBtn] ? 1 : 0], talkPanPosition + Displacement { 4, -15 });
 		}
 		if (player.plractive) {

@@ -152,7 +152,6 @@ Note: You must be logged into GitHub to download the attachments.
    * Hidden increases durability of items to a maximum of 250 [255].
    * Enchanted reduces slvl 15 spell by -1 [-2].
 #### Monsters:
-   * Bonus points to health have been increased to 100 [1] in Nightmare and 300 [3] in Hell difficulty for multi player, and 50 in Nightmare and 150 in Hell for single player.
    * Number per dlvl has been increased by 25% with a maximum of 250 [200].
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.

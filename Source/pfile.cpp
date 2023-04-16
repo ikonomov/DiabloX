@@ -40,8 +40,8 @@ namespace devilution {
 
 #define PASSWORD_SPAWN_SINGLE "adslhfb1"
 #define PASSWORD_SPAWN_MULTI "lshbkfg1"
-#define PASSWORD_SINGLE "vy8jd8zb"
-#define PASSWORD_MULTI "7q4z0l4x"
+#define PASSWORD_SINGLE "jf6d1jwn"
+#define PASSWORD_MULTI "h6cfwf3r"
 
 bool gbValidSaveFile;
 

@@ -14,7 +14,7 @@
 namespace devilution {
 
 /** Specifies the experience point limit of each level. */
-const uint32_t ExpLvlsTbl[MaxCharacterLevel + 1] = {
+const uint32_t ExpLvlsTbl[MaxCharacterLevel] = {
 	0,
 	4000,
 	9240,
@@ -64,8 +64,7 @@ const uint32_t ExpLvlsTbl[MaxCharacterLevel + 1] = {
 	1467651234,
 	1785360444,
 	2165817224,
-	2621414218,
-	3166991618
+	2621414218
 };
 
 const _sfx_id herosounds[enum_size<HeroClass>::value][enum_size<HeroSpeech>::value] = {

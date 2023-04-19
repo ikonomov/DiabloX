@@ -121,20 +121,6 @@ void PrintDebugMonster(const Monster &monster)
 	EventPlrMsg(StrCat("Active List = ", bActive ? 1 : 0, ", Squelch = ", monster.activeForTicks), UiFlags::ColorWhite);
 }
 
-void ProcessMessages()
-{
-	SDL_Event event;
-	uint16_t modState;
-	while (FetchMessage(&event, &modState)) {
-		if (event.type == SDL_QUIT) {
-			gbRunGameResult = false;
-			gbRunGame = false;
-			break;
-		}
-		HandleMessage(event, modState);
-	}
-}
-
 struct DebugCmdItem {
 	const string_view text;
 	const string_view description;
@@ -1175,6 +1161,7 @@ bool IsDebugGridInMegatiles()
 bool GetDebugGridText(Point dungeonCoords, char *debugGridTextBuffer)
 {
 	int info = 0;
+	int blankValue = 0;
 	Point megaCoords = dungeonCoords.worldToMega();
 	switch (SelectedDebugGridTextItem) {
 	case DebugGridTextItem::coords:
@@ -1201,9 +1188,11 @@ bool GetDebugGridText(Point dungeonCoords, char *debugGridTextBuffer)
 		break;
 	case DebugGridTextItem::dLight:
 		info = dLight[dungeonCoords.x][dungeonCoords.y];
+		blankValue = LightsMax;
 		break;
 	case DebugGridTextItem::dPreLight:
 		info = dPreLight[dungeonCoords.x][dungeonCoords.y];
+		blankValue = LightsMax;
 		break;
 	case DebugGridTextItem::dFlags:
 		info = static_cast<int>(dFlags[dungeonCoords.x][dungeonCoords.y]);
@@ -1250,7 +1239,7 @@ bool GetDebugGridText(Point dungeonCoords, char *debugGridTextBuffer)
 	case DebugGridTextItem::None:
 		return false;
 	}
-	if (info == 0)
+	if (info == blankValue)
 		return false;
 	*BufCopy(debugGridTextBuffer, info) = '\0';
 	return true;

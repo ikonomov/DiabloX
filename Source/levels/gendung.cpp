@@ -36,7 +36,7 @@ dungeon_type setlvltype;
 Point ViewPosition;
 uint_fast8_t MicroTileLen;
 int8_t TransVal;
-bool TransList[256];
+std::array<bool, 256> TransList;
 uint16_t dPiece[MAXDUNX][MAXDUNY];
 MICROS DPieceMicros[MAXTILES];
 int8_t dTransVal[MAXDUNX][MAXDUNY];
@@ -338,7 +338,12 @@ void InitGlobals()
 	memset(dItem, 0, sizeof(dItem));
 	memset(dObject, 0, sizeof(dObject));
 	memset(dSpecial, 0, sizeof(dSpecial));
-	memset(dLight, DisableLighting || leveltype == DTYPE_TOWN ? 0 : 15, sizeof(dLight));
+	uint8_t defaultLight = leveltype == DTYPE_TOWN ? 0 : 15;
+#ifdef _DEBUG
+	if (DisableLighting)
+		defaultLight = 0;
+#endif
+	memset(dLight, defaultLight, sizeof(dLight));
 
 	DRLG_InitTrans();
 
@@ -496,7 +501,7 @@ void SetDungeonMicros()
 void DRLG_InitTrans()
 {
 	memset(dTransVal, 0, sizeof(dTransVal));
-	memset(TransList, 0, sizeof(TransList));
+	TransList = {}; // TODO duplicate reset in InitLighting()
 	TransVal = 1;
 }
 

@@ -236,8 +236,7 @@ struct Player {
 	Item SpdList[MaxBeltItems];
 	Item HoldItem;
 
-	int _plid;
-	int _pvid;
+	int lightId;
 
 	int _pNumInv;
 	int _pStrength;

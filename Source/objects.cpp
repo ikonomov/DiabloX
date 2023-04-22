@@ -1348,7 +1348,7 @@ void AddTrap(Object &trap)
 void AddObjectLight(Object &object, int r)
 {
 	if (ApplyObjectLighting) {
-		DoLighting(object.position, r, -1);
+		DoLighting(object.position, r, {});
 		object._oVar1 = -1;
 	} else {
 		object._oVar1 = 0;
@@ -1532,7 +1532,7 @@ void AddMushPatch()
 bool IsLightVisible(Object &light, int lightRadius)
 {
 #ifdef _DEBUG
-	if (!DisableLighting)
+	if (DisableLighting)
 		return false;
 #endif
 
@@ -4240,9 +4240,8 @@ void ProcessObjects()
 		Object &object = Objects[ActiveObjects[i]];
 		switch (object._otype) {
 		case OBJ_L1LIGHT:
-			UpdateObjectLight(object, 10);
-			break;
 		case OBJ_SKFIRE:
+		case OBJ_CANDLE1:
 		case OBJ_CANDLE2:
 		case OBJ_BOOKCANDLE:
 			UpdateObjectLight(object, 5);
@@ -4297,7 +4296,7 @@ void ProcessObjects()
 			break;
 		case OBJ_BCROSS:
 		case OBJ_TBCROSS:
-			UpdateObjectLight(object, 10);
+			UpdateObjectLight(object, 5);
 			UpdateBurningCrossDamage(object);
 			break;
 		default:

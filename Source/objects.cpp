@@ -49,7 +49,6 @@ Object Objects[MAXOBJECTS];
 int AvailableObjects[MAXOBJECTS];
 int ActiveObjects[MAXOBJECTS];
 int ActiveObjectCount;
-bool ApplyObjectLighting;
 bool LoadingMapObjects;
 
 namespace {
@@ -651,7 +650,6 @@ void AddChestTraps()
 void LoadMapObjects(const char *path, Point start, WorldTileRectangle mapRange = {}, int leveridx = 0)
 {
 	LoadingMapObjects = true;
-	ApplyObjectLighting = true;
 
 	auto dunData = LoadFileInMem<uint16_t>(path);
 
@@ -678,7 +676,6 @@ void LoadMapObjects(const char *path, Point start, WorldTileRectangle mapRange =
 		}
 	}
 
-	ApplyObjectLighting = false;
 	LoadingMapObjects = false;
 }
 
@@ -1345,14 +1342,39 @@ void AddTrap(Object &trap)
 	trap._oVar4 = 0;
 }
 
-void AddObjectLight(Object &object, int r)
+void AddObjectLight(Object &object)
 {
-	if (ApplyObjectLighting) {
-		DoLighting(object.position, r, {});
-		object._oVar1 = -1;
-	} else {
-		object._oVar1 = 0;
+	int radius;
+	switch (object._otype) {
+	case OBJ_STORYCANDLE:
+	case OBJ_L5CANDLE:
+		radius = 3;
+		break;
+	case OBJ_L1LIGHT:
+	case OBJ_SKFIRE:
+	case OBJ_CANDLE1:
+	case OBJ_CANDLE2:
+	case OBJ_BOOKCANDLE:
+	case OBJ_BCROSS:
+	case OBJ_TBCROSS:
+		radius = 5;
+		break;
+	case OBJ_TORCHL:
+	case OBJ_TORCHR:
+	case OBJ_TORCHL2:
+	case OBJ_TORCHR2:
+		radius = 8;
+		break;
+	default:
+		return;
 	}
+
+	DoLighting(object.position, radius, {});
+	if (LoadingMapObjects) {
+		DoUnLight(object.position, radius);
+		UpdateLighting = true;
+	}
+	object._oVar1 = -1;
 }
 
 void AddBarrel(Object &barrel)
@@ -1595,7 +1617,9 @@ void UpdateCircle(Object &circle)
 	if (circle.position == Point { 35, 36 } && circle._oVar5 == 3) {
 		circle._oVar6 = 4;
 		if (Quests[Q_BETRAYER]._qvar1 <= 4) {
+			LoadingMapObjects = true;
 			ObjChangeMap(circle._oVar1, circle._oVar2, circle._oVar3, circle._oVar4);
+			LoadingMapObjects = false;
 			Quests[Q_BETRAYER]._qvar1 = 4;
 			NetSendCmdQuest(true, Quests[Q_BETRAYER]);
 		}
@@ -1955,10 +1979,11 @@ void OperateBook(Player &player, Object &book, bool sendmsg)
 	}
 
 	if (setlvlnum == SL_BONECHAMB) {
-		player._pMemSpells |= GetSpellBitmask(SpellID::Guardian);
-		if (player._pSplLvl[static_cast<int8_t>(SpellID::Guardian)] < MaxSpellLevel)
-			player._pSplLvl[static_cast<int8_t>(SpellID::Guardian)]++;
 		if (sendmsg) {
+			uint8_t newSpellLevel = player._pSplLvl[static_cast<int8_t>(SpellID::Guardian)] + 1;
+			if (newSpellLevel <= MaxSpellLevel)
+				NetSendCmdParam2(true, CMD_CHANGE_SPELL_LEVEL, static_cast<uint16_t>(SpellID::Guardian), newSpellLevel);
+
 			Quests[Q_SCHAMB]._qactive = QUEST_DONE;
 			NetSendCmdQuest(true, Quests[Q_SCHAMB]);
 		}
@@ -2524,34 +2549,29 @@ void OperateShrineEnchanted(Player &player)
 
 	int cnt = 0;
 	uint64_t spell = 1;
-	int maxSpells = gbIsHellfire ? MAX_SPELLS : 37;
+	uint8_t maxSpells = gbIsHellfire ? MAX_SPELLS : 37;
 	uint64_t spells = player._pMemSpells;
-	for (int j = 0; j < maxSpells; j++) {
+	for (uint16_t j = 0; j < maxSpells; j++) {
 		if ((spell & spells) != 0)
 			cnt++;
 		spell *= 2;
 	}
 	if (cnt > 1) {
+		int spellToReduce;
+		do {
+			spellToReduce = GenerateRnd(maxSpells) + 1;
+		} while ((player._pMemSpells & GetSpellBitmask(static_cast<SpellID>(spellToReduce))) == 0);
+
 		spell = 1;
-		for (int j = static_cast<int8_t>(SpellID::Firebolt); j < maxSpells; j++) { // BUGFIX: < MAX_SPELLS, there is no spell with MAX_SPELLS index (fixed)
-			if ((player._pMemSpells & spell) != 0) {
-				if (player._pSplLvl[j] < MaxSpellLevel)
-					player._pSplLvl[j]++;
+		for (uint8_t j = static_cast<uint8_t>(SpellID::Firebolt); j < maxSpells; j++) { // BUGFIX: < MAX_SPELLS, there is no spell with MAX_SPELLS index (fixed)
+			if ((player._pMemSpells & spell) != 0 && player._pSplLvl[j] < MaxSpellLevel && j != spellToReduce) {
+				NetSendCmdParam2(true, CMD_CHANGE_SPELL_LEVEL, j, static_cast<uint8_t>(player._pSplLvl[j] + 1));
 			}
 			spell *= 2;
 		}
-		int r;
-		do {
-			r = GenerateRnd(maxSpells);
-		} while ((player._pMemSpells & GetSpellBitmask(static_cast<SpellID>(r + 1))) == 0);
-		if (player._pSplLvl[r + 1] >= 2) {
-			if (player._pSplLvl[r + 1] == MaxSpellLevel)
-				player._pSplLvl[r + 1] -= 1;
-			else
-				player._pSplLvl[r + 1] -= 2;
-		} else {
-			player._pSplLvl[r + 1] = 0;
-		}
+
+		if (player._pSplLvl[spellToReduce] > 0)
+			NetSendCmdParam2(true, CMD_CHANGE_SPELL_LEVEL, spellToReduce, player._pSplLvl[spellToReduce] - 1);
 	}
 
 	InitDiabloMsg(EMSG_SHRINE_ENCHANTED);
@@ -2581,10 +2601,11 @@ void OperateShrineCostOfWisdom(Player &player, SpellID spellId, diablo_message m
 
 	player._pMemSpells |= GetSpellBitmask(spellId);
 
-	if (player._pSplLvl[static_cast<int8_t>(spellId)] < MaxSpellLevel)
-		player._pSplLvl[static_cast<int8_t>(spellId)]++;
-	if (player._pSplLvl[static_cast<int8_t>(spellId)] < MaxSpellLevel)
-		player._pSplLvl[static_cast<int8_t>(spellId)]++;
+	uint8_t curSpellLevel = player._pSplLvl[static_cast<int8_t>(spellId)];
+	if (curSpellLevel < MaxSpellLevel) {
+		uint8_t newSpellLevel = std::min(static_cast<uint8_t>(curSpellLevel + 2), MaxSpellLevel);
+		NetSendCmdParam2(true, CMD_CHANGE_SPELL_LEVEL, static_cast<uint16_t>(spellId), newSpellLevel);
+	}
 
 	int magicLoss = player.GetBaseAttributeValue(CharacterAttribute::Magic) / 50;
 	if (magicLoss > 0)
@@ -3840,7 +3861,6 @@ void InitObjects()
 	if (currlevel == 16) {
 		AddDiabObjs();
 	} else {
-		ApplyObjectLighting = true;
 		AdvanceRndSeed();
 		if (currlevel == 9 && !UseMultiplayerQuests())
 			AddSlainHero();
@@ -3984,7 +4004,6 @@ void InitObjects()
 			AddObjTraps();
 		if (IsAnyOf(leveltype, DTYPE_CATACOMBS, DTYPE_CAVES, DTYPE_HELL, DTYPE_NEST))
 			AddChestTraps();
-		ApplyObjectLighting = false;
 	}
 }
 
@@ -3993,7 +4012,6 @@ void SetMapObjects(const uint16_t *dunData, int startx, int starty)
 	uint16_t filesWidths[65] = {};
 
 	ClrAllObjects();
-	ApplyObjectLighting = true;
 
 	int width = SDL_SwapLE16(dunData[0]);
 	int height = SDL_SwapLE16(dunData[1]);
@@ -4026,8 +4044,6 @@ void SetMapObjects(const uint16_t *dunData, int startx, int starty)
 			}
 		}
 	}
-
-	ApplyObjectLighting = false;
 }
 
 Object *AddObject(_object_id objType, Point objPos)
@@ -4042,23 +4058,6 @@ Object *AddObject(_object_id objType, Point objPos)
 	Object &object = Objects[oi];
 	SetupObject(object, objPos, objType);
 	switch (object._otype) {
-	case OBJ_L1LIGHT:
-	case OBJ_SKFIRE:
-	case OBJ_CANDLE1:
-	case OBJ_CANDLE2:
-	case OBJ_BOOKCANDLE:
-		AddObjectLight(object, 5);
-		break;
-	case OBJ_STORYCANDLE:
-	case OBJ_L5CANDLE:
-		AddObjectLight(object, 3);
-		break;
-	case OBJ_TORCHL:
-	case OBJ_TORCHR:
-	case OBJ_TORCHL2:
-	case OBJ_TORCHR2:
-		AddObjectLight(object, 8);
-		break;
 	case OBJ_L1LDOOR:
 	case OBJ_L1RDOOR:
 	case OBJ_L2LDOOR:
@@ -4155,7 +4154,6 @@ Object *AddObject(_object_id objType, Point objPos)
 	case OBJ_BCROSS:
 	case OBJ_TBCROSS:
 		object._oRndSeed = AdvanceRndSeed();
-		AddObjectLight(object, 5);
 		break;
 	case OBJ_PEDESTAL:
 		AddPedestalOfBlood(object);
@@ -4170,6 +4168,9 @@ Object *AddObject(_object_id objType, Point objPos)
 	default:
 		break;
 	}
+
+	AddObjectLight(object);
+
 	ActiveObjectCount++;
 	return &object;
 }

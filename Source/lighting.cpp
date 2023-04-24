@@ -109,19 +109,6 @@ uint8_t GetLight(Point position)
 	return dLight[position.x][position.y];
 }
 
-void DoUnLight(Point position, uint8_t radius)
-{
-	radius++;
-	radius++; // If lights moved at a diagonal it can result in some extra tiles being lit
-
-	auto searchArea = PointsInRectangle(WorldTileRectangle { position, radius });
-
-	for (WorldTilePosition targetPosition : searchArea) {
-		if (InDungeonBounds(targetPosition))
-			dLight[targetPosition.x][targetPosition.y] = dPreLight[targetPosition.x][targetPosition.y];
-	}
-}
-
 bool CrawlFlipsX(Displacement mirrored, tl::function_ref<bool(Displacement)> function)
 {
 	for (const Displacement displacement : { mirrored.flipX(), mirrored }) {
@@ -203,6 +190,19 @@ bool DoCrawl(unsigned minRadius, unsigned maxRadius, tl::function_ref<bool(Displ
 	return true;
 }
 
+void DoUnLight(Point position, uint8_t radius)
+{
+	radius++;
+	radius++; // If lights moved at a diagonal it can result in some extra tiles being lit
+
+	auto searchArea = PointsInRectangle(WorldTileRectangle { position, radius });
+
+	for (WorldTilePosition targetPosition : searchArea) {
+		if (InDungeonBounds(targetPosition))
+			dLight[targetPosition.x][targetPosition.y] = dPreLight[targetPosition.x][targetPosition.y];
+	}
+}
+
 void DoLighting(Point position, uint8_t radius, DisplacementOf<int8_t> offset)
 {
 	assert(radius >= 0 && radius <= NumLightRadiuses);
@@ -241,8 +241,9 @@ void DoLighting(Point position, uint8_t radius, DisplacementOf<int8_t> offset)
 
 	// Allow for dim lights in crypt and nest
 	if (IsAnyOf(leveltype, DTYPE_NEST, DTYPE_CRYPT)) {
-		SetLight(position, LightFalloffs[radius][0]);
-	} else if (GetLight(position) > LightFalloffs[radius][0]) {
+		if (GetLight(position) > LightFalloffs[radius][0])
+			SetLight(position, LightFalloffs[radius][0]);
+	} else {
 		SetLight(position, 0);
 	}
 
@@ -369,29 +370,26 @@ void MakeLightTable()
 	LoadFileInMem("gendata\\pause.trn", PauseTable);
 
 	// Generate light falloffs ranges
-	if (IsAnyOf(leveltype, DTYPE_NEST, DTYPE_CRYPT)) {
-		for (size_t j = 0; j < NumLightRadiuses; j++) {
-			double fa = (sqrt((double)(16 - j))) / 128;
-			fa *= fa;
-			for (int i = 0; i < 128; i++) {
-				uint8_t color = 15 - static_cast<uint8_t>(fa * (double)((128 - i) * (128 - i)));
-				if (color > 15)
-					color = 0;
-				color -= static_cast<uint8_t>((NumLightRadiuses - j - 1) / 2);
-				if (color > 15)
-					color = 0;
-				LightFalloffs[NumLightRadiuses - j - 1][i] = color;
-			}
-		}
-	} else {
-		for (size_t j = 0; j < NumLightRadiuses; j++) {
-			for (size_t i = 0; i < 128; i++) {
-				if (i > (j + 1) * 8) {
-					LightFalloffs[j][i] = 15;
+	const float maxDarkness = 15;
+	const float maxBrightness = 0;
+	for (size_t radius = 0; radius < NumLightRadiuses; radius++) {
+		size_t maxDistance = (radius + 1) * 8;
+		for (size_t distance = 0; distance < 128; distance++) {
+			if (distance > maxDistance) {
+				LightFalloffs[radius][distance] = 15;
+			} else {
+				const float factor = static_cast<float>(distance) / maxDistance;
+				float scaled;
+				if (IsAnyOf(leveltype, DTYPE_NEST, DTYPE_CRYPT)) {
+					// quardratic falloff with over exposure
+					const float brightness = radius * 1.25;
+					scaled = factor * factor * brightness + (maxDarkness - brightness);
+					scaled = std::max(maxBrightness, scaled);
 				} else {
-					double fs = (double)15 * i / ((double)8 * (j + 1));
-					LightFalloffs[j][i] = static_cast<uint8_t>(fs + 0.5);
+					// Leaner falloff
+					scaled = factor * maxDarkness;
 				}
+				LightFalloffs[radius][distance] = static_cast<uint8_t>(scaled + 0.5F); // round up
 			}
 		}
 	}
@@ -578,6 +576,8 @@ void ProcessLightList()
 			i--;
 			continue;
 		}
+		if (TileHasAny(dPiece[light.position.tile.x][light.position.tile.y], TileProperties::Solid))
+			continue; // Monster hidden in a wall, don't spoil the surprise
 		DoLighting(light.position.tile, light.radius, light.position.offset);
 	}
 

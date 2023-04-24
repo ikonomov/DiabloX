@@ -33,7 +33,7 @@ constexpr int InventoryGridCells = 40;
 constexpr int MaxBeltItems = 8;
 constexpr int MaxResistance = 75;
 constexpr int MaxCharacterLevel = 50;
-constexpr int MaxSpellLevel = 15;
+constexpr uint8_t MaxSpellLevel = 15;
 constexpr int PlayerNameLength = 32;
 
 constexpr size_t NumHotkeys = 12;
@@ -339,7 +339,7 @@ struct Player {
 	SpellID _pRSpell;
 	SpellType _pRSplType;
 	SpellID _pSBkSpell;
-	int8_t _pSplLvl[64];
+	uint8_t _pSplLvl[64];
 	/** @brief Bitmask of staff spell */
 	uint64_t _pISpells;
 	/** @brief Bitmask of learned spells */
@@ -606,7 +606,7 @@ struct Player {
 			return 0;
 		}
 
-		return std::max<int8_t>(_pISplLvlAdd + _pSplLvl[static_cast<std::size_t>(spell)], 0);
+		return std::max<int>(_pISplLvlAdd + _pSplLvl[static_cast<std::size_t>(spell)], 0);
 	}
 
 	/**

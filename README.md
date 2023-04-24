@@ -150,7 +150,6 @@ Note: You must be logged into GitHub to download the attachments.
    * Fascinating, Ornate and Sacred reduce magic instead of mana by 2% (-1 minimum) [10%].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
-   * Enchanted reduces slvl 15 spell by -1 [-2].
 #### Monsters:
    * Number per dlvl has been increased by 25% with a maximum of 250 [200].
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.

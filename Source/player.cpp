@@ -27,6 +27,7 @@
 #include "help.h"
 #include "init.h"
 #include "inv_iterators.hpp"
+#include "levels/trigs.h"
 #include "lighting.h"
 #include "loadsave.h"
 #include "minitext.h"
@@ -55,15 +56,6 @@ std::vector<Player> Players;
 Player *InspectPlayer;
 bool MyPlayerIsDead;
 
-/** Specifies the X-coordinate delta from the player start location in Tristram. */
-const int8_t plrxoff[9] = { 0, 2, 0, 2, 1, 0, 1, 2, 1 };
-/** Specifies the Y-coordinate delta from the player start location in Tristram. */
-const int8_t plryoff[9] = { 0, 2, 2, 0, 1, 1, 0, 1, 2 };
-/** Specifies the X-coordinate delta from a player, used for instance when casting resurrect. */
-const int8_t plrxoff2[9] = { 0, 1, 0, 1, 2, 0, 1, 2, 2 };
-/** Specifies the Y-coordinate delta from a player, used for instance when casting resurrect. */
-const int8_t plryoff2[9] = { 0, 0, 1, 1, 0, 2, 2, 1, 2 };
-
 namespace {
 
 struct DirectionSettings {
@@ -74,27 +66,13 @@ struct DirectionSettings {
 	void (*walkModeHandler)(Player &, const DirectionSettings &);
 };
 
-void PmChangeLightOff(Player &player)
+void UpdatePlayerLightOffset(Player &player)
 {
 	if (player.lightId == NO_LIGHT)
 		return;
 
-	const Light *l = &Lights[player.lightId];
-	WorldTileDisplacement offset = player.position.CalculateWalkingOffset(player._pdir, player.AnimInfo);
-	int x = 2 * offset.deltaY + offset.deltaX;
-	int y = 2 * offset.deltaY - offset.deltaX;
-
-	x = (x / 8) * (x < 0 ? 1 : -1);
-	y = (y / 8) * (y < 0 ? 1 : -1);
-	int lx = x + (l->position.tile.x * 8);
-	int ly = y + (l->position.tile.y * 8);
-	int offx = l->position.offset.deltaX + (l->position.tile.x * 8);
-	int offy = l->position.offset.deltaY + (l->position.tile.y * 8);
-
-	if (abs(lx - offx) < 3 && abs(ly - offy) < 3)
-		return;
-
-	ChangeLightOffset(player.lightId, { x, y });
+	const WorldTileDisplacement offset = player.position.CalculateWalkingOffset(player._pdir, player.AnimInfo);
+	ChangeLightOffset(player.lightId, offset.screenToLight());
 }
 
 void WalkNorthwards(Player &player, const DirectionSettings &walkParams)
@@ -112,7 +90,7 @@ void WalkSouthwards(Player &player, const DirectionSettings & /*walkParams*/)
 	dPlayer[player.position.tile.x][player.position.tile.y] = playerId + 1;
 	// BUGFIX: missing `if (leveltype != DTYPE_TOWN) {` for call to ChangeLightXY and PM_ChangeLightOff.
 	ChangeLightXY(player.lightId, player.position.tile);
-	PmChangeLightOff(player);
+	UpdatePlayerLightOffset(player);
 }
 
 void WalkSideways(Player &player, const DirectionSettings &walkParams)
@@ -125,7 +103,7 @@ void WalkSideways(Player &player, const DirectionSettings &walkParams)
 
 	if (leveltype != DTYPE_TOWN) {
 		ChangeLightXY(player.lightId, nextPosition);
-		PmChangeLightOff(player);
+		UpdatePlayerLightOffset(player);
 	}
 
 	player.position.temp = player.position.future;
@@ -221,11 +199,6 @@ void StartWalkStand(Player &player)
 	if (&player == MyPlayer) {
 		ViewPosition = player.position.tile;
 	}
-}
-
-void ChangeOffset(Player &player)
-{
-	PmChangeLightOff(player);
 }
 
 void StartAttack(Player &player, Direction d, bool includesFirstFrame)
@@ -481,7 +454,7 @@ bool DoWalk(Player &player, int variant)
 
 	if (!player.AnimInfo.isLastFrame()) {
 		// We didn't reach new tile so update player's "sub-tile" position
-		ChangeOffset(player);
+		UpdatePlayerLightOffset(player);
 		return false;
 	}
 
@@ -2558,19 +2531,10 @@ void InitPlayer(Player &player, bool firstTime)
 
 		player._pdir = Direction::South;
 
-		if (&player == MyPlayer) {
-			if (!firstTime || leveltype != DTYPE_TOWN) {
-				player.position.tile = ViewPosition;
-			}
-		} else {
-			unsigned i;
-			for (i = 0; i < 8 && !PosOkPlayer(player, player.position.tile + Displacement { plrxoff2[i], plryoff2[i] }); i++)
-				;
-			player.position.tile.x += plrxoff2[i];
-			player.position.tile.y += plryoff2[i];
+		if (&player == MyPlayer && (!firstTime || leveltype != DTYPE_TOWN)) {
+			player.position.tile = ViewPosition;
 		}
 
-		player.position.future = player.position.tile;
 		SetPlayerOld(player);
 		player.walkpath[0] = WALK_NONE;
 		player.destAction = ACTION_NONE;
@@ -3296,19 +3260,24 @@ void SyncPlrAnim(Player &player)
 
 void SyncInitPlrPos(Player &player)
 {
-	if (!gbIsMultiplayer || !player.isOnActiveLevel()) {
+	if (!player.isOnActiveLevel())
 		return;
-	}
+
+	const WorldTileDisplacement offset[9] = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 }, { 2, 0 }, { 0, 2 }, { 1, 2 }, { 2, 1 }, { 2, 2 } };
 
 	Point position = [&]() {
 		for (int i = 0; i < 8; i++) {
-			Point position = player.position.tile + Displacement { plrxoff2[i], plryoff2[i] };
+			Point position = player.position.tile + offset[i];
 			if (PosOkPlayer(player, position))
 				return position;
 		}
 
 		std::optional<Point> nearPosition = FindClosestValidPosition(
 		    [&player](Point testPosition) {
+			    for (int i = 0; i < numtrigs; i++) {
+				    if (trigs[i].position == testPosition)
+					    return false;
+			    }
 			    return PosOkPlayer(player, testPosition) && !PosOkPortal(currlevel, testPosition);
 		    },
 		    player.position.tile,
@@ -3320,9 +3289,9 @@ void SyncInitPlrPos(Player &player)
 
 	player.position.tile = position;
 	dPlayer[position.x][position.y] = player.getId() + 1;
+	player.position.future = position;
 
 	if (&player == MyPlayer) {
-		player.position.future = position;
 		ViewPosition = position;
 	}
 }

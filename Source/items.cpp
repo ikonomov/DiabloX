@@ -2172,7 +2172,7 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 		GetItemAttrs(item, idx, lvl);
 	} else if (gbIsHellfire && idx >= 114 && idx <= 117) {
 		SetRndSeed(iseed);
-		AdvanceRndSeed();
+		DiscardRandomValues(1);
 		GetItemAttrs(item, idx, lvl);
 	} else {
 		SetRndSeed(iseed);
@@ -2315,18 +2315,15 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 	int minlvl;
 	int maxlvl;
 	if ((item._iCreateInfo & CF_SMITHPREMIUM) != 0) {
-		AdvanceRndSeed(); // RndVendorItem
-		AdvanceRndSeed(); // GetItemAttrs
+		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		minlvl = lvl / 2;
 		maxlvl = lvl;
 	} else if ((item._iCreateInfo & CF_BOY) != 0) {
-		AdvanceRndSeed(); // RndVendorItem
-		AdvanceRndSeed(); // GetItemAttrs
+		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		minlvl = lvl;
 		maxlvl = lvl * 2;
 	} else if ((item._iCreateInfo & CF_WITCH) != 0) {
-		AdvanceRndSeed(); // RndVendorItem
-		AdvanceRndSeed(); // GetItemAttrs
+		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
 			iblvl = 2 * lvl;
@@ -2335,11 +2332,11 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 		minlvl = iblvl / 2;
 		maxlvl = iblvl;
 	} else {
-		AdvanceRndSeed(); // GetItemAttrs
+		DiscardRandomValues(1); // GetItemAttrs
 		int iblvl = GetItemBLevel(lvl, item._iMiscId, onlygood, item._iCreateInfo & CF_UPER15);
 		minlvl = iblvl / 2;
 		maxlvl = iblvl;
-		AdvanceRndSeed(); // CheckUnique
+		DiscardRandomValues(1); // CheckUnique
 	}
 
 	if (minlvl > 25)
@@ -2373,8 +2370,7 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 		else if (!hellfireItem && FlipCoin(4)) {
 			affixItemType = AffixItemType::Staff;
 		} else {
-			AdvanceRndSeed(); // Spell
-			AdvanceRndSeed(); // Charges
+			DiscardRandomValues(2); // Spell and Charges
 
 			int preidx = GetStaffPrefixId(maxlvl, onlygood, hellfireItem);
 			if (preidx == -1 || item._iSpell == SpellID::Null) {
@@ -2410,14 +2406,13 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 		    [&pPrefix](const PLStruct &prefix) {
 			    pPrefix = &prefix;
 			    // GenerateRnd(prefix.power.param2 - prefix.power.param2 + 1)
-			    AdvanceRndSeed();
+			    DiscardRandomValues(1);
 			    switch (pPrefix->power.type) {
 			    case IPL_TOHIT_DAMP:
-				    AdvanceRndSeed();
-				    AdvanceRndSeed();
+				    DiscardRandomValues(2);
 				    break;
 			    case IPL_TOHIT_DAMP_CURSE:
-				    AdvanceRndSeed();
+				    DiscardRandomValues(1);
 				    break;
 			    default:
 				    break;
@@ -2519,7 +2514,7 @@ void InitItems()
 	}
 
 	if (!setlevel) {
-		AdvanceRndSeed(); /* unused */
+		DiscardRandomValues(1);
 		if (Quests[Q_ROCK].IsAvailable())
 			SpawnRock();
 		if (Quests[Q_ANVIL].IsAvailable())
@@ -4311,7 +4306,7 @@ void SpawnWitch(int lvl)
 				if (lvl >= AllItemsList[bookType].iMinMLvl) {
 					item._iSeed = AdvanceRndSeed();
 					SetRndSeed(item._iSeed);
-					AdvanceRndSeed();
+					DiscardRandomValues(1);
 					GetItemAttrs(item, bookType, lvl);
 					item._iCreateInfo = lvl | CF_WITCH;
 					item._iIdentified = true;

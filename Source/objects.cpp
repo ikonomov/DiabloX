@@ -3881,7 +3881,7 @@ void InitObjects()
 	if (currlevel == 16) {
 		AddDiabObjs();
 	} else {
-		AdvanceRndSeed();
+		DiscardRandomValues(1);
 		if (currlevel == 9 && !UseMultiplayerQuests())
 			AddSlainHero();
 		if (Quests[Q_MUSHROOM].IsAvailable())

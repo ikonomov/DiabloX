@@ -151,6 +151,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
 #### Monsters:
+   * Bonus points to health have been increased to 200 [100] in Nightmare and 400 [200] in Hell difficulty for multi player.
    * Number per dlvl has been increased by 25% with a maximum of 250 [200].
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.

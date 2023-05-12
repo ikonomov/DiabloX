@@ -1743,38 +1743,12 @@ bool CanPut(Point position)
 	return true;
 }
 
-int InvPutItem(const Player &player, Point position, const Item &item)
-{
-	std::optional<Point> itemTile = FindAdjacentPositionForItem(player.position.tile, GetDirection(player.position.tile, position));
-	if (!itemTile)
-		return -1;
-
-	int ii = AllocateItem();
-
-	dItem[itemTile->x][itemTile->y] = ii + 1;
-	Items[ii] = item;
-	Items[ii].position = *itemTile;
-	RespawnItem(Items[ii], true);
-
-	if (CornerStone.isAvailable() && *itemTile == CornerStone.position) {
-		CornerStone.item = Items[ii];
-		InitQTextMsg(TEXT_CORNSTN);
-		Quests[Q_CORNSTN]._qlog = false;
-		Quests[Q_CORNSTN]._qactive = QUEST_DONE;
-	}
-
-	return ii;
-}
-
 int SyncDropItem(Point position, _item_indexes idx, uint16_t icreateinfo, int iseed, int id, int dur, int mdur, int ch, int mch, int ivalue, uint32_t ibuff, int toHit, int maxDam, int minStr, int minMag, int minDex, int ac)
 {
 	if (ActiveItemCount >= MAXITEMS)
 		return -1;
 
-	int ii = AllocateItem();
-	auto &item = Items[ii];
-
-	dItem[position.x][position.y] = ii + 1;
+	Item item;
 
 	RecreateItem(*MyPlayer, item, idx, icreateinfo, iseed, ivalue, (ibuff & CF_HELLFIRE) != 0);
 	if (id != 0)
@@ -1790,16 +1764,8 @@ int SyncDropItem(Point position, _item_indexes idx, uint16_t icreateinfo, int is
 	item._iMinDex = minDex;
 	item._iAC = ac;
 	item.dwBuff = ibuff;
-	item.position = position;
-	RespawnItem(item, true);
 
-	if (CornerStone.isAvailable() && position == CornerStone.position) {
-		CornerStone.item = item;
-		InitQTextMsg(TEXT_CORNSTN);
-		Quests[Q_CORNSTN]._qlog = false;
-		Quests[Q_CORNSTN]._qactive = QUEST_DONE;
-	}
-	return ii;
+	return PlaceItemInWorld(std::move(item), position);
 }
 
 int SyncDropEar(Point position, uint16_t icreateinfo, uint32_t iseed, uint8_t cursval, string_view heroname)
@@ -1807,21 +1773,10 @@ int SyncDropEar(Point position, uint16_t icreateinfo, uint32_t iseed, uint8_t cu
 	if (ActiveItemCount >= MAXITEMS)
 		return -1;
 
-	int ii = AllocateItem();
-	auto &item = Items[ii];
-
-	dItem[position.x][position.y] = ii + 1;
+	Item item;
 	RecreateEar(item, icreateinfo, iseed, cursval, heroname);
-	item.position = position;
-	RespawnItem(item, true);
 
-	if (CornerStone.isAvailable() && position == CornerStone.position) {
-		CornerStone.item = item;
-		InitQTextMsg(TEXT_CORNSTN);
-		Quests[Q_CORNSTN]._qlog = false;
-		Quests[Q_CORNSTN]._qactive = QUEST_DONE;
-	}
-	return ii;
+	return PlaceItemInWorld(std::move(item), position);
 }
 
 int8_t CheckInvHLight()

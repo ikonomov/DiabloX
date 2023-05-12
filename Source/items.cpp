@@ -31,6 +31,7 @@
 #include "inv_iterators.hpp"
 #include "levels/town.h"
 #include "lighting.h"
+#include "minitext.h"
 #include "missiles.h"
 #include "options.h"
 #include "panels/info_box.hpp"
@@ -3143,6 +3144,29 @@ int AllocateItem()
 	Items[inum] = {};
 
 	return inum;
+}
+
+uint8_t PlaceItemInWorld(Item &&item, WorldTilePosition position)
+{
+	assert(ActiveItemCount < MAXITEMS);
+
+	uint8_t ii = ActiveItems[ActiveItemCount];
+	ActiveItemCount++;
+
+	dItem[position.x][position.y] = ii + 1;
+	auto &item_ = Items[ii];
+	item_ = std::move(item);
+	item_.position = position;
+	RespawnItem(item_, true);
+
+	if (CornerStone.isAvailable() && position == CornerStone.position) {
+		CornerStone.item = item_;
+		InitQTextMsg(TEXT_CORNSTN);
+		Quests[Q_CORNSTN]._qlog = false;
+		Quests[Q_CORNSTN]._qactive = QUEST_DONE;
+	}
+
+	return ii;
 }
 
 Point GetSuperItemLoc(Point position)

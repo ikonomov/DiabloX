@@ -1007,7 +1007,7 @@ void SyncLightPosition(Monster &monster)
 	if (monster.lightId == NO_LIGHT)
 		return;
 
-	const WorldTileDisplacement offset = monster.position.CalculateWalkingOffset(monster.direction, monster.animInfo);
+	const WorldTileDisplacement offset = monster.isWalking() ? monster.position.CalculateWalkingOffset(monster.direction, monster.animInfo) : WorldTileDisplacement {};
 	ChangeLightOffset(monster.lightId, offset.screenToLight());
 }
 

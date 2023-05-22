@@ -3509,8 +3509,11 @@ bool AreAllCruxesOfTypeBroken(int cruxType)
 	return true;
 }
 
-void BreakCrux(const Player *player, Object &crux)
+void BreakCrux(Object &crux, bool sendmsg)
 {
+	if (crux._oSelFlag == 0)
+		return;
+
 	crux._oAnimFlag = true;
 	crux._oAnimFrame = 1;
 	crux._oAnimDelay = 1;
@@ -3519,7 +3522,7 @@ void BreakCrux(const Player *player, Object &crux)
 	crux._oBreak = -1;
 	crux._oSelFlag = 0;
 
-	if (player == MyPlayer || player == nullptr)
+	if (sendmsg)
 		NetSendCmdLoc(MyPlayerId, false, CMD_BREAKOBJ, crux.position);
 
 	if (!AreAllCruxesOfTypeBroken(crux._oVar8))
@@ -4746,14 +4749,14 @@ void SyncOpObject(Player &player, int cmd, Object &object)
 void BreakObjectMissile(const Player *player, Object &object)
 {
 	if (object.IsCrux())
-		BreakCrux(player, object);
+		BreakCrux(object, true);
 }
 void BreakObject(const Player &player, Object &object)
 {
 	if (object.IsBarrel()) {
 		BreakBarrel(player, object, false, true);
 	} else if (object.IsCrux()) {
-		BreakCrux(&player, object);
+		BreakCrux(object, true);
 	}
 }
 
@@ -4780,6 +4783,8 @@ void SyncBreakObj(const Player &player, Object &object)
 {
 	if (object.IsBarrel()) {
 		BreakBarrel(player, object, true, false);
+	} else if (object.IsCrux()) {
+		BreakCrux(object, false);
 	}
 }
 

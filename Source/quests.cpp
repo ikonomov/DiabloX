@@ -917,7 +917,7 @@ void SetMultiQuest(int q, quest_state s, bool log, int v1, int v2, int16_t qmsg)
 	auto &quest = Quests[q];
 	quest_state oldQuestState = quest._qactive;
 	if (quest._qactive != QUEST_DONE) {
-		if (s > quest._qactive)
+		if (s > quest._qactive || (IsAnyOf(s, QUEST_ACTIVE, QUEST_DONE) && IsAnyOf(quest._qactive, QUEST_HIVE_TEASE1, QUEST_HIVE_TEASE2, QUEST_HIVE_ACTIVE)))
 			quest._qactive = s;
 		if (log)
 			quest._qlog = true;
@@ -930,9 +930,14 @@ void SetMultiQuest(int q, quest_state s, bool log, int v1, int v2, int16_t qmsg)
 		// Ensure that changes on another client is also updated on our own
 		ResyncQuests();
 
+		bool questGotCompleted = oldQuestState != QUEST_DONE && quest._qactive == QUEST_DONE;
 		// Ensure that water also changes for remote players
-		if (quest._qidx == Q_PWATER && oldQuestState == QUEST_ACTIVE && quest._qactive == QUEST_DONE && MyPlayer->isOnLevel(quest._qslvl))
+		if (quest._qidx == Q_PWATER && questGotCompleted && MyPlayer->isOnLevel(quest._qslvl))
 			StartPWaterPurify();
+		if (quest._qidx == Q_GIRL && questGotCompleted && MyPlayer->isOnLevel(0))
+			UpdateGirlAnimAfterQuestComplete();
+		if (quest._qidx == Q_JERSEY && questGotCompleted && MyPlayer->isOnLevel(0))
+			UpdateCowFarmerAnimAfterQuestComplete();
 	}
 }
 

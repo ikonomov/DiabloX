@@ -479,6 +479,7 @@ void TalkToBarmaid(Player &player, Towner & /*barmaid*/)
 		Quests[Q_GRAVE]._qactive = QUEST_ACTIVE;
 		Quests[Q_GRAVE]._qlog = true;
 		Quests[Q_GRAVE]._qmsg = TEXT_GRAVE8;
+		NetSendCmdQuest(true, Quests[Q_GRAVE]);
 		InitQTextMsg(TEXT_GRAVE8);
 		return;
 	}
@@ -648,7 +649,6 @@ void TalkToFarmer(Player &player, Towner &farmer)
 		InitQTextMsg(TEXT_FARMER4);
 		SpawnRewardItem(IDI_AURIC, farmer.position + Displacement { 1, 0 }, true);
 		quest._qactive = QUEST_HIVE_DONE;
-		quest._qlog = false;
 		if (gbIsMultiplayer)
 			NetSendCmdQuest(true, quest);
 		break;
@@ -673,9 +673,8 @@ void TalkToCowFarmer(Player &player, Towner &cowFarmer)
 		SpawnUnique(UITEM_BOVINE, cowFarmer.position + Direction::SouthEast);
 		InitQTextMsg(TEXT_JERSEY8);
 		quest._qactive = QUEST_DONE;
-		auto curFrame = cowFarmer._tAnimFrame;
-		LoadTownerAnimations(cowFarmer, "towners\\farmer\\mfrmrn2", 15, 3);
-		cowFarmer._tAnimFrame = std::min<uint8_t>(curFrame, cowFarmer._tAnimLen - 1);
+		UpdateCowFarmerAnimAfterQuestComplete();
+		NetSendCmdQuest(true, quest);
 		return;
 	}
 
@@ -685,6 +684,7 @@ void TalkToCowFarmer(Player &player, Towner &cowFarmer)
 		quest._qvar1 = 1;
 		quest._qmsg = TEXT_JERSEY4;
 		quest._qlog = true;
+		NetSendCmdQuest(true, quest);
 		return;
 	}
 
@@ -750,12 +750,9 @@ void TalkToGirl(Player &player, Towner &girl)
 
 	if (quest._qactive != QUEST_DONE && RemoveInventoryItemById(player, IDI_THEODORE)) {
 		InitQTextMsg(TEXT_GIRL4);
-		CreateAmulet(girl.position, 13, true, false);
-		quest._qlog = false;
+		CreateAmulet(girl.position, 13, false, false, true);
 		quest._qactive = QUEST_DONE;
-		auto curFrame = girl._tAnimFrame;
-		LoadTownerAnimations(girl, "towners\\girl\\girls1", 20, 6);
-		girl._tAnimFrame = std::min<uint8_t>(curFrame, girl._tAnimLen - 1);
+		UpdateGirlAnimAfterQuestComplete();
 		if (gbIsMultiplayer)
 			NetSendCmdQuest(true, quest);
 		return;
@@ -916,6 +913,24 @@ void TalkToTowner(Player &player, int t)
 	}
 
 	towner.talk(player, towner);
+}
+
+void UpdateGirlAnimAfterQuestComplete()
+{
+	Towner *girl = GetTowner(TOWN_GIRL);
+	if (girl == nullptr || !girl->ownedAnim)
+		return; // Girl is not spawned in town yet
+	auto curFrame = girl->_tAnimFrame;
+	LoadTownerAnimations(*girl, "towners\\girl\\girls1", 20, 6);
+	girl->_tAnimFrame = std::min<uint8_t>(curFrame, girl->_tAnimLen - 1);
+}
+
+void UpdateCowFarmerAnimAfterQuestComplete()
+{
+	Towner *cowFarmer = GetTowner(TOWN_COWFARM);
+	auto curFrame = cowFarmer->_tAnimFrame;
+	LoadTownerAnimations(*cowFarmer, "towners\\farmer\\mfrmrn2", 15, 3);
+	cowFarmer->_tAnimFrame = std::min<uint8_t>(curFrame, cowFarmer->_tAnimLen - 1);
 }
 
 #ifdef _DEBUG

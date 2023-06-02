@@ -3262,15 +3262,13 @@ Item *SpawnUnique(_unique_items uid, Point position, std::optional<int> level /*
 	while (AllItemsList[idx].iItemId != UniqueItems[uid].UIItemId)
 		idx++;
 
-	if (gbIsMultiplayer) {
-		if (level)
-			curlv = *level;
-		const ItemData &uniqueItemData = AllItemsList[idx];
-		_item_indexes idx = GetItemIndexForDroppableItem(false, [&uniqueItemData](const ItemData &item) {
-			return item.itype == uniqueItemData.itype || (uniqueItemData.itype == ItemType::Amulet && item.itype == ItemType::Ring);
-		});
-		SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), curlv * 2, 15, true, false, false);
-	}
+	if (level)
+		curlv = *level;
+	const ItemData &uniqueItemData = AllItemsList[idx];
+	_item_indexes idx = GetItemIndexForDroppableItem(false, [&uniqueItemData](const ItemData &item) {
+		return item.itype == uniqueItemData.itype || (uniqueItemData.itype == ItemType::Amulet && item.itype == ItemType::Ring);
+	});
+	SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), curlv * 2, 15, true, false, false);
 	if (sgGameInitInfo.nDifficulty == DIFF_NORMAL || (FlipCoin() && item._iMagical == ITEM_QUALITY_UNIQUE)) {
 		GetItemAttrs(item, static_cast<_item_indexes>(idx), curlv);
 		GetUniqueItem(*MyPlayer, item, uid);

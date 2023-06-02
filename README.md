@@ -64,6 +64,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
    * Helm of Spirits has been removed with The Undead Crown as a replacement.
+   * Quest items always drop on Normal difficulty.  In Nightmare and Hell the quest rewards have a chance (12.5%) of being the quest item or another unique (12.5%) or a magical item (75%) of the same type.
    * Set to maximum values:
       * Affixes with a range of values.
       * Staff charges.

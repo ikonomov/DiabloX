@@ -3266,7 +3266,7 @@ Item *SpawnUnique(_unique_items uid, Point position, std::optional<int> level /*
 		});
 		SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), curlv * 2, 15, true, false, false);
 	}
-	if (!gbIsMultiplayer || item._iMagical == ITEM_QUALITY_UNIQUE) {
+	if (sgGameInitInfo.nDifficulty == DIFF_NORMAL || (FlipCoin() && item._iMagical == ITEM_QUALITY_UNIQUE)) {
 		GetItemAttrs(item, static_cast<_item_indexes>(idx), curlv);
 		GetUniqueItem(*MyPlayer, item, uid);
 		SetupItem(item);

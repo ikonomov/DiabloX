@@ -655,7 +655,7 @@ void OpenCharPanel()
 {
 	QuestLogIsOpen = false;
 	CloseGoldWithdraw();
-	IsStashOpen = false;
+	CloseStash();
 	chrflag = true;
 }
 
@@ -1029,7 +1029,7 @@ void CheckBtnUp()
 		case PanelButtonQlog:
 			CloseCharPanel();
 			CloseGoldWithdraw();
-			IsStashOpen = false;
+			CloseStash();
 			if (!QuestLogIsOpen)
 				StartQuestlog();
 			else
@@ -1046,7 +1046,7 @@ void CheckBtnUp()
 		case PanelButtonInventory:
 			sbookflag = false;
 			CloseGoldWithdraw();
-			IsStashOpen = false;
+			CloseStash();
 			invflag = !invflag;
 			if (dropGoldFlag) {
 				CloseGoldDrop();

@@ -4463,7 +4463,8 @@ Monster *PreSpawnSkeleton()
 
 void TalktoMonster(Player &player, Monster &monster)
 {
-	monster.mode = MonsterMode::Talk;
+	if (&player == MyPlayer)
+		monster.mode = MonsterMode::Talk;
 
 	if (monster.uniqueType == UniqueMonsterType::SnotSpill
 	    && Quests[Q_LTBANNER].IsAvailable() && Quests[Q_LTBANNER]._qvar1 == 2) {

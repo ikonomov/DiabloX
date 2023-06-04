@@ -3262,7 +3262,7 @@ Item *SpawnUnique(_unique_items uid, Point position, std::optional<int> level /*
 	while (AllItemsList[idx].iItemId != UniqueItems[uid].UIItemId)
 		idx++;
 
-	if (sgGameInitInfo.nDifficulty == DIFF_NORMAL || FlipCoin(10)) {
+	if (sgGameInitInfo.nDifficulty == DIFF_NORMAL) {
 		GetItemAttrs(item, static_cast<_item_indexes>(idx), curlv);
 		GetUniqueItem(*MyPlayer, item, uid);
 		SetupItem(item);

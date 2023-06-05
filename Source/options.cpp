@@ -1056,15 +1056,15 @@ GameplayOptions::GameplayOptions()
 std::vector<OptionEntryBase *> GameplayOptions::GetEntries()
 {
 	return {
-		&grabInput,
 		&experienceBar,
 		&enemyHealthBar,
 		&showMonsterType,
 		&showItemLabels,
-		&autoGoldPickup,
+		&enableFloatingNumbers,
 		&autoEquipWeapons,
 		&autoEquipShields,
-		&enableFloatingNumbers,
+		&autoGoldPickup,
+		&grabInput,
 	};
 }
 

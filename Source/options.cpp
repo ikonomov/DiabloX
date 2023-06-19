@@ -609,7 +609,6 @@ DiabloOptions::DiabloOptions()
 std::vector<OptionEntryBase *> DiabloOptions::GetEntries()
 {
 	return {
-		&lastSinglePlayerHero,
 		&lastMultiplayerHero,
 	};
 }
@@ -947,13 +946,14 @@ GraphicsOptions::GraphicsOptions()
               { ScalingQuality::AnisotropicFiltering, N_("Anisotropic") },
           })
     , integerScaling("Integer Scaling", OptionEntryFlags::Invisible, N_("Integer Scaling"), N_("Scales the image using whole number pixel ratio."), false)
-    , vSync("Vertical Sync", OptionEntryFlags::Invisible, N_("Vertical Sync"), N_("Forces waiting for Vertical Sync. Prevents tearing effect when drawing a frame. Disabling it can help with mouse lag on some systems."),
+    , vSync("Vertical Sync",
+          OptionEntryFlags::RecreateUI
 #ifdef NXDK
-          false
-#else
-          true
+              | OptionEntryFlags::Invisible
 #endif
-          )
+          ,
+          N_("Vertical Sync"),
+          N_("Forces waiting for Vertical Sync. Prevents tearing effect when drawing a frame. Disabling it can help with mouse lag on some systems."), false)
 #endif
     , gammaCorrection("Gamma Correction", OptionEntryFlags::Invisible, "Gamma Correction", "Gamma correction level.", 100)
     , zoom("Zoom", OptionEntryFlags::None, N_("Zoom"), N_("Zoom on when enabled."), true)
@@ -996,6 +996,7 @@ std::vector<OptionEntryBase *> GraphicsOptions::GetEntries()
 #endif
 #ifndef USE_SDL1
 		&upscale,
+		&vSync,
 #endif
 		&gammaCorrection,
 		&zoom,

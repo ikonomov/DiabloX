@@ -41,7 +41,7 @@ namespace devilution {
 
 #define PASSWORD_SPAWN_SINGLE "adslhfb1"
 #define PASSWORD_SPAWN_MULTI "lshbkfg1"
-#define PASSWORD_SINGLE "urdcwc7v"
+#define PASSWORD_SINGLE "xrgyrkj1"
 #define PASSWORD_MULTI "ia5qrgxm"
 
 bool gbValidSaveFile;
@@ -56,7 +56,7 @@ std::string GetSavePath(uint32_t saveNum, string_view savePrefix = {})
 	return StrCat(paths::PrefPath(), savePrefix,
 	    gbIsSpawn
 	        ? (gbIsMultiplayer ? "share_" : "spawn_")
-	        : (gbIsMultiplayer ? "dx_multi_" : "dx_single_"),
+	        : (gbIsMultiplayer ? "dx_multi_" : "single_"),
 	    saveNum,
 #ifdef UNPACKED_SAVES
 	    gbIsHellfire ? "_hsv" DIRECTORY_SEPARATOR_STR : "_sv" DIRECTORY_SEPARATOR_STR

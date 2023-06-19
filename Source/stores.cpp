@@ -2182,7 +2182,15 @@ void SetupTownStores()
 	Player &myPlayer = *MyPlayer;
 
 	int l = myPlayer._pLevel / 2;
-	SetRndSeed(glSeedTbl[currlevel] * SDL_GetTicks());
+	if (!gbIsMultiplayer) {
+		l = 0;
+		for (int i = 0; i < NUMLEVELS; i++) {
+			if (myPlayer._pLvlVisited[i])
+				l = i;
+		}
+	} else {
+		SetRndSeed(glSeedTbl[currlevel] * SDL_GetTicks());
+	}
 
 	l = clamp(l + 2, 6, 16);
 	SpawnSmith(l);

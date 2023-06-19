@@ -34,7 +34,10 @@ Note: You must be logged into GitHub to download the attachments.
 #### Characters:
    * The required experience points for each clvl have been increased by 100%.
    * Stop gaining level up attribute points after clvl 25.
-   * Regenerate 1% (Sorcerer 2%) of max mana per second.
+   * Regenerate % of max mana per second:
+      * Warrior: 1%
+      * Rogue: 1.5%
+      * Sorcerer: 2%
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Block bonus: 0 [30/20/10]
    * Maximum stats:
@@ -151,17 +154,12 @@ Note: You must be logged into GitHub to download the attachments.
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
 #### Monsters:
-   * Bonus points to health for multi player have been increased to 200 [100] in Nightmare and 400 [200] in Hell difficulty.
    * Number per dlvl has been increased by 25% with a maximum of 250 [200].
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:
-   * Single player functions like multi player:
-      * experience cap
-      * base item ilvl at stores is calculated using clvl
-      * stores don't sell jewelry
-      * when starting a new game entrances to the catacombs, caves and hell are enabled if Diablo has been previously killed at the same difficulty level
    * Removed:
+      * single player mode
       * support for Spawned Diablo and Diablo: Hellfire
       * multi-language support
       * speed settings

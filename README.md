@@ -184,7 +184,6 @@ Note: You must be logged into GitHub to download the attachments.
    * Help menu has been replaced by a list of shrine descriptions available after reaching clvl 17.
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
       * Shrine List: D [Help: F1]
-      * Quick Save: G [F2]
       * Quick Spells: F1-F8 [F5-F8]
       * Pause: Pause [P]
 

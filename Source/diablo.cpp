@@ -1652,22 +1652,6 @@ void InitKeymapActions()
 	    nullptr,
 	    CanPlayerTakeAction);
 	sgOptions.Keymapper.AddAction(
-	    "QuickSave",
-	    N_("Quick save"),
-	    N_("Saves the game."),
-	    'G',
-	    [] { gamemenu_save_game(false); },
-	    nullptr,
-	    [&]() { return !gbIsMultiplayer && CanPlayerTakeAction(); });
-	sgOptions.Keymapper.AddAction(
-	    "QuickLoad",
-	    N_("Quick load"),
-	    N_("Loads the game."),
-	    SDLK_UNKNOWN,
-	    [] { gamemenu_load_game(false); },
-	    nullptr,
-	    [&]() { return !gbIsMultiplayer && gbValidSaveFile && stextflag == TalkID::None && IsGameRunning(); });
-	sgOptions.Keymapper.AddAction(
 	    "StopHero",
 	    N_("Stop hero"),
 	    N_("Stops walking and cancel pending actions."),

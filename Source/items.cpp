@@ -4198,9 +4198,6 @@ void UseItem(size_t pnum, item_misc_id mid, SpellID spellID, int spellFrom)
 			ModifyPlrVit(player, 1);
 			break;
 		}
-		CheckStats(player);
-		CalcPlrInv(player, true);
-		RedrawEverything();
 		break;
 	case IMISC_RUNEF:
 		prepareSpellID = SpellID::RuneOfFire;

@@ -53,8 +53,6 @@ void SwapLE(PlayerPack &player)
 		SwapLE(item);
 	}
 	player.wReflections = SDL_SwapLE16(player.wReflections);
-	player.wReserved2 = SDL_SwapLE16(player.wReserved2);
-	player.wReserved8 = SDL_SwapLE16(player.wReserved8);
 	player.pDiabloKillLevel = SDL_SwapLE32(player.pDiabloKillLevel);
 	player.pDifficulty = SDL_SwapLE32(player.pDifficulty);
 	player.pDamAcFlags = SDL_SwapLE32(player.pDamAcFlags);
@@ -297,9 +295,7 @@ void AssertPlayer(Player &player)
 	ASSERT_EQ(player.pDungMsgs2, 0);
 	ASSERT_EQ(player.pLvlLoad, 0);
 	ASSERT_EQ(player.pDiabloKillLevel, 3);
-	ASSERT_EQ(player.pBattleNet, 0);
 	ASSERT_EQ(player.pManaShield, 0);
-	ASSERT_EQ(player.pDifficulty, 0);
 	ASSERT_EQ(player.pDamAcFlags, ItemSpecialEffectHf::None);
 
 	ASSERT_EQ(player._pmode, 0);
@@ -377,15 +373,13 @@ TEST(Writehero, pfile_write_hero)
 	Players.resize(1);
 	MyPlayerId = 0;
 	MyPlayer = &Players[MyPlayerId];
-	*MyPlayer = {};
 
 	_uiheroinfo info {};
-	strcpy(info.name, "TestPlayer");
 	info.heroclass = HeroClass::Rogue;
 	pfile_ui_save_create(&info);
 	PlayerPack pks;
 	PackPlayerTest(&pks);
-	UnPackPlayer(&pks, *MyPlayer, true);
+	UnPackPlayer(pks, *MyPlayer);
 	AssertPlayer(Players[0]);
 	pfile_write_hero();
 

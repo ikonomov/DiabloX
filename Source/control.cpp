@@ -521,8 +521,8 @@ std::string TextCmdLevelSeed(const string_view parameter)
 }
 
 std::vector<TextCmdItem> TextCmdList = {
-	{ N_("/help"), N_("Prints help overview or help for a specific command."), N_("({command})"), &TextCmdHelp },
-	{ N_("/inspect"), N_("Inspects stats and equipment of another player."), N_("{player name}"), &TextCmdInspect },
+	{ N_("/help"), N_("Prints help overview or help for a specific command."), N_("[command]"), &TextCmdHelp },
+	{ N_("/inspect"), N_("Inspects stats and equipment of another player."), N_("<player name>"), &TextCmdInspect },
 	{ N_("/seedinfo"), N_("Show seed infos for current level."), "", &TextCmdLevelSeed },
 };
 

@@ -2330,14 +2330,14 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 	} else if ((item._iCreateInfo & CF_BOY) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		minlvl = lvl;
-		maxlvl = lvl * 2;
+		maxlvl = lvl * 2 + 1;
 	} else if ((item._iCreateInfo & CF_WITCH) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl + 1;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl + 1;
 		minlvl = iblvl / 2;
 		maxlvl = iblvl;
 	} else {

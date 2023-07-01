@@ -66,7 +66,6 @@ Note: You must be logged into GitHub to download the attachments.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
-   * Helm of Spirits has been removed with The Undead Crown as a replacement.
    * Set to maximum values:
       * Affixes with a range of values.
       * Staff charges.

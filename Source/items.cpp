@@ -2174,7 +2174,7 @@ void RecreateBoyItem(const Player &player, Item &item, int lvl, int iseed)
 
 void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (IsAnyOf(idx, IDI_PORTAL)) {
+	if (idx == IDI_PORTAL) {
 		GetItemAttrs(item, idx, lvl);
 	} else if (gbIsHellfire && idx >= 114 && idx <= 117) {
 		SetRndSeed(iseed);
@@ -2200,7 +2200,7 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 
 void RecreateHealerItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (IsAnyOf(idx, IDI_RESURRECT)) {
+	if (idx == IDI_RESURRECT) {
 		GetItemAttrs(item, idx, lvl);
 	} else {
 		SetRndSeed(iseed);

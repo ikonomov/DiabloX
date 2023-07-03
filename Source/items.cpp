@@ -4317,7 +4317,7 @@ void SpawnPremium(const Player &player)
 
 void SpawnWitch(int lvl)
 {
-	constexpr int PinnedItemCount = 3;
+	constexpr int PinnedItemCount = 1;
 	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_PORTAL };
 	constexpr int MaxPinnedBookCount = 4;
 	constexpr std::array<_item_indexes, MaxPinnedBookCount> PinnedBookTypes = { IDI_BOOK1, IDI_BOOK2, IDI_BOOK3, IDI_BOOK4 };
@@ -4499,7 +4499,7 @@ void SpawnBoy(int lvl)
 
 void SpawnHealer(int lvl)
 {
-	constexpr int PinnedItemCount = 2;
+	constexpr int PinnedItemCount = 0;
 	constexpr std::array<_item_indexes, PinnedItemCount + 1> PinnedItemTypes = { IDI_RESURRECT };
 	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 2;
 

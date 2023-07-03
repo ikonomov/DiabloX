@@ -34,10 +34,7 @@ Note: You must be logged into GitHub to download the attachments.
 #### Characters:
    * The required experience points for each clvl have been increased by 100%.
    * Stop gaining level up attribute points after clvl 25.
-   * Regenerate % of max mana per second:
-      * Warrior: 1%
-      * Rogue: 1.5%
-      * Sorcerer: 2%
+   * Regenerate 1% of max mana per second.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Block bonus: 0 [30/20/10]
    * Maximum stats:
@@ -45,12 +42,8 @@ Note: You must be logged into GitHub to download the attachments.
       * Rogue's dexterity: 150 [250]
       * Sorcerer's magic: 150 [250]
 #### Spells:
-   * Damage:
-      * Lightning, Chain Lightning min: 1 [2], max: (5+clvl)/3 [2+clvl]
-      * Chain Lightning: creates 2+slvl/5 number of bolts
-      * Apocalypse, Fire Wall: 1/2 of the original
-      * Guardian: 1/3 of the original
-      * Elemental, Fireball, Flash: 1/4 of the original
+   * Chain Lightning creates a maximum of 3+slvl/4 number of bolts.
+   * Lightning, Chain Lightning, Fire Wall, Guardian, Elemental, Fireball and Flash do 1/2 of the original damage.
    * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
@@ -59,16 +52,17 @@ Note: You must be logged into GitHub to download the attachments.
       * Town Portal initial: 50 [35]; minimum: 35 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]
-      * Stone Curse initial: 120 [60]; minimum: 80 [40]; decrease per slvl: 6 [3]
-      * Fire Wall initial: 60 [28]; minimum: 40 [16]; decrease per slvl: 3 [2]
+      * Stone Curse initial: 100 [60]; minimum: 60 [40]; decrease per slvl: 6 [3]
+      * Fire Wall initial: 40 [28]; minimum: 28 [16]
 #### Items:
    * Potions cost 100% more gold.
+   * Adria and Pepin do not sell potions.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
+   * Staff charges have been set to minimum values.
    * Set to maximum values:
       * Affixes with a range of values.
-      * Staff charges.
       * Base armor except:
          * Kite Shield: 12 [8-15]
          * Gothic Shield: 14 [14-18]

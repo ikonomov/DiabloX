@@ -2084,6 +2084,10 @@ bool WitchItemOk(const Player &player, const ItemData &item)
 		return false;
 	if (item.iMiscId == IMISC_HEAL)
 		return false;
+	if (item.iMiscId == IMISC_REJUV)
+		return false;
+	if (item.iMiscId == IMISC_FULLREJUV)
+		return false;
 	if (item.iMiscId > IMISC_OILFIRST && item.iMiscId < IMISC_OILLAST)
 		return false;
 	if (item.iSpell == SpellID::Resurrect && !gbIsMultiplayer)
@@ -2124,11 +2128,6 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 		if (item.iMiscId == IMISC_ELIXVIT)
 			return !gbIsHellfire || player._pBaseVit < player.GetMaximumAttributeValue(CharacterAttribute::Vitality);
 	}
-
-	if (item.iMiscId == IMISC_REJUV)
-		return true;
-	if (item.iMiscId == IMISC_FULLREJUV)
-		return true;
 
 	return false;
 }
@@ -2175,7 +2174,7 @@ void RecreateBoyItem(const Player &player, Item &item, int lvl, int iseed)
 
 void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (IsAnyOf(idx, IDI_MANA, IDI_FULLMANA, IDI_PORTAL)) {
+	if (IsAnyOf(idx, IDI_PORTAL)) {
 		GetItemAttrs(item, idx, lvl);
 	} else if (gbIsHellfire && idx >= 114 && idx <= 117) {
 		SetRndSeed(iseed);
@@ -2201,7 +2200,7 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 
 void RecreateHealerItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (IsAnyOf(idx, IDI_HEAL, IDI_FULLHEAL, IDI_RESURRECT)) {
+	if (IsAnyOf(idx, IDI_RESURRECT)) {
 		GetItemAttrs(item, idx, lvl);
 	} else {
 		SetRndSeed(iseed);
@@ -4319,14 +4318,14 @@ void SpawnPremium(const Player &player)
 void SpawnWitch(int lvl)
 {
 	constexpr int PinnedItemCount = 3;
-	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_MANA, IDI_FULLMANA, IDI_PORTAL };
+	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_PORTAL };
 	constexpr int MaxPinnedBookCount = 4;
 	constexpr std::array<_item_indexes, MaxPinnedBookCount> PinnedBookTypes = { IDI_BOOK1, IDI_BOOK2, IDI_BOOK3, IDI_BOOK4 };
 
 	int bookCount = 0;
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
-	const int reservedItems = gbIsHellfire ? 10 : 17;
-	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 10;
+	const int reservedItems = gbIsHellfire ? 10 : 18;
+	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 7;
 	const int maxValue = gbIsHellfire ? 200000 : 216000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
@@ -4501,8 +4500,8 @@ void SpawnBoy(int lvl)
 void SpawnHealer(int lvl)
 {
 	constexpr int PinnedItemCount = 2;
-	constexpr std::array<_item_indexes, PinnedItemCount + 1> PinnedItemTypes = { IDI_HEAL, IDI_FULLHEAL, IDI_RESURRECT };
-	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 8) + 10;
+	constexpr std::array<_item_indexes, PinnedItemCount + 1> PinnedItemTypes = { IDI_RESURRECT };
+	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 2;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];

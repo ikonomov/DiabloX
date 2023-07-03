@@ -661,7 +661,7 @@ bool GuardianTryFireAt(Missile &missile, Point target)
 
 	Player &player = Players[missile._misource];
 	int dmg = GenerateRnd(10) + (player._pLevel / 2) + 1;
-	dmg = ScaleSpellEffect(dmg, missile._mispllvl) / 3;
+	dmg = ScaleSpellEffect(dmg, missile._mispllvl) / 2;
 
 	Direction dir = GetDirection(position, target);
 	AddMissile(position, target, dir, MissileID::Firebolt, TARGET_MONSTERS, missile._misource, missile._midam, missile.sourcePlayer()->GetSpellLevel(SpellID::Guardian), &missile);
@@ -790,11 +790,11 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 	case SpellID::RuneOfLight:
 	case SpellID::Lightning:
 		*mind = (6 + sl / 2);
-		*maxd = ((5 + myPlayer._pLevel) / 3) * (6 + sl / 2);
+		*maxd = ((3 + myPlayer._pLevel) / 2) * (6 + sl / 2);
 		break;
 	case SpellID::Flash:
-		*mind = ScaleSpellEffect(myPlayer._pLevel + 1, sl) * 57 / 512;
-		*maxd = ScaleSpellEffect(myPlayer._pLevel * 20 + 20, sl) * 57 / 512;
+		*mind = ScaleSpellEffect(myPlayer._pLevel + 1, sl) * 57 / 256;
+		*maxd = ScaleSpellEffect(myPlayer._pLevel * 20 + 20, sl) * 57 / 256;
 		break;
 	case SpellID::Identify:
 	case SpellID::TownPortal:
@@ -831,17 +831,17 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 	case SpellID::Fireball:
 	case SpellID::RuneOfFire: {
 		int base = (2 * myPlayer._pLevel) + 4;
-		*mind = ScaleSpellEffect(base, sl) / 4;
-		*maxd = ScaleSpellEffect(base + 36, sl) / 4;
+		*mind = ScaleSpellEffect(base, sl) / 2;
+		*maxd = ScaleSpellEffect(base + 36, sl) / 2;
 	} break;
 	case SpellID::Guardian: {
 		int base = (myPlayer._pLevel / 2) + 1;
-		*mind = ScaleSpellEffect(base, sl) / 3;
-		*maxd = ScaleSpellEffect(base + 9, sl) / 3;
+		*mind = ScaleSpellEffect(base, sl) / 2;
+		*maxd = ScaleSpellEffect(base + 9, sl) / 2;
 	} break;
 	case SpellID::ChainLightning:
 		*mind = (6 + sl / 2);
-		*maxd = ((5 + myPlayer._pLevel) / 3) * (6 + sl / 2);
+		*maxd = ((3 + myPlayer._pLevel) / 2) * (6 + sl / 2);
 		break;
 	case SpellID::FlameWave:
 		*mind = myPlayer._pLevel + 1;
@@ -863,12 +863,12 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 		*maxd = *mind + 8;
 		break;
 	case SpellID::Apocalypse:
-		*mind = myPlayer._pLevel / 2;
-		*maxd = myPlayer._pLevel * 3;
+		*mind = myPlayer._pLevel;
+		*maxd = *mind * 6;
 		break;
 	case SpellID::Elemental:
-		*mind = ScaleSpellEffect(2 * myPlayer._pLevel + 4, sl) / 8;
-		*maxd = ScaleSpellEffect(2 * myPlayer._pLevel + 40, sl) / 8;
+		*mind = ScaleSpellEffect(2 * myPlayer._pLevel + 4, sl) / 4;
+		*maxd = ScaleSpellEffect(2 * myPlayer._pLevel + 40, sl) / 4;
 		break;
 	case SpellID::ChargedBolt:
 		*mind = 1;
@@ -1880,7 +1880,7 @@ void AddFireball(Missile &missile, AddMissileParameter &parameter)
 		Player &player = Players[missile._misource];
 
 		int dmg = 2 * (player._pLevel + GenerateRndSum(10, 2)) + 4;
-		missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) / 4;
+		missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) / 2;
 	}
 	UpdateMissileVelocity(missile, dst, sp);
 	SetMissDir(missile, GetDirection16(missile.position.start, dst));
@@ -2018,7 +2018,7 @@ void AddFlashBottom(Missile &missile, AddMissileParameter & /*parameter*/)
 	case MissileSource::Player: {
 		Player &player = *missile.sourcePlayer();
 		int dmg = GenerateRndSum(20, player._pLevel + 1) + player._pLevel + 1;
-		missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) * 3 / 8;
+		missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) * 3 / 4;
 	} break;
 	case MissileSource::Monster:
 		missile._midam = missile.sourceMonster()->level(sgGameInitInfo.nDifficulty) * 2;
@@ -2037,7 +2037,7 @@ void AddFlashTop(Missile &missile, AddMissileParameter & /*parameter*/)
 		if (!missile.IsTrap()) {
 			int dmg = Players[missile._misource]._pLevel + 1;
 			dmg += GenerateRndSum(20, dmg);
-			missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) * 3 / 8;
+			missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) * 3 / 4;
 		} else {
 			missile._midam = currlevel / 2;
 		}
@@ -2384,7 +2384,7 @@ void AddElemental(Missile &missile, AddMissileParameter &parameter)
 	Player &player = Players[missile._misource];
 
 	int dmg = 2 * (player._pLevel + GenerateRndSum(10, 2)) + 4;
-	missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) / 8;
+	missile._midam = ScaleSpellEffect(dmg, missile._mispllvl) / 4;
 
 	UpdateMissileVelocity(missile, dst, 16);
 	SetMissDir(missile, GetDirection(missile.position.start, dst));
@@ -2552,7 +2552,7 @@ void AddApocalypse(Missile &missile, AddMissileParameter & /*parameter*/)
 	missile.var5 = std::min(missile.position.start.x + 8, MAXDUNX - 1);
 	missile.var6 = missile.var4;
 	int playerLevel = player._pLevel;
-	missile._midam = (GenerateRndSum(6, playerLevel) + playerLevel) / 2;
+	missile._midam = GenerateRndSum(6, playerLevel) + playerLevel;
 	missile._mirange = 255;
 }
 
@@ -3285,7 +3285,7 @@ void ProcessLightningControl(Missile &missile)
 		dam = GenerateRnd(currlevel) + 2 * currlevel;
 	} else if (missile._micaster == TARGET_MONSTERS) {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		dam = ((GenerateRnd(4) + GenerateRnd(Players[missile._misource]._pLevel) + 3) / 3) << 6;
+		dam = ((GenerateRnd(3) + GenerateRnd(Players[missile._misource]._pLevel) + 2) / 2) << 6;
 	} else {
 		auto &monster = Monsters[missile._misource];
 		dam = 2 * (monster.minDamage + GenerateRnd(monster.maxDamage - monster.minDamage + 1));
@@ -3514,7 +3514,7 @@ void ProcessChainLightning(Missile &missile)
 	Direction dir = GetDirection(position, dst);
 	AddMissile(position, dst, dir, MissileID::LightningControl, TARGET_MONSTERS, id, 1, missile._mispllvl);
 	int rad = std::min<int>(missile._mispllvl + 3, MaxCrawlRadius);
-	int maxTargets = 1 + missile._mispllvl / 5;
+	int maxTargets = 2 + missile._mispllvl / 4;
 	int targetCount = 0;
 	Crawl(1, rad, [&](Displacement displacement) {
 		Point target = position + displacement;

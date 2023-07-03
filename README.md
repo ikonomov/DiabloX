@@ -60,7 +60,7 @@ Note: You must be logged into GitHub to download the attachments.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
-   * Staff charges have been set to minimum values.
+   * Staff charges have been set to minimum values except 20 [40-80] for Fireball.
    * Set to maximum values:
       * Affixes with a range of values.
       * Base armor except:

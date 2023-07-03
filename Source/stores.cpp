@@ -1776,7 +1776,7 @@ void HealerBuyItem(Item &item)
 {
 	int idx = stextvhold + ((stextlhold - stextup) / 4);
 	if (gbIsMultiplayer && idx == 0)
-			item._iSeed = AdvanceRndSeed();
+		item._iSeed = AdvanceRndSeed();
 
 	TakePlrsMoney(item._iIvalue);
 	if (item._iMagical == ITEM_QUALITY_NORMAL)

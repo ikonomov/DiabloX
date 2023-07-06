@@ -56,7 +56,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Fire Wall initial: 40 [28]; minimum: 28 [16]
 #### Items:
    * Potions cost 100% more gold.
-   * Adria and Pepin sell potions, elixirs and scrolls in limited quantities.
+   * Adria and Pepin sell all items in limited quantities with potions and elixirs being more rare depending on price.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].

@@ -363,8 +363,6 @@ void LoadOptions()
 		}
 	}
 
-	GetIniValue("Hellfire", "SItem", sgOptions.Hellfire.szItem, sizeof(sgOptions.Hellfire.szItem), "");
-
 	GetIniValue("Network", "Bind Address", sgOptions.Network.szBindAddress, sizeof(sgOptions.Network.szBindAddress), "0.0.0.0");
 	GetIniValue("Network", "Previous Game ID", sgOptions.Network.szPreviousZTGame, sizeof(sgOptions.Network.szPreviousZTGame), "");
 	GetIniValue("Network", "Previous Host", sgOptions.Network.szPreviousHost, sizeof(sgOptions.Network.szPreviousHost), "");
@@ -392,8 +390,6 @@ void SaveOptions()
 			pEntry->SaveToIni(pCategory->GetKey());
 		}
 	}
-
-	SetIniValue("Hellfire", "SItem", sgOptions.Hellfire.szItem);
 
 	SetIniValue("Network", "Bind Address", sgOptions.Network.szBindAddress);
 	SetIniValue("Network", "Previous Game ID", sgOptions.Network.szPreviousZTGame);

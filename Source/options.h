@@ -438,8 +438,6 @@ struct HellfireOptions : OptionCategoryBase {
 	HellfireOptions();
 	std::vector<OptionEntryBase *> GetEntries() override;
 
-	/** @brief Cornerstone of the world item. */
-	char szItem[sizeof(ItemPack) * 2 + 1];
 	/** @brief Remembers what singleplayer hero/save was last used. */
 	OptionEntryInt<std::uint32_t> lastSinglePlayerHero;
 	/** @brief Remembers what multiplayer hero/save was last used. */

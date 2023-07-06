@@ -1758,12 +1758,6 @@ void InitKeymapActions()
 	    nullptr,
 	    CanPlayerTakeAction);
 	sgOptions.Keymapper.AddAction(
-	    "Pause Game",
-	    N_("Pause Game"),
-	    N_("Pauses the game."),
-	    SDLK_PAUSE,
-	    diablo_pause_game);
-	sgOptions.Keymapper.AddAction(
 	    "DecreaseGamma",
 	    N_("Decrease Gamma"),
 	    N_("Reduce screen brightness."),

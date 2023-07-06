@@ -56,7 +56,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Fire Wall initial: 40 [28]; minimum: 28 [16]
 #### Items:
    * Potions cost 100% more gold.
-   * Adria and Pepin do not sell potions.
+   * Adria and Pepin sell potions, elixirs and scrolls in limited quantities.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
@@ -82,7 +82,7 @@ Note: You must be logged into GitHub to download the attachments.
   <summary>Qlvl (click to expand)</summary>
 
    * Qlvl:
-      * Elixir of Strength, Magic and Dexterity: 20 [15]
+      * Elixir of Strength, Magic, Dexterity and Vitality: 16 [15/20]
       * Affix:
          * giants: 18 [17]
          * titans: 29 [23]

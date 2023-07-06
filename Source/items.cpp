@@ -2075,25 +2075,31 @@ bool WitchItemOk(const Player &player, const ItemData &item)
 	if (IsNoneOf(item.itype, ItemType::Misc, ItemType::Staff))
 		return false;
 	if (item.iMiscId == IMISC_MANA)
-		return false;
+		return FlipCoin(2);
 	if (item.iMiscId == IMISC_FULLMANA)
-		return false;
-	if (item.iSpell == SpellID::TownPortal)
-		return false;
+		return FlipCoin(6);
 	if (item.iMiscId == IMISC_FULLHEAL)
 		return false;
 	if (item.iMiscId == IMISC_HEAL)
 		return false;
 	if (item.iMiscId == IMISC_REJUV)
-		return false;
+		return FlipCoin(4);
 	if (item.iMiscId == IMISC_FULLREJUV)
-		return false;
+		return FlipCoin(8);
 	if (item.iMiscId > IMISC_OILFIRST && item.iMiscId < IMISC_OILLAST)
 		return false;
 	if (item.iSpell == SpellID::Resurrect && !gbIsMultiplayer)
 		return false;
 	if (item.iSpell == SpellID::HealOther && !gbIsMultiplayer)
 		return false;
+	if (item.iMiscId == IMISC_ELIXSTR)
+		return FlipCoin(40);
+	if (item.iMiscId == IMISC_ELIXMAG)
+		return FlipCoin(40);
+	if (item.iMiscId == IMISC_ELIXDEX)
+		return FlipCoin(40);
+	if (item.iMiscId == IMISC_ELIXVIT)
+		return FlipCoin(40);
 
 	return true;
 }
@@ -2115,19 +2121,24 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 
 	if (item.iMiscId == IMISC_SCROLL)
 		return item.iSpell == SpellID::Healing;
-	if (item.iMiscId == IMISC_SCROLLT)
-		return item.iSpell == SpellID::HealOther && gbIsMultiplayer;
-
-	if (!gbIsMultiplayer) {
-		if (item.iMiscId == IMISC_ELIXSTR)
-			return !gbIsHellfire || player._pBaseStr < player.GetMaximumAttributeValue(CharacterAttribute::Strength);
-		if (item.iMiscId == IMISC_ELIXMAG)
-			return !gbIsHellfire || player._pBaseMag < player.GetMaximumAttributeValue(CharacterAttribute::Magic);
-		if (item.iMiscId == IMISC_ELIXDEX)
-			return !gbIsHellfire || player._pBaseDex < player.GetMaximumAttributeValue(CharacterAttribute::Dexterity);
-		if (item.iMiscId == IMISC_ELIXVIT)
-			return !gbIsHellfire || player._pBaseVit < player.GetMaximumAttributeValue(CharacterAttribute::Vitality);
-	}
+	if (item.iSpell == SpellID::Resurrect && gbIsMultiplayer)
+		return true;
+	if (item.iMiscId == IMISC_ELIXSTR)
+		return FlipCoin(100);
+	if (item.iMiscId == IMISC_ELIXMAG)
+		return FlipCoin(100);
+	if (item.iMiscId == IMISC_ELIXDEX)
+		return FlipCoin(100);
+	if (item.iMiscId == IMISC_ELIXVIT)
+		return FlipCoin(100);
+	if (item.iMiscId == IMISC_HEAL)
+		return FlipCoin(5);
+	if (item.iMiscId == IMISC_FULLHEAL)
+		return FlipCoin(15);
+	if (item.iMiscId == IMISC_REJUV)
+		return FlipCoin(10);
+	if (item.iMiscId == IMISC_FULLREJUV)
+		return FlipCoin(20);
 
 	return false;
 }
@@ -2174,9 +2185,7 @@ void RecreateBoyItem(const Player &player, Item &item, int lvl, int iseed)
 
 void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (idx == IDI_PORTAL) {
-		GetItemAttrs(item, idx, lvl);
-	} else if (gbIsHellfire && idx >= 114 && idx <= 117) {
+	if (gbIsHellfire && idx >= 114 && idx <= 117) {
 		SetRndSeed(iseed);
 		DiscardRandomValues(1);
 		GetItemAttrs(item, idx, lvl);
@@ -2200,13 +2209,9 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 
 void RecreateHealerItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (idx == IDI_RESURRECT) {
-		GetItemAttrs(item, idx, lvl);
-	} else {
-		SetRndSeed(iseed);
-		_item_indexes itype = RndHealerItem(player, lvl);
-		GetItemAttrs(item, itype, lvl);
-	}
+	SetRndSeed(iseed);
+	_item_indexes itype = RndHealerItem(player, lvl);
+	GetItemAttrs(item, itype, lvl);
 
 	item._iSeed = iseed;
 	item._iCreateInfo = lvl | CF_HEALER;
@@ -4317,44 +4322,18 @@ void SpawnPremium(const Player &player)
 
 void SpawnWitch(int lvl)
 {
-	constexpr int PinnedItemCount = 1;
-	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_PORTAL };
 	constexpr int MaxPinnedBookCount = 4;
 	constexpr std::array<_item_indexes, MaxPinnedBookCount> PinnedBookTypes = { IDI_BOOK1, IDI_BOOK2, IDI_BOOK3, IDI_BOOK4 };
 
 	int bookCount = 0;
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
 	const int reservedItems = gbIsHellfire ? 10 : 18;
-	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 7;
+	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 9;
 	const int maxValue = gbIsHellfire ? 200000 : 216000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
 		Item &item = witchitem[i];
 		item = {};
-
-		if (i < PinnedItemCount) {
-			item._iSeed = AdvanceRndSeed();
-			GetItemAttrs(item, PinnedItemTypes[i], 1);
-			item._iCreateInfo = lvl;
-			item._iStatFlag = true;
-			continue;
-		}
-
-		if (gbIsHellfire) {
-			if (i < PinnedItemCount + MaxPinnedBookCount && bookCount < pinnedBookCount) {
-				_item_indexes bookType = PinnedBookTypes[i - PinnedItemCount];
-				if (lvl >= AllItemsList[bookType].iMinMLvl) {
-					item._iSeed = AdvanceRndSeed();
-					SetRndSeed(item._iSeed);
-					DiscardRandomValues(1);
-					GetItemAttrs(item, bookType, lvl);
-					item._iCreateInfo = lvl | CF_WITCH;
-					item._iIdentified = true;
-					bookCount++;
-					continue;
-				}
-			}
-		}
 
 		if (i >= itemCount) {
 			item.clear();
@@ -4380,7 +4359,7 @@ void SpawnWitch(int lvl)
 		item._iIdentified = true;
 	}
 
-	SortVendor(witchitem + PinnedItemCount);
+	SortVendor(witchitem);
 }
 
 void SpawnBoy(int lvl)
@@ -4499,21 +4478,11 @@ void SpawnBoy(int lvl)
 
 void SpawnHealer(int lvl)
 {
-	constexpr int PinnedItemCount = 0;
-	constexpr std::array<_item_indexes, PinnedItemCount + 1> PinnedItemTypes = { IDI_RESURRECT };
-	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 2;
+	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 3;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];
 		item = {};
-
-		if (i < PinnedItemCount || (gbIsMultiplayer && i == PinnedItemCount)) {
-			item._iSeed = AdvanceRndSeed();
-			GetItemAttrs(item, PinnedItemTypes[i], 1);
-			item._iCreateInfo = lvl;
-			item._iStatFlag = true;
-			continue;
-		}
 
 		if (i >= itemCount) {
 			item.clear();
@@ -4528,7 +4497,7 @@ void SpawnHealer(int lvl)
 		item._iIdentified = true;
 	}
 
-	SortVendor(healitem + PinnedItemCount);
+	SortVendor(healitem);
 }
 
 void MakeGoldStack(Item &goldItem, int value)

@@ -4280,6 +4280,7 @@ void SpawnPremium(const Player &player)
 
 void SpawnWitch(int lvl)
 {
+	constexpr int PinnedItemCount = 0;
 	constexpr int MaxPinnedBookCount = 4;
 	constexpr std::array<_item_indexes, MaxPinnedBookCount> PinnedBookTypes = { IDI_BOOK1, IDI_BOOK2, IDI_BOOK3, IDI_BOOK4 };
 
@@ -4317,7 +4318,7 @@ void SpawnWitch(int lvl)
 		item._iIdentified = true;
 	}
 
-	SortVendor(witchitem);
+	SortVendor(witchitem + PinnedItemCount);
 }
 
 void SpawnBoy(int lvl)
@@ -4436,6 +4437,7 @@ void SpawnBoy(int lvl)
 
 void SpawnHealer(int lvl)
 {
+	constexpr int PinnedItemCount = 0;
 	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 3;
 
 	for (int i = 0; i < 20; i++) {
@@ -4455,7 +4457,7 @@ void SpawnHealer(int lvl)
 		item._iIdentified = true;
 	}
 
-	SortVendor(healitem);
+	SortVendor(healitem + PinnedItemCount);
 }
 
 void MakeGoldStack(Item &goldItem, int value)

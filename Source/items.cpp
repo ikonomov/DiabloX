@@ -4338,6 +4338,22 @@ void SpawnWitch(int lvl)
 		Item &item = witchitem[i];
 		item = {};
 
+		if (gbIsHellfire) {
+			if (i < PinnedItemCount + MaxPinnedBookCount && bookCount < pinnedBookCount) {
+				_item_indexes bookType = PinnedBookTypes[i - PinnedItemCount];
+				if (lvl >= AllItemsList[bookType].iMinMLvl) {
+					item._iSeed = AdvanceRndSeed();
+					SetRndSeed(item._iSeed);
+					DiscardRandomValues(1);
+					GetItemAttrs(item, bookType, lvl);
+					item._iCreateInfo = lvl | CF_WITCH;
+					item._iIdentified = true;
+					bookCount++;
+					continue;
+				}
+			}
+		}
+
 		if (i >= itemCount) {
 			item.clear();
 			continue;

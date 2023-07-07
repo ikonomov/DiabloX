@@ -2074,18 +2074,16 @@ bool WitchItemOk(const Player &player, const ItemData &item)
 {
 	if (IsNoneOf(item.itype, ItemType::Misc, ItemType::Staff))
 		return false;
-	if (item.iMiscId == IMISC_MANA)
-		return FlipCoin(2);
 	if (item.iMiscId == IMISC_FULLMANA)
-		return FlipCoin(6);
+		return FlipCoin(4);
 	if (item.iMiscId == IMISC_FULLHEAL)
 		return false;
 	if (item.iMiscId == IMISC_HEAL)
 		return false;
 	if (item.iMiscId == IMISC_REJUV)
-		return FlipCoin(4);
+		return FlipCoin();
 	if (item.iMiscId == IMISC_FULLREJUV)
-		return FlipCoin(8);
+		return FlipCoin(6);
 	if (item.iMiscId > IMISC_OILFIRST && item.iMiscId < IMISC_OILLAST)
 		return false;
 	if (item.iSpell == SpellID::Resurrect && !gbIsMultiplayer)
@@ -2093,13 +2091,13 @@ bool WitchItemOk(const Player &player, const ItemData &item)
 	if (item.iSpell == SpellID::HealOther && !gbIsMultiplayer)
 		return false;
 	if (item.iMiscId == IMISC_ELIXSTR)
-		return FlipCoin(40);
+		return FlipCoin(30);
 	if (item.iMiscId == IMISC_ELIXMAG)
-		return FlipCoin(40);
+		return FlipCoin(30);
 	if (item.iMiscId == IMISC_ELIXDEX)
-		return FlipCoin(40);
+		return FlipCoin(30);
 	if (item.iMiscId == IMISC_ELIXVIT)
-		return FlipCoin(40);
+		return FlipCoin(30);
 
 	return true;
 }
@@ -2124,21 +2122,21 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 	if (item.iSpell == SpellID::Resurrect && gbIsMultiplayer)
 		return true;
 	if (item.iMiscId == IMISC_ELIXSTR)
-		return FlipCoin(100);
+		return FlipCoin(90);
 	if (item.iMiscId == IMISC_ELIXMAG)
-		return FlipCoin(100);
+		return FlipCoin(90);
 	if (item.iMiscId == IMISC_ELIXDEX)
-		return FlipCoin(100);
+		return FlipCoin(90);
 	if (item.iMiscId == IMISC_ELIXVIT)
-		return FlipCoin(100);
+		return FlipCoin(90);
 	if (item.iMiscId == IMISC_HEAL)
-		return FlipCoin(5);
+		return FlipCoin(3);
 	if (item.iMiscId == IMISC_FULLHEAL)
-		return FlipCoin(15);
+		return FlipCoin(12);
 	if (item.iMiscId == IMISC_REJUV)
-		return FlipCoin(10);
+		return FlipCoin(6);
 	if (item.iMiscId == IMISC_FULLREJUV)
-		return FlipCoin(20);
+		return FlipCoin(18);
 
 	return false;
 }
@@ -4498,7 +4496,7 @@ void SpawnBoy(int lvl)
 void SpawnHealer(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
-	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 3;
+	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 4;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];

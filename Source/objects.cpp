@@ -35,6 +35,7 @@
 #include "missiles.h"
 #include "monster.h"
 #include "options.h"
+#include "qol/stash.h"
 #include "stores.h"
 #include "towners.h"
 #include "track.h"
@@ -1987,6 +1988,15 @@ void OperateBook(Player &player, Object &book, bool sendmsg)
 				NetSendCmdParam2(true, CMD_CHANGE_SPELL_LEVEL, static_cast<uint16_t>(SpellID::Guardian), newSpellLevel);
 			}
 
+			if (&player == MyPlayer) {
+				for (Item &item : InventoryPlayerItemsRange { player }) {
+					item.updateRequiredStatsCacheForPlayer(player);
+				}
+				if (IsStashOpen) {
+					Stash.RefreshItemStatFlags();
+				}
+			}
+
 			Quests[Q_SCHAMB]._qactive = QUEST_DONE;
 			NetSendCmdQuest(true, Quests[Q_SCHAMB]);
 		}
@@ -2582,6 +2592,15 @@ void OperateShrineEnchanted(Player &player)
 			player._pSplLvl[spellToReduce] = newSpellLevel;
 			NetSendCmdParam2(true, CMD_CHANGE_SPELL_LEVEL, spellToReduce, newSpellLevel);
 		}
+
+		if (&player == MyPlayer) {
+			for (Item &item : InventoryPlayerItemsRange { player }) {
+				item.updateRequiredStatsCacheForPlayer(player);
+			}
+			if (IsStashOpen) {
+				Stash.RefreshItemStatFlags();
+			}
+		}
 	}
 
 	InitDiabloMsg(EMSG_SHRINE_ENCHANTED);
@@ -2616,6 +2635,15 @@ void OperateShrineCostOfWisdom(Player &player, SpellID spellId, diablo_message m
 		uint8_t newSpellLevel = std::min(static_cast<uint8_t>(curSpellLevel + 2), MaxSpellLevel);
 		player._pSplLvl[static_cast<int8_t>(spellId)] = newSpellLevel;
 		NetSendCmdParam2(true, CMD_CHANGE_SPELL_LEVEL, static_cast<uint16_t>(spellId), newSpellLevel);
+	}
+
+	if (&player == MyPlayer) {
+		for (Item &item : InventoryPlayerItemsRange { player }) {
+			item.updateRequiredStatsCacheForPlayer(player);
+		}
+		if (IsStashOpen) {
+			Stash.RefreshItemStatFlags();
+		}
 	}
 
 	int magicLoss = player.GetBaseAttributeValue(CharacterAttribute::Magic) / 50;

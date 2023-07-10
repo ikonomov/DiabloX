@@ -2130,13 +2130,13 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 	if (item.iMiscId == IMISC_ELIXVIT)
 		return FlipCoin(90);
 	if (item.iMiscId == IMISC_HEAL)
-		return FlipCoin(3);
+		return FlipCoin();
 	if (item.iMiscId == IMISC_FULLHEAL)
-		return FlipCoin(12);
+		return FlipCoin(8);
 	if (item.iMiscId == IMISC_REJUV)
-		return FlipCoin(6);
+		return FlipCoin(4);
 	if (item.iMiscId == IMISC_FULLREJUV)
-		return FlipCoin(18);
+		return FlipCoin(12);
 
 	return false;
 }

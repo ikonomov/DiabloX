@@ -2116,12 +2116,10 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 	if (item.itype != ItemType::Misc)
 		return false;
 
-	if (item.iMiscId == IMISC_SCROLL)
-		return item.iSpell == SpellID::Healing;
-	if (item.iMiscId == IMISC_SCROLL)
-		return item.iSpell == SpellID::Resurrect && gbIsMultiplayer;
-	if (item.iMiscId == IMISC_SCROLLT)
-		return item.iSpell == SpellID::HealOther && gbIsMultiplayer;
+	if (item.iSpell == SpellID::Healing)
+		return true;
+	if (item.iSpell == SpellID::Resurrect && gbIsMultiplayer)
+		return true;
 
 	if (!gbIsMultiplayer) {
 		if (item.iMiscId == IMISC_ELIXSTR)

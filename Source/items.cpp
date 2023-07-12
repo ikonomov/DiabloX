@@ -683,27 +683,27 @@ int CalculateToHitBonus(int level)
 {
 	switch (level) {
 	case -75:
-		return -10;
+		return -RndPL(10, 10);
 	case -45:
-		return -5;
+		return -RndPL(5, 5);
 	case 35:
-		return 5;
+		return RndPL(5, 5);
 	case 50:
-		return 10;
+		return RndPL(10, 10);
 	case 65:
-		return 15;
+		return RndPL(15, 15);
 	case 80:
-		return 20;
+		return RndPL(20, 20);
 	case 95:
-		return 30;
+		return RndPL(30, 30);
 	case 110:
-		return 40;
+		return RndPL(40, 40);
 	case 125:
-		return 50;
+		return RndPL(50, 50);
 	case 150:
-		return 75;
+		return RndPL(75, 75);
 	case 175:
-		return 100;
+		return RndPL(100, 100);
 	default:
 		app_fatal("Unknown to hit bonus");
 	}
@@ -2079,30 +2079,24 @@ bool WitchItemOk(const Player &player, const ItemData &item)
 {
 	if (IsNoneOf(item.itype, ItemType::Misc, ItemType::Staff))
 		return false;
+	if (item.iMiscId == IMISC_MANA)
+		return false;
 	if (item.iMiscId == IMISC_FULLMANA)
-		return FlipCoin(4);
+		return false;
 	if (item.iMiscId == IMISC_FULLHEAL)
 		return false;
 	if (item.iMiscId == IMISC_HEAL)
 		return false;
 	if (item.iMiscId == IMISC_REJUV)
-		return FlipCoin();
+		return false;
 	if (item.iMiscId == IMISC_FULLREJUV)
-		return FlipCoin(6);
+		return false;
 	if (item.iMiscId > IMISC_OILFIRST && item.iMiscId < IMISC_OILLAST)
 		return false;
 	if (item.iSpell == SpellID::Resurrect && !gbIsMultiplayer)
 		return false;
 	if (item.iSpell == SpellID::HealOther && !gbIsMultiplayer)
 		return false;
-	if (item.iMiscId == IMISC_ELIXSTR)
-		return FlipCoin(30);
-	if (item.iMiscId == IMISC_ELIXMAG)
-		return FlipCoin(30);
-	if (item.iMiscId == IMISC_ELIXDEX)
-		return FlipCoin(30);
-	if (item.iMiscId == IMISC_ELIXVIT)
-		return FlipCoin(30);
 
 	return true;
 }
@@ -2124,24 +2118,21 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 
 	if (item.iMiscId == IMISC_SCROLL)
 		return item.iSpell == SpellID::Healing;
-	if (item.iSpell == SpellID::Resurrect && gbIsMultiplayer)
-		return true;
-	if (item.iMiscId == IMISC_ELIXSTR)
-		return FlipCoin(90);
-	if (item.iMiscId == IMISC_ELIXMAG)
-		return FlipCoin(90);
-	if (item.iMiscId == IMISC_ELIXDEX)
-		return FlipCoin(90);
-	if (item.iMiscId == IMISC_ELIXVIT)
-		return FlipCoin(90);
-	if (item.iMiscId == IMISC_HEAL)
-		return FlipCoin(3);
-	if (item.iMiscId == IMISC_FULLHEAL)
-		return FlipCoin(12);
-	if (item.iMiscId == IMISC_REJUV)
-		return FlipCoin(6);
-	if (item.iMiscId == IMISC_FULLREJUV)
-		return FlipCoin(18);
+	if (item.iMiscId == IMISC_SCROLL)
+		return item.iSpell == SpellID::Resurrect && gbIsMultiplayer;
+	if (item.iMiscId == IMISC_SCROLLT)
+		return item.iSpell == SpellID::HealOther && gbIsMultiplayer;
+
+	if (!gbIsMultiplayer) {
+		if (item.iMiscId == IMISC_ELIXSTR)
+			return !gbIsHellfire || player._pBaseStr < player.GetMaximumAttributeValue(CharacterAttribute::Strength);
+		if (item.iMiscId == IMISC_ELIXMAG)
+			return !gbIsHellfire || player._pBaseMag < player.GetMaximumAttributeValue(CharacterAttribute::Magic);
+		if (item.iMiscId == IMISC_ELIXDEX)
+			return !gbIsHellfire || player._pBaseDex < player.GetMaximumAttributeValue(CharacterAttribute::Dexterity);
+		if (item.iMiscId == IMISC_ELIXVIT)
+			return !gbIsHellfire || player._pBaseVit < player.GetMaximumAttributeValue(CharacterAttribute::Vitality);
+	}
 
 	return false;
 }
@@ -2337,14 +2328,14 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 	} else if ((item._iCreateInfo & CF_BOY) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		minlvl = lvl;
-		maxlvl = lvl * 2;
+		maxlvl = lvl * 2 + 1;
 	} else if ((item._iCreateInfo & CF_WITCH) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl + 1;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl + 1;
 		minlvl = iblvl / 2;
 		maxlvl = iblvl;
 	} else {
@@ -4334,7 +4325,7 @@ void SpawnWitch(int lvl)
 	int bookCount = 0;
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
 	const int reservedItems = gbIsHellfire ? 10 : 18;
-	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 9;
+	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 7;
 	const int maxValue = gbIsHellfire ? 200000 : 216000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
@@ -4501,7 +4492,7 @@ void SpawnBoy(int lvl)
 void SpawnHealer(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
-	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 4;
+	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 2;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];
@@ -4822,7 +4813,6 @@ void Item::updateRequiredStatsCacheForPlayer(const Player &player)
 
 StringOrView Item::getName() const
 {
-	return _iIdentified ? string_view(_iIName) : string_view(_iName);
 	if (isEmpty()) {
 		return string_view("");
 	} else if (!_iIdentified || _iCreateInfo == 0 || _iMagical == ITEM_QUALITY_NORMAL) {

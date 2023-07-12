@@ -3458,7 +3458,7 @@ void InitMonsters()
 					na++;
 			}
 		}
-		int numplacemonsters = na / 24;
+		int numplacemonsters = na / 30;
 		if (gbIsMultiplayer)
 			numplacemonsters += numplacemonsters / 2;
 		if (ActiveMonsterCount + numplacemonsters > MaxMonsters - 10)

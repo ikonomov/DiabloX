@@ -32,7 +32,9 @@ Note: You must be logged into GitHub to download the attachments.
 ## Changes in DiabloX from DevilutionX:
 *The original values are listed in [square brackets].*
 #### Characters:
-   * The required experience points for each clvl have been increased by 100%.
+   * Required clvl to create game:
+      * Nightmare difficulty: 15 [20]
+      * Hell difficulty: 20 [30]
    * Stop gaining level up attribute points after clvl 25.
    * Regenerate 1% of max mana per second.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
@@ -56,7 +58,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Fire Wall initial: 40 [28]; minimum: 28 [16]
 #### Items:
    * Potions cost 100% more gold.
-   * Adria and Pepin sell all items in limited quantities with potions and elixirs being more rare depending on price.
+   * Adria and Pepin do not sell potions.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix: +50% [+200%].
@@ -82,7 +84,7 @@ Note: You must be logged into GitHub to download the attachments.
   <summary>Qlvl (click to expand)</summary>
 
    * Qlvl:
-      * Elixir of Strength, Magic, Dexterity and Vitality: 16 [15/20]
+      * Elixir of Strength, Magic and Dexterity: 20 [15]
       * Affix:
          * giants: 18 [17]
          * titans: 29 [23]
@@ -147,7 +149,6 @@ Note: You must be logged into GitHub to download the attachments.
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
 #### Monsters:
-   * Number per dlvl has been increased by 25% with a maximum of 250 [200].
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:

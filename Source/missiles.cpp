@@ -289,9 +289,6 @@ bool Plr2PlrMHit(const Player &player, int p, int mindam, int maxdam, int dist, 
 
 	*blocked = false;
 
-	if (target.isOnArenaLevel() && target._pmode == PM_WALK_SIDEWAYS)
-		return false;
-
 	if (target._pInvincible) {
 		return false;
 	}
@@ -359,6 +356,7 @@ bool Plr2PlrMHit(const Player &player, int p, int mindam, int maxdam, int dist, 
 			dam += player._pIBonusDamMod + player._pDamageMod + dam * player._pIBonusDam / 100;
 		if (!shift)
 			dam <<= 6;
+		dam /= 2;
 	}
 	if (resper > 0) {
 		dam -= (dam * resper) / 100;

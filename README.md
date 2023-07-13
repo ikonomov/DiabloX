@@ -43,10 +43,10 @@ Note: You must be logged into GitHub to download the attachments.
       * Warrior's strength: 150 [250]
       * Rogue's dexterity: 150 [250]
       * Sorcerer's magic: 150 [250]
+   * The 1/2 missile damage modifier in player versus player is applied to all missiles.
 #### Spells:
    * Chain Lightning creates a maximum of 3+slvl/4 number of bolts.
    * Lightning, Chain Lightning, Fire Wall, Guardian, Elemental, Fireball and Flash do 1/2 of the original damage.
-   * The 1/2 spell damage modifier in player versus player has been removed.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
    * Stone Curse does not affect unique monsters.
@@ -162,14 +162,42 @@ Note: You must be logged into GitHub to download the attachments.
       * Adria refilling mana
       * option to disable randomized quests
       * option to disable harmful shrines
-      * arena support
       * town automap
+      * in arena levels:
+         * immunity to missiles when moving horizontally
+         * functionality of Infravision
    * Disabled automation options:
       * pickup except for gold (configurable for gold)
       * equip except for weapons and shields (configurable for weapons and shields)
       * refilling belt
       * key binding for using health and mana potions from belt
       * quick cast
+<details>
+  <summary>Sound effects (click to expand)</summary>
+
+   * Sound effects:
+      * Corrected flip sfx for Ogden’s Sign.
+      * Removed casting sfx (spell/skill sfx unchanged):
+         * Firebolt
+         * Lightning
+         * Town Portal
+         * Infravision
+         * Phasing
+         * Mana Shield
+         * Guardian
+         * Flame Wave
+         * Nova
+         * Inferno
+         * Golem
+         * Teleport
+         * Item Repair
+         * Trap Disarm
+         * Charged Bolt
+         * Holy Bolt
+         * Telekinesis
+         * Bone Spirit
+</details>
+
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.

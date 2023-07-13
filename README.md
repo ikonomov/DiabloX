@@ -180,13 +180,13 @@ Note: You must be logged into GitHub to download the attachments.
       * Removed casting sfx (spell/skill sfx unchanged):
          * Firebolt
          * Lightning
+         * Flash
          * Town Portal
          * Infravision
          * Phasing
          * Mana Shield
          * Guardian
          * Flame Wave
-         * Nova
          * Inferno
          * Golem
          * Teleport

@@ -190,7 +190,6 @@ Note: You must be logged into GitHub to download the attachments.
          * Inferno
          * Golem
          * Teleport
-         * Item Repair
          * Trap Disarm
          * Charged Bolt
          * Holy Bolt

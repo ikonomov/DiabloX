@@ -96,8 +96,6 @@ void CreditsRenderer::Render()
 
 	SDL_FillRect(DiabloUiSurface(), nullptr, 0x000000);
 	const Point uiPosition = GetUIRectangle().position;
-	if (ArtBackgroundWidescreen)
-		RenderClxSprite(Surface(DiabloUiSurface()), (*ArtBackgroundWidescreen)[0], uiPosition - Displacement { 320, 0 });
 	RenderClxSprite(Surface(DiabloUiSurface()), (*ArtBackground)[0], uiPosition);
 
 	const std::size_t linesBegin = std::max(offsetY / LINE_H, 0);

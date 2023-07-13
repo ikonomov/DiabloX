@@ -201,10 +201,6 @@ void DrawCutsceneBackground()
 	const Rectangle &uiRectangle = GetUIRectangle();
 	const Surface &out = GlobalBackBuffer();
 	SDL_FillRect(out.surface, nullptr, 0x000000);
-	if (ArtCutsceneWidescreen) {
-		const ClxSprite sprite = (*ArtCutsceneWidescreen)[0];
-		RenderClxSprite(out, sprite, { uiRectangle.position.x - (sprite.width() - uiRectangle.size.width) / 2, uiRectangle.position.y });
-	}
 	ClxDraw(out, { uiRectangle.position.x, 480 - 1 + uiRectangle.position.y }, (*sgpBackCel)[0]);
 }
 

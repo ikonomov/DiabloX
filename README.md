@@ -172,31 +172,12 @@ Note: You must be logged into GitHub to download the attachments.
       * refilling belt
       * key binding for using health and mana potions from belt
       * quick cast
-<details>
-  <summary>Sound effects (click to expand)</summary>
-
    * Sound effects:
       * Corrected flip sfx for Ogden’s Sign.
-      * Removed casting sfx (spell/skill sfx unchanged):
-         * Firebolt
-         * Lightning
-         * Flash
-         * Town Portal
-         * Infravision
+      * Removed casting sfx (spell sfx unchanged):
          * Phasing
          * Mana Shield
-         * Guardian
-         * Flame Wave
-         * Inferno
-         * Golem
          * Teleport
-         * Trap Disarm
-         * Charged Bolt
-         * Holy Bolt
-         * Telekinesis
-         * Bone Spirit
-</details>
-
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.

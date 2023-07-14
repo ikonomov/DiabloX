@@ -43,7 +43,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Warrior's strength: 150 [250]
       * Rogue's dexterity: 150 [250]
       * Sorcerer's magic: 150 [250]
-   * The 1/2 missile damage modifier in player versus player is applied to all missiles.
+   * The 1/2 spell damage modifier in player versus player is applied to all missiles.
 #### Spells:
    * Chain Lightning creates a maximum of 3+slvl/4 number of bolts.
    * Lightning, Chain Lightning, Fire Wall, Guardian, Elemental, Fireball and Flash do 1/2 of the original damage.

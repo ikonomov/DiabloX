@@ -356,8 +356,8 @@ bool Plr2PlrMHit(const Player &player, int p, int mindam, int maxdam, int dist, 
 			dam += player._pIBonusDamMod + player._pDamageMod + dam * player._pIBonusDam / 100;
 		if (!shift)
 			dam <<= 6;
-		dam /= 2;
 	}
+	dam /= 2;
 	if (resper > 0) {
 		dam -= (dam * resper) / 100;
 		if (&player == MyPlayer)

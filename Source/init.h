@@ -83,6 +83,21 @@ inline bool HaveExtraFonts()
 #endif
 }
 
+#ifdef UNPACKED_MPQS
+bool AreExtraFontsOutOfDate(const std::string &path);
+#else
+bool AreExtraFontsOutOfDate(MpqArchive &archive);
+#endif
+
+inline bool AreExtraFontsOutOfDate()
+{
+#ifdef UNPACKED_MPQS
+	return font_data_path && AreExtraFontsOutOfDate(*font_data_path);
+#else
+	return font_mpq && AreExtraFontsOutOfDate(*font_mpq);
+#endif
+}
+
 void init_cleanup();
 void LoadCoreArchives();
 void LoadLanguageArchive();

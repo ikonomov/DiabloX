@@ -1116,11 +1116,10 @@ void CheckArchivesUpToDate()
 {
 #ifdef UNPACKED_MPQS
 	const bool devilutionxMpqOutOfDate = false;
-	const bool fontsMpqOutOfDate = font_data_path && !FileExists(*font_data_path + "fonts" + DirectorySeparator + "12-4e.clx");
 #else
-	const bool devilutionxMpqOutOfDate = devilutionx_mpq && !devilutionx_mpq->HasFile("data\\charbg.clx");
-	const bool fontsMpqOutOfDate = font_mpq && !font_mpq->HasFile("fonts\\12-4e.clx");
+	const bool devilutionxMpqOutOfDate = devilutionx_mpq && (!devilutionx_mpq->HasFile("data\\charbg.clx") || devilutionx_mpq->HasFile("fonts\\12-00.bin"));
 #endif
+	const bool fontsMpqOutOfDate = AreExtraFontsOutOfDate();
 
 	if (devilutionxMpqOutOfDate && fontsMpqOutOfDate) {
 		app_fatal(_("Please update devilutionx.mpq and fonts.mpq to the latest version"));

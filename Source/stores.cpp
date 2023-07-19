@@ -1615,16 +1615,21 @@ void WitchBuyItem(Item &item)
 {
 	int idx = stextvhold + ((stextlhold - stextup) / 4);
 
+	if (idx < 1)
+		item._iSeed = AdvanceRndSeed();
+
 	TakePlrsMoney(item._iIvalue);
 	StoreAutoPlace(item, true);
 
-	if (idx == WITCH_ITEMS - 1) {
-		witchitem[WITCH_ITEMS - 1].clear();
-	} else {
-		for (; !witchitem[idx + 1].isEmpty(); idx++) {
-			witchitem[idx] = std::move(witchitem[idx + 1]);
+	if (idx >= 1) {
+		if (idx == WITCH_ITEMS - 1) {
+			witchitem[WITCH_ITEMS - 1].clear();
+		} else {
+			for (; !witchitem[idx + 1].isEmpty(); idx++) {
+				witchitem[idx] = std::move(witchitem[idx + 1]);
+			}
+			witchitem[idx].clear();
 		}
-		witchitem[idx].clear();
 	}
 
 	CalcPlrInv(*MyPlayer, true);
@@ -1770,12 +1775,16 @@ void BoyBuyItem(Item &item)
 void HealerBuyItem(Item &item)
 {
 	int idx = stextvhold + ((stextlhold - stextup) / 4);
+	if (gbIsMultiplayer && idx < 1)
+		item._iSeed = AdvanceRndSeed();
 
 	TakePlrsMoney(item._iIvalue);
 	if (item._iMagical == ITEM_QUALITY_NORMAL)
 		item._iIdentified = false;
 	StoreAutoPlace(item, true);
 
+	if (gbIsMultiplayer && idx < 1)
+		return;
 	idx = stextvhold + ((stextlhold - stextup) / 4);
 	if (idx == 19) {
 		healitem[19].clear();

@@ -50,6 +50,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
    * Stone Curse does not affect unique monsters.
+   * The casting sound effect (spell sound effect not changed) for Phasing and Teleport has been removed.
    * Mana cost:
       * Town Portal initial: 50 [35]; minimum: 35 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
@@ -175,12 +176,6 @@ Note: You must be logged into GitHub to download the attachments.
       * refilling belt
       * key binding for using health and mana potions from belt
       * quick cast
-   * Sound effects:
-      * Corrected flip sfx for Ogden’s Sign.
-      * Removed casting sfx (spell sfx unchanged):
-         * Phasing
-         * Mana Shield
-         * Teleport
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.

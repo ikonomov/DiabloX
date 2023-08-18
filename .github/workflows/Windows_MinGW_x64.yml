@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - dev_arena
     paths-ignore:
       - '*.md'
   pull_request:

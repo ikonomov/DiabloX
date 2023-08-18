@@ -22,6 +22,7 @@
 #include "inv_iterators.hpp"
 #include "levels/town.h"
 #include "minitext.h"
+#include "monster.h"
 #include "options.h"
 #include "panels/ui_panels.hpp"
 #include "plrmsg.h"
@@ -2064,8 +2065,8 @@ bool UseInvItem(int cii)
 		return true;
 	}
 
-	if (item->_iMiscId == IMISC_ARENAPOT && !player.isOnArenaLevel()) {
-		player.Say(HeroSpeech::ThatWontWorkHere);
+	if (item->_iMiscId == IMISC_ARENAPOT && ActiveMonsterCount != 4) {
+		player.Say(HeroSpeech::ICantDoThat);
 		return true;
 	}
 

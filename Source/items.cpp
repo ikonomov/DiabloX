@@ -33,6 +33,7 @@
 #include "lighting.h"
 #include "minitext.h"
 #include "missiles.h"
+#include "monster.h"
 #include "options.h"
 #include "panels/info_box.hpp"
 #include "panels/ui_panels.hpp"
@@ -1799,7 +1800,7 @@ void PrintItemOil(char iDidx)
 		break;
 	case IMISC_ARENAPOT:
 		AddPanelString(_("restore all life and mana"));
-		AddPanelString(_("(works only in arenas)"));
+		AddPanelString(_("(works only in cleared levels)"));
 		break;
 	}
 }
@@ -2205,7 +2206,7 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 
 void RecreateHealerItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (IsAnyOf(idx, IDI_RESURRECT)) {
+	if (IsAnyOf(idx, IDI_ARENAPOT, IDI_RESURRECT)) {
 		GetItemAttrs(item, idx, lvl);
 	} else {
 		SetRndSeed(iseed);
@@ -4513,8 +4514,8 @@ void SpawnBoy(int lvl)
 void SpawnHealer(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
-	constexpr std::array<_item_indexes, PinnedItemCount + 1> PinnedItemTypes = { IDI_RESURRECT };
-	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 2;
+	constexpr std::array<_item_indexes, PinnedItemCount + 2> PinnedItemTypes = { IDI_ARENAPOT, IDI_RESURRECT };
+	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 4;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];

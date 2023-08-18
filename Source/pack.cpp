@@ -185,8 +185,7 @@ bool UnPackNetItem(const Player &player, const ItemNetPack &packedItem, Item &it
 void PackItem(ItemPack &packedItem, const Item &item, bool isHellfire)
 {
 	packedItem = {};
-	// Arena potions don't exist in vanilla so don't save them to stay backward compatible
-	if (item.isEmpty() || item._iMiscId == IMISC_ARENAPOT) {
+	if (item.isEmpty()) {
 		packedItem.idx = 0xFFFF;
 	} else {
 		auto idx = item.IDidx;

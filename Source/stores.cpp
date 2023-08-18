@@ -1775,7 +1775,7 @@ void BoyBuyItem(Item &item)
 void HealerBuyItem(Item &item)
 {
 	int idx = stextvhold + ((stextlhold - stextup) / 4);
-	if (gbIsMultiplayer && idx < 1)
+	if (gbIsMultiplayer && idx < 2)
 		item._iSeed = AdvanceRndSeed();
 
 	TakePlrsMoney(item._iIvalue);
@@ -1783,7 +1783,7 @@ void HealerBuyItem(Item &item)
 		item._iIdentified = false;
 	StoreAutoPlace(item, true);
 
-	if (gbIsMultiplayer && idx < 1)
+	if (gbIsMultiplayer && idx < 2)
 		return;
 	idx = stextvhold + ((stextlhold - stextup) / 4);
 	if (idx == 19) {

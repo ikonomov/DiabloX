@@ -33,7 +33,7 @@ Note: You must be logged into GitHub to download the attachments.
 *The original values are listed in [square brackets].*
 #### Characters:
    * Required clvl to create game:
-      * Nightmare difficulty: 15 [20]
+      * Nightmare difficulty: 10 [20]
       * Hell difficulty: 20 [30]
    * Stop gaining level up attribute points after clvl 25.
    * Regenerate 1% (Sorcerer 1.5%) of max mana per second.
@@ -58,8 +58,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Stone Curse initial: 100 [60]; minimum: 60 [40]; decrease per slvl: 6 [3]
       * Fire Wall initial: 40 [28]; minimum: 28 [16]
 #### Items:
-   * Potions cost 100% more gold.
-   * Adria and Pepin do not sell potions.
+   * Adria and Pepin do not sell potions except arena potions at Pepin.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix [+200%]:
@@ -160,6 +159,7 @@ Note: You must be logged into GitHub to download the attachments.
       * single player mode
       * support for Spawned Diablo and Diablo: Hellfire
       * multi-language support
+      * arenas
       * speed settings
       * run in town
       * friendly damage from spells and ranged attacks to other players

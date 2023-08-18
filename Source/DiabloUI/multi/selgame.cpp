@@ -403,14 +403,14 @@ void selgame_Diff_Focus(int value)
 
 bool IsDifficultyAllowed(int value)
 {
-	if (value == 0 || (value == 1 && heroLevel >= 15) || (value == 2 && heroLevel >= 20)) {
+	if (value == 0 || (value == 1 && heroLevel >= 10) || (value == 2 && heroLevel >= 20)) {
 		return true;
 	}
 
 	selgame_Free();
 
 	if (value == 1)
-		UiSelOkDialog(title, _("Your character must reach level 15 before you can enter a multiplayer game of Nightmare difficulty.").data(), false);
+		UiSelOkDialog(title, _("Your character must reach level 10 before you can enter a multiplayer game of Nightmare difficulty.").data(), false);
 	if (value == 2)
 		UiSelOkDialog(title, _("Your character must reach level 20 before you can enter a multiplayer game of Hell difficulty.").data(), false);
 

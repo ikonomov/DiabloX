@@ -2065,9 +2065,14 @@ bool UseInvItem(int cii)
 		return true;
 	}
 
-	if (item->_iMiscId == IMISC_ARENAPOT && ActiveMonsterCount != 4) {
-		player.Say(HeroSpeech::ICantDoThat);
-		return true;
+	if (item->_iMiscId == IMISC_ARENAPOT) {
+		if (leveltype == DTYPE_TOWN) {
+			player.Say(HeroSpeech::ThatWontWorkHere);
+			return true;
+		} else if (ActiveMonsterCount != 4) {
+			player.Say(HeroSpeech::ThatWontWorkYet);
+			return true;
+		}
 	}
 
 	int idata = ItemCAnimTbl[item->_iCurs];

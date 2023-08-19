@@ -487,6 +487,11 @@ bool UseStashItem(uint16_t c)
 		return true;
 	}
 
+	if (item->_iMiscId == IMISC_ARENAPOT) {
+		MyPlayer->Say(HeroSpeech::ThatWontWorkHere);
+		return true;
+	}
+
 	if (item->_iMiscId > IMISC_RUNEFIRST && item->_iMiscId < IMISC_RUNELAST && leveltype == DTYPE_TOWN) {
 		return true;
 	}

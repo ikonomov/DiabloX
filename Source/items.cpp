@@ -4513,15 +4513,15 @@ void SpawnBoy(int lvl)
 
 void SpawnHealer(int lvl)
 {
-	constexpr int PinnedItemCount = 0;
-	constexpr std::array<_item_indexes, PinnedItemCount + 2> PinnedItemTypes = { IDI_ARENAPOT, IDI_RESURRECT };
+	constexpr int PinnedItemCount = 2;
+	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_ARENAPOT, IDI_RESURRECT };
 	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 4;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];
 		item = {};
 
-		if (i < PinnedItemCount || (gbIsMultiplayer && i == PinnedItemCount)) {
+		if (i < PinnedItemCount) {
 			item._iSeed = AdvanceRndSeed();
 			GetItemAttrs(item, PinnedItemTypes[i], 1);
 			item._iCreateInfo = lvl;

@@ -1854,7 +1854,7 @@ _item_indexes RemapItemIdxToDiablo(_item_indexes i)
 		if ((i >= 83 && i <= 86) || i == 92 || (i >= 161 && i <= 166)) {
 			return -1; // Hellfire exclusive items
 		}
-		if (i >= 166) {
+		if (i >= 167) {
 			i -= 5; // Runes
 		}
 		if (i >= 93) {

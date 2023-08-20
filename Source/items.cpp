@@ -4512,17 +4512,21 @@ void SpawnBoy(int lvl)
 
 void SpawnHealer(int lvl)
 {
-	constexpr int PinnedItemCount = 2;
-	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_ARENAPOT, IDI_RESURRECT };
+	constexpr int PinnedItemCount = 1;
+	constexpr std::array<_item_indexes, PinnedItemCount + 1> PinnedItemTypesArena = { IDI_ARENAPOT, IDI_RESURRECT };
+	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_RESURRECT };
 	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 4;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];
 		item = {};
 
-		if (i < PinnedItemCount) {
+		if (i < PinnedItemCount || (MyPlayer->pDiabloKillLevel == 3 && i == PinnedItemCount)) {
 			item._iSeed = AdvanceRndSeed();
-			GetItemAttrs(item, PinnedItemTypes[i], 1);
+			if (MyPlayer->pDiabloKillLevel == 3)
+				GetItemAttrs(item, PinnedItemTypesArena[i], 1);
+			else
+				GetItemAttrs(item, PinnedItemTypes[i], 1);
 			item._iCreateInfo = lvl;
 			item._iStatFlag = true;
 			continue;

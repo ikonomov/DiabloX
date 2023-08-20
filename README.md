@@ -58,7 +58,7 @@ Note: You must be logged into GitHub to download the attachments.
       * Stone Curse initial: 100 [60]; minimum: 60 [40]; decrease per slvl: 6 [3]
       * Fire Wall initial: 40 [28]; minimum: 28 [16]
 #### Items:
-   * Adria and Pepin do not sell potions except arena potions at Pepin which can be used on cleared levels.
+   * Adria and Pepin do not sell potions except arena potions which can be used on cleared levels and purchased from Pepin by a character that has killed Diablo on Hell difficulty.
    * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix [+200%]:

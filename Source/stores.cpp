@@ -1775,16 +1775,26 @@ void BoyBuyItem(Item &item)
 void HealerBuyItem(Item &item)
 {
 	int idx = stextvhold + ((stextlhold - stextup) / 4);
-	if (idx < 2)
-		item._iSeed = AdvanceRndSeed();
+	if (MyPlayer->pDiabloKillLevel == 3) {
+		if (idx < 2)
+			item._iSeed = AdvanceRndSeed();
+	} else {
+		if (idx < 1)
+			item._iSeed = AdvanceRndSeed();
+	}
 
 	TakePlrsMoney(item._iIvalue);
 	if (item._iMagical == ITEM_QUALITY_NORMAL)
 		item._iIdentified = false;
 	StoreAutoPlace(item, true);
 
-	if (idx < 2)
-		return;
+	if (MyPlayer->pDiabloKillLevel == 3) {
+		if (idx < 2)
+			return;
+	} else {
+		if (idx < 1)
+			return;
+	}
 	idx = stextvhold + ((stextlhold - stextup) / 4);
 	if (idx == 19) {
 		healitem[19].clear();

@@ -3485,7 +3485,16 @@ void InitMonsters()
 					na++;
 			}
 		}
-		int numplacemonsters = na / 30;
+		int numplacemonstersdivisor = 30;
+		switch (sgGameInitInfo.nDifficulty) {
+		case DIFF_NIGHTMARE:
+			numplacemonstersdivisor = 24;
+			break;
+		case DIFF_HELL:
+			numplacemonstersdivisor = 20;
+			break;
+		}
+		int numplacemonsters = na / numplacemonstersdivisor;
 		if (gbIsMultiplayer)
 			numplacemonsters += numplacemonsters / 2;
 		if (ActiveMonsterCount + numplacemonsters > MaxMonsters - 10)

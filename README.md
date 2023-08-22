@@ -52,6 +52,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Stone Curse does not affect unique monsters.
    * The casting sound (spell sound unchanged) for Phasing and Teleport has been removed.
    * Mana cost:
+      * Sorcerer receives the same 75% reduction (never below the minimum) as Rogue for all spells.
       * Town Portal initial: 50 [35]; minimum: 35 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]

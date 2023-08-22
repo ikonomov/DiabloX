@@ -133,7 +133,7 @@ int GetManaAmount(const Player &player, SpellID sn)
 
 	if (gbIsHellfire && player._pClass == HeroClass::Sorcerer) {
 		ma /= 2;
-	} else if (player._pClass == HeroClass::Rogue || player._pClass == HeroClass::Monk || player._pClass == HeroClass::Bard) {
+	} else if (player._pClass == HeroClass::Sorcerer || player._pClass == HeroClass::Rogue || player._pClass == HeroClass::Monk || player._pClass == HeroClass::Bard) {
 		ma -= ma / 4;
 	}
 

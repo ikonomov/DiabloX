@@ -38,7 +38,10 @@ Note: You must be logged into GitHub to download the attachments.
    * Stop gaining level up attribute points after clvl 25.
    * Regenerate 1% (Sorcerer +0.01% per level) of max mana per second.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
-   * Block bonus: 0 [30/20/10]
+   * Block bonus:
+      * Warrior: 10 [30]
+      * Rogue: 0 [20]
+      * Sorcerer: 0 [10]
    * Maximum stats:
       * Warrior's strength: 150 [250]
       * Rogue's dexterity: 150 [250]

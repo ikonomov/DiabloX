@@ -587,12 +587,15 @@ struct Player {
 
 	void RegenerateMana()
 	{
-		int regenDivisor = _pClass == HeroClass::Sorcerer ? 1333 : 2000;
-		_pRegenOverflow += _pMaxMana % regenDivisor;
-		int regenMana = _pMaxMana / regenDivisor + _pRegenOverflow / regenDivisor;
-		_pRegenOverflow %= regenDivisor;
-		_pMana = clamp(_pMana + regenMana, _pMana, _pMaxMana);
-		_pManaBase = clamp(_pManaBase + regenMana, _pManaBase, _pMaxManaBase);
+		int regendivisor = 2000;
+		int maxmanaregen = _pMaxMana;
+		if (_pClass == HeroClass::Sorcerer)
+			maxmanaregen += maxmanaregen * _pLevel / 100;
+		_pRegenOverflow += maxmanaregen % regendivisor;
+		int regenmana = maxmanaregen / regendivisor + _pRegenOverflow / regendivisor;
+		_pRegenOverflow %= regendivisor;
+		_pMana = clamp(_pMana + regenmana, _pMana, _pMaxMana);
+		_pManaBase = clamp(_pManaBase + regenmana, _pManaBase, _pMaxManaBase);
 	}
 
 	/**

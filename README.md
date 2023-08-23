@@ -172,9 +172,6 @@ Note: You must be logged into GitHub to download the attachments.
       * option to disable randomized quests
       * option to disable harmful shrines
       * town automap
-      * in arena levels:
-         * immunity to missiles when moving horizontally
-         * functionality of Infravision
    * Disabled automation options:
       * pickup except for gold (configurable for gold)
       * equip except for weapons and shields (configurable for weapons and shields)

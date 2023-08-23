@@ -396,7 +396,7 @@ void DrawPlayerIcons(const Surface &out, const Player &player, Point position, b
  */
 void DrawPlayer(const Surface &out, const Player &player, Point tilePosition, Point targetBufferPosition)
 {
-	if (!IsTileLit(tilePosition) && (!MyPlayer->_pInfraFlag || MyPlayer->isOnArenaLevel()) && leveltype != DTYPE_TOWN) {
+	if (!IsTileLit(tilePosition) && !MyPlayer->_pInfraFlag && !MyPlayer->isOnArenaLevel() && leveltype != DTYPE_TOWN) {
 		return;
 	}
 
@@ -413,7 +413,7 @@ void DrawPlayer(const Surface &out, const Player &player, Point tilePosition, Po
 		return;
 	}
 
-	if (!IsTileLit(tilePosition) || (MyPlayer->_pInfraFlag && !MyPlayer->isOnArenaLevel() && LightTableIndex > 8)) {
+	if (!IsTileLit(tilePosition) || ((MyPlayer->_pInfraFlag || MyPlayer->isOnArenaLevel()) && LightTableIndex > 8)) {
 		ClxDrawTRN(out, spriteBufferPosition, sprite, GetInfravisionTRN());
 		DrawPlayerIcons(out, player, targetBufferPosition, true);
 		return;

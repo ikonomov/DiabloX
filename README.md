@@ -55,7 +55,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Stone Curse does not affect unique monsters.
    * The casting sound (spell sound unchanged) for Phasing and Teleport has been removed.
    * Mana cost:
-      * Sorcerer receives the same 75% reduction (never below the minimum) as Rogue for all spells.
+      * Sorcerer receives the same 25% reduction (doens't extend below the minimum) as Rogue for all spells.
       * Town Portal initial: 50 [35]; minimum: 35 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]
@@ -156,7 +156,6 @@ Note: You must be logged into GitHub to download the attachments.
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
 #### Monsters:
-   * Number per dlvl has been increased by 25% in Nightmare difficulty and 50% in Hell with a maximum of 250 [200].
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:

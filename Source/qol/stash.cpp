@@ -89,12 +89,10 @@ void CheckStashPaste(Point cursorPosition)
 	Player &player = *MyPlayer;
 
 	const Size itemSize = GetInventorySize(player.HoldItem);
-	const Displacement hotPixelOffset = Displacement(itemSize * INV_SLOT_HALF_SIZE_PX);
-	if (IsHardwareCursor()) {
-		// It's more natural to select the top left cell of the region the sprite is overlapping when putting an item
-		//  into an inventory grid, so compensate for the adjusted hot pixel of hardware cursors.
-		cursorPosition -= hotPixelOffset;
-	}
+
+	// It's more natural to select the top left cell of the region the sprite is overlapping when putting an item
+	//  into an inventory grid, so compensate for the adjusted hot pixel of item cursors.
+	cursorPosition -= Displacement(itemSize * INV_SLOT_HALF_SIZE_PX);
 
 	if (player.HoldItem._itype == ItemType::Gold) {
 		if (Stash.gold > std::numeric_limits<int>::max() - player.HoldItem._ivalue)
@@ -103,10 +101,6 @@ void CheckStashPaste(Point cursorPosition)
 		player.HoldItem.clear();
 		PlaySFX(IS_GOLD);
 		Stash.dirty = true;
-		if (!IsHardwareCursor()) {
-			// To make software cursors behave like hardware cursors we need to adjust the hand cursor position manually
-			SetCursorPos(cursorPosition + hotPixelOffset);
-		}
 		NewCursor(CURSOR_HAND);
 		return;
 	}
@@ -157,10 +151,6 @@ void CheckStashPaste(Point cursorPosition)
 
 	Stash.dirty = true;
 
-	if (player.HoldItem.isEmpty() && !IsHardwareCursor()) {
-		// To make software cursors behave like hardware cursors we need to adjust the hand cursor position manually
-		SetCursorPos(cursorPosition + hotPixelOffset);
-	}
 	NewCursor(player.HoldItem);
 }
 
@@ -235,11 +225,6 @@ void CheckStashCut(Point cursorPosition, bool automaticMove)
 			holdItem.clear();
 		} else {
 			NewCursor(holdItem);
-			if (!IsHardwareCursor()) {
-				// For a hardware cursor, we set the "hot point" to the center of the item instead.
-				Size cursSize = GetInvItemSize(holdItem._iCurs + CURSOR_FIRSTITEM);
-				SetCursorPos(cursorPosition - Displacement(cursSize / 2));
-			}
 		}
 	}
 }

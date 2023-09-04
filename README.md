@@ -156,6 +156,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
 #### Monsters:
+   * All monsters are able to walk through fire wall.
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:

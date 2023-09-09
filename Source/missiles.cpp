@@ -835,8 +835,8 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 	case SpellID::FireWall:
 	case SpellID::LightningWall:
 	case SpellID::RingOfFire:
-		*mind = (myPlayer._pLevel + 2) * 5 / 4;
-		*maxd = (myPlayer._pLevel + 20) * 5 / 4;
+		*mind = (myPlayer._pLevel + 2) * 5 / 2;
+		*maxd = (myPlayer._pLevel + 20) * 5 / 2;
 		break;
 	case SpellID::Fireball:
 	case SpellID::RuneOfFire: {
@@ -1878,7 +1878,6 @@ void AddFireWall(Missile &missile, AddMissileParameter &parameter)
 {
 	missile._midam = GenerateRndSum(10, 2) + 2;
 	missile._midam += missile._misource >= 0 ? Players[missile._misource]._pLevel : currlevel; // BUGFIX: missing parenthesis around ternary (fixed)
-	missile._midam /= 2;
 	missile._midam <<= 3;
 	UpdateMissileVelocity(missile, parameter.dst, 16);
 	int i = missile._mispllvl;
@@ -1887,7 +1886,7 @@ void AddFireWall(Missile &missile, AddMissileParameter &parameter)
 		missile._mirange *= i + 1;
 	if (missile._micaster == TARGET_PLAYERS || missile._misource < 0)
 		missile._mirange += currlevel;
-	missile._mirange *= 16;
+	missile._mirange *= 8;
 	missile.var1 = missile._mirange - missile._miAnimLen;
 }
 

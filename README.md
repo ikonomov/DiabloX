@@ -49,7 +49,8 @@ Note: You must be logged into GitHub to download the attachments.
    * The 1/2 spell damage modifier in player versus player is applied to all missiles.
 #### Spells:
    * Chain Lightning creates a maximum of 3+slvl/4 number of bolts.
-   * Lightning, Chain Lightning, Fire Wall, Guardian, Elemental, Fireball and Flash do 1/2 of the original damage.
+   * Lightning, Chain Lightning, Guardian, Elemental, Fireball and Flash do 1/2 of the original damage.
+   * Fire Wall has 1/2 of the original duration.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
    * Stone Curse does not affect unique monsters.

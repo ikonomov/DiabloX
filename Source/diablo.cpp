@@ -1782,7 +1782,7 @@ void InitKeymapActions()
 	sgOptions.Keymapper.AddAction(
 	    "Shrine List",
 	    N_("Shrine List"),
-	    N_("Open a list of shrine descriptions available after reaching character level 17."),
+	    N_("Open a list of shrine descriptions."),
 	    'D',
 	    HelpKeyPressed,
 	    nullptr,
@@ -2263,7 +2263,7 @@ void InitPadmapActions()
 	sgOptions.Padmapper.AddAction(
 	    "Shrine List",
 	    N_("Shrine List"),
-	    N_("Open a list of shrine descriptions available after reaching character level 17."),
+	    N_("Open a list of shrine descriptions."),
 	    ControllerButton_NONE,
 	    HelpKeyPressed,
 	    nullptr,

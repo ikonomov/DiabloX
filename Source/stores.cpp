@@ -354,10 +354,9 @@ void StartSmith()
 	stextscrl = false;
 	AddSText(0, 1, _("Welcome to the"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
 	AddSText(0, 3, _("Blacksmith's shop"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
-	AddSText(0, 7, _("Would you like to:"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
-	AddSText(0, 10, _("Talk to Griswold"), UiFlags::ColorBlue | UiFlags::AlignCenter, true);
-	AddSText(0, 12, _("Buy basic items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
-	AddSText(0, 14, _("Buy premium items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
+	AddSText(0, 9, _("Would you like to:"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
+	AddSText(0, 12, _("Talk to Griswold"), UiFlags::ColorBlue | UiFlags::AlignCenter, true);
+	AddSText(0, 14, _("Buy items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
 	AddSText(0, 16, _("Sell items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
 	AddSText(0, 18, _("Repair items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
 	AddSText(0, 20, _("Leave the shop"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
@@ -1336,17 +1335,14 @@ void StartDrunk()
 void SmithEnter()
 {
 	switch (stextsel) {
-	case 10:
+	case 12:
 		talker = TOWN_SMITH;
-		stextlhold = 10;
+		stextlhold = 12;
 		stextshold = TalkID::Smith;
 		StartStore(TalkID::Gossip);
 		break;
-	case 12:
-		StartStore(TalkID::SmithBuy);
-		break;
 	case 14:
-		StartStore(TalkID::SmithPremiumBuy);
+		StartStore(TalkID::SmithBuy);
 		break;
 	case 16:
 		StartStore(TalkID::SmithSell);
@@ -2495,7 +2491,7 @@ void StoreESC()
 		break;
 	case TalkID::SmithBuy:
 		StartStore(TalkID::Smith);
-		stextsel = 12;
+		stextsel = 14;
 		break;
 	case TalkID::SmithPremiumBuy:
 		StartStore(TalkID::Smith);

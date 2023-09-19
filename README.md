@@ -63,14 +63,17 @@ Note: You must be logged into GitHub to download the attachments.
       * Stone Curse initial: 100 [60]; minimum: 60 [40]; decrease per slvl: 6 [3]
       * Fire Wall initial: 40 [28]; minimum: 28 [16]
 #### Items:
-   * Adria and Pepin do not sell potions except arena potions which can be used on cleared levels and purchased from Pepin by a character that has killed Diablo on Hell difficulty.
-   * The maximum price at stores has been increased to 216,000 [140,000/135,000] gold.
+   * Adria sells scrolls only.
+   * Griswold does not sell magical items.
+   * Pepin does not sell potions except arena potions which can be used on cleared levels and purchased by a character that has killed Diablo on Hell difficulty.
+   * Wirt sells staves in addition to his normal inventory.
+   * The maximum price of items at Wirt has been reduced to 45,000 [135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
       * Civerb's Cudgel: +80%
       * Bloodslayer: +100%
-   * Staff charges have been set to minimum values except 20 [40-80] for Fireball.
+   * Staff charges have been set to minimum values.
    * Set to maximum values:
       * Affixes with a range of values.
       * Base armor except:
@@ -84,8 +87,7 @@ Note: You must be logged into GitHub to download the attachments.
    * Burgundy affix has been renamed to russet.
    * Maximum base item ilvl for dungeon drops: +15 in Nightmare difficulty; +30 in Hell
    * Maximum affix ilvl:
-      * items sold by Wirt and Adria: +1
-      * premium items sold by Griswold: 35 [30]
+      * Wirt: clvl [2·clvl]
       * dungeon drops: +1 in Normal difficulty; +9 in Nightmare; +17 in Hell
       * monster drops: +8 in Nightmare difficulty; +16 in Hell
 <details>
@@ -122,7 +124,7 @@ Note: You must be logged into GitHub to download the attachments.
          * mithril: 27 [20]
          * meteoric: 32 [23]
          * weird: 40 [35]
-         * strange: 50 [60]
+         * strange: 46 [60]
          * champion: 35 [40]
          * king: 44 [28]
          * jagged: 1 [4]
@@ -138,17 +140,17 @@ Note: You must be logged into GitHub to download the attachments.
          * carnage: 32 [35]
          * slaughter: 42 [60]
          * osmosis: 30 [50]
-         * thunder: 50 [60]
+         * thunder: 46 [60]
          * blood: 24 [19]
          * vampires: 24 [19]
          * amber: 14 [12]
          * jade: 22 [18]
          * obsidian: 32 [24]
          * emerald: 43 [31]
-         * readiness: 5 [1]
+         * readiness: 8 [1]
          * swiftness: 17 [10]
-         * speed: 27 [19]
-         * haste: 38 [27]
+         * speed: 24 [19]
+         * haste: 32 [27]
          * harmony: 24 [20]
 </details>
 

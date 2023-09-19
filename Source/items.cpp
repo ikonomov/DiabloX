@@ -1982,8 +1982,6 @@ bool PremiumItemOk(const Player &player, const ItemData &item)
 		return false;
 	if (item.itype == ItemType::Gold)
 		return false;
-	if (!gbIsHellfire && item.itype == ItemType::Staff)
-		return false;
 
 	if (gbIsMultiplayer) {
 		if (item.iMiscId == IMISC_OILOF)
@@ -2011,7 +2009,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 	dexterity += dexterity / 5;
 	magic += magic / 5;
 
-	plvl = clamp(plvl, 1, 35);
+	plvl = clamp(plvl, 1, 30);
 
 	int maxCount = 150;
 	const bool unlimited = !gbIsHellfire; // TODO: This could lead to an infinite loop if a suitable item can never be generated
@@ -2024,7 +2022,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 		GetItemBonus(player, premiumItem, plvl / 2, plvl, true, !gbIsHellfire);
 
 		if (!gbIsHellfire) {
-			if (premiumItem._iIvalue <= 216000) {
+			if (premiumItem._iIvalue <= 140000) {
 				break;
 			}
 		} else {
@@ -2077,7 +2075,9 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 
 bool WitchItemOk(const Player &player, const ItemData &item)
 {
-	if (IsNoneOf(item.itype, ItemType::Misc, ItemType::Staff))
+	if (item.itype != ItemType::Misc)
+		return false;
+	if (item.iMiscId == IMISC_BOOK)
 		return false;
 	if (item.iMiscId == IMISC_MANA)
 		return false;
@@ -2170,7 +2170,7 @@ void RecreateBoyItem(const Player &player, Item &item, int lvl, int iseed)
 	SetRndSeed(iseed);
 	_item_indexes itype = RndBoyItem(player, lvl);
 	GetItemAttrs(item, itype, lvl);
-	GetItemBonus(player, item, lvl, 2 * lvl + 1, true, true);
+	GetItemBonus(player, item, lvl / 2, lvl, true, true);
 
 	item._iSeed = iseed;
 	item._iCreateInfo = lvl | CF_BOY;
@@ -2191,9 +2191,9 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 		GetItemAttrs(item, itype, lvl);
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl + 1;
+			iblvl = 2 * lvl;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl + 1;
+			iblvl = 2 * lvl;
 		if (iblvl != -1)
 			GetItemBonus(player, item, iblvl / 2, iblvl, true, true);
 	}
@@ -2333,15 +2333,15 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 		maxlvl = lvl;
 	} else if ((item._iCreateInfo & CF_BOY) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
-		minlvl = lvl;
-		maxlvl = lvl * 2 + 1;
+		minlvl = lvl / 2;
+		maxlvl = lvl;
 	} else if ((item._iCreateInfo & CF_WITCH) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl + 1;
+			iblvl = 2 * lvl;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl + 1;
+			iblvl = 2 * lvl;
 		minlvl = iblvl / 2;
 		maxlvl = iblvl;
 	} else {
@@ -4267,7 +4267,7 @@ void SpawnSmith(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
 
-	int maxValue = 216000;
+	int maxValue = 140000;
 	int maxItems = 20;
 	if (gbIsHellfire) {
 		maxValue = 200000;
@@ -4337,9 +4337,9 @@ void SpawnWitch(int lvl)
 
 	int bookCount = 0;
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
-	const int reservedItems = gbIsHellfire ? 10 : 18;
-	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 7;
-	const int maxValue = gbIsHellfire ? 200000 : 216000;
+	const int reservedItems = gbIsHellfire ? 10 : 22;
+	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 4;
+	const int maxValue = gbIsHellfire ? 200000 : 140000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
 		Item &item = witchitem[i];
@@ -4382,9 +4382,9 @@ void SpawnWitch(int lvl)
 			GetItemAttrs(item, itemData, lvl);
 			int maxlvl = -1;
 			if (GenerateRnd(100) <= 5)
-				maxlvl = 2 * lvl + 1;
+				maxlvl = 2 * lvl;
 			if (maxlvl == -1 && item._iMiscId == IMISC_STAFF)
-				maxlvl = 2 * lvl + 1;
+				maxlvl = 2 * lvl;
 			if (maxlvl != -1)
 				GetItemBonus(*MyPlayer, item, maxlvl / 2, maxlvl, true, true);
 		} while (item._iIvalue > maxValue);
@@ -4421,10 +4421,10 @@ void SpawnBoy(int lvl)
 		SetRndSeed(boyitem._iSeed);
 		_item_indexes itype = RndBoyItem(*MyPlayer, lvl);
 		GetItemAttrs(boyitem, itype, lvl);
-		GetItemBonus(*MyPlayer, boyitem, lvl, 2 * lvl + 1, true, true);
+		GetItemBonus(*MyPlayer, boyitem, lvl / 2, lvl, true, true);
 
 		if (!gbIsHellfire) {
-			if (boyitem._iIvalue > 144000) {
+			if (boyitem._iIvalue > 30000) {
 				keepgoing = true; // prevent breaking the do/while loop too early by failing hellfire's condition in while
 				continue;
 			}

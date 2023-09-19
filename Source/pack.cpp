@@ -176,6 +176,9 @@ bool UnPackNetItem(const Player &player, const ItemNetPack &packedItem, Item &it
 		return true;
 	}
 
+	uint16_t creationFlags = SDL_SwapLE16(packedItem.item.wCI);
+	uint32_t dwBuff = SDL_SwapLE16(packedItem.item.dwBuff);
+
 	RecreateItem(player, packedItem.item, item);
 	return true;
 }

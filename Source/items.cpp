@@ -4274,7 +4274,7 @@ void SpawnSmith(int lvl)
 		maxItems = 25;
 	}
 
-	int iCnt = GenerateRnd(maxItems - 10) + 10;
+	int iCnt = GenerateRnd(maxItems - 15) + 8;
 	for (int i = 0; i < iCnt; i++) {
 		Item &newItem = smithitem[i];
 

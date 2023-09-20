@@ -2397,13 +2397,10 @@ void NextPlrLevel(Player &player)
 
 	CalcPlrInv(player, true);
 
-	if (player._pLevel <= 25) {
-		if (CalcStatDiff(player) < 5) {
-			player._pStatPts = CalcStatDiff(player);
-		} else {
-			player._pStatPts += 5;
-		}
-	}
+	if (CalcStatDiff(player) < 5) {
+		player._pStatPts = CalcStatDiff(player);
+	} else {
+		player._pStatPts += 5;
 	player._pNextExper = ExpLvlsTbl[std::min<int8_t>(player._pLevel, MaxCharacterLevel - 1)];
 
 	int hp = PlayersData[static_cast<size_t>(player._pClass)].lvlLife;

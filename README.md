@@ -35,7 +35,6 @@ Note: You must be logged into GitHub to download the attachments.
    * Required clvl to create game:
       * Nightmare difficulty: 10 [20]
       * Hell difficulty: 20 [30]
-   * Stop gaining level up attribute points after clvl 25.
    * Regenerate 1% (Sorcerer +0.01% per level) of max mana per second.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Block bonus:
@@ -123,7 +122,7 @@ Note: You must be logged into GitHub to download the attachments.
          * platinum: 22 [16]
          * mithril: 27 [20]
          * meteoric: 32 [23]
-         * weird: 40 [35]
+         * weird: 38 [35]
          * strange: 46 [60]
          * champion: 35 [40]
          * king: 44 [28]
@@ -135,7 +134,7 @@ Note: You must be logged into GitHub to download the attachments.
          * massive: 22 [20]
          * savage: 27 [23]
          * ruthless: 32 [35]
-         * merciless: 40 [60]
+         * merciless: 38 [60]
          * gore: 24 [25]
          * carnage: 32 [35]
          * slaughter: 42 [60]

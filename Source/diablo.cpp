@@ -1470,6 +1470,7 @@ void HelpKeyPressed()
 {
 	if (MyPlayer->_pLevel < 17) {
 		InitDiabloMsg(EMSG_REQUIRES_LVL_17);
+		MyPlayer->Say(HeroSpeech::ICantUseThisYet);
 	} else {
 		if (HelpFlag) {
 			HelpFlag = false;

@@ -68,10 +68,9 @@ Note: You must be logged into GitHub to download the attachments.
    * Wirt sells staves in addition to his normal inventory.
    * The maximum price of items at Wirt has been reduced to 45,000 [135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
-   * Damage versus demons affix [+200%]:
-      * Deadly Hunter: +50%
-      * Civerb's Cudgel: +80%
-      * Bloodslayer: +100%
+   * Damage versus demons affix:
+      * Deadly Hunter: +50% [+200%]
+      * Civerb's Cudgel: +150% [+200%]
    * Staff charges have been set to minimum values.
    * Set to maximum values:
       * Affixes with a range of values.

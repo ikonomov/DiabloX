@@ -70,8 +70,8 @@ Note: You must be logged into GitHub to download the attachments.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
-      * Civerb's Cudgel: +80%
-      * Bloodslayer: +100%
+      * Civerb's Cudgel: +150%
+      * Bloodslayer: +200%
    * Staff charges have been set to minimum values.
    * Set to maximum values:
       * Affixes with a range of values.

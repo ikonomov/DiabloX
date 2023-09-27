@@ -644,9 +644,9 @@ bool PlrHitMonst(Player &player, Monster &monster, bool adjacentDamage = false)
 	case MonsterClass::Demon:
 		if (HasAnyOf(player._pIFlags, ItemSpecialEffect::TripleDemonDamage)) {
 			if (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe) {
-				dam *= 2;
+				dam *= 3;
 			} else {
-				dam += dam * 4 / 5;
+				dam += dam * 3 / 2;
 			}
 		}
 		break;

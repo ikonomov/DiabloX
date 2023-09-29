@@ -1058,14 +1058,8 @@ void DiabloParseFlags(int argc, char **argv)
 			gbShowIntro = false;
 		} else if (arg == "-f") {
 			EnableFrameCount();
-		} else if (arg == "--spawn") {
-			forceSpawn = true;
 		} else if (arg == "--diablo") {
 			forceDiablo = true;
-		} else if (arg == "--hellfire") {
-			forceHellfire = true;
-		} else if (arg == "--vanilla") {
-			gbVanilla = true;
 		} else if (arg == "--verbose") {
 			SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 #ifdef _DEBUG

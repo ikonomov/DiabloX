@@ -1,6 +1,6 @@
 # DiabloX
 
-[![Discord Channel](https://img.shields.io/discord/936748966652022834?color=%237289DA&logo=discord&logoColor=%23FFFFFF)](https://discord.gg/QddvKsenvm)
+[![Discord](https://img.shields.io/discord/936748966652022834?color=%237289DA&logo=discord&logoColor=%23FFFFFF)](https://discord.gg/QddvKsenvm)
 [![Downloads](https://img.shields.io/github/downloads/ikonomov/DiabloX/total.svg)](https://github.com/ikonomov/DiabloX/releases)
 
 DiabloX is a mod for Diablo 1 and a fork of [DevilutionX](https://github.com/diasurgical/devilutionX) with modifications to its code listed below.  The purpose of the changes is to increase the challenge by rebalancing various aspects of the game.
@@ -12,17 +12,10 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Download the latest [DiabloX release](https://github.com/ikonomov/DiabloX/releases) and extract the contents to a folder of your choosing.
    * Copy `DIABDAT.MPQ` from the CD or GOG-installation to the same folder.
 
-## Test builds
-
-If you want to help test the latest development stage of the next version (make sure to backup your files as these may contain bugs), you can fetch the test build artifact from one of the build servers:
-
-Note: You must be logged into GitHub to download the attachments.
-
-[![Windows MinGW x64](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x64.yml/badge.svg)](https://github.com/ikonomov/DiabloX/actions/workflows/Windows_MinGW_x64.yml?query=branch%3Amaster)
-
 ## Multiplayer:
    * ZeroTier does not need port forwarding or an extra application.
    * TCP/IP requires the host to expose port 6112.
+   * [Discord server](https://discord.gg/QddvKsenvm).
 
 ## Saved Games and configuration file location:
 `C:\Users\[username]\AppData\Roaming\ikonomov\DiabloX`

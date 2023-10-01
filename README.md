@@ -1,6 +1,6 @@
 # DiabloX
 
-[![Discord](https://img.shields.io/discord/936748966652022834?color=%237289DA&logo=discord&logoColor=%23FFFFFF)](https://discord.gg/QddvKsenvm)
+[![Discord](https://img.shields.io/discord/936748966652022834?color=%237289DA&logo=discord&logoColor=%23FFFFFF)](https://discord.gg/TeUFFnarUV)
 [![Downloads](https://img.shields.io/github/downloads/ikonomov/DiabloX/total.svg)](https://github.com/ikonomov/DiabloX/releases)
 
 DiabloX is a mod for Diablo 1 and a fork of [DevilutionX](https://github.com/diasurgical/devilutionX) with modifications to its code listed below.  The purpose of the changes is to increase the challenge by rebalancing various aspects of the game.
@@ -15,7 +15,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 ## Multiplayer:
    * ZeroTier does not need port forwarding or an extra application.
    * TCP/IP requires the host to expose port 6112.
-   * [Discord server](https://discord.gg/QddvKsenvm).
+   * [Discord server](https://discord.gg/TeUFFnarUV).
 
 ## Saved Games and configuration file location:
 `C:\Users\[username]\AppData\Roaming\ikonomov\DiabloX`

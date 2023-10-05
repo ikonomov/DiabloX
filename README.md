@@ -29,6 +29,7 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Nightmare difficulty: 10 [20]
       * Hell difficulty: 20 [30]
    * Regenerate 1% (Sorcerer +0.01% per level) of max mana per second.
+   * Sorcerer receives the same 25% mana cost reduction (doens't extend below the minimum) as Rogue for all spells.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Block bonus:
       * Warrior: 10 [30]
@@ -48,12 +49,9 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Stone Curse does not affect unique monsters.
    * The casting sound (spell sound unchanged) for Phasing and Teleport has been removed.
    * Mana cost:
-      * Sorcerer receives the same 25% reduction (doens't extend below the minimum) as Rogue for all spells.
       * Town Portal initial: 50 [35]; minimum: 35 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]
-      * Stone Curse initial: 100 [60]; minimum: 60 [40]; decrease per slvl: 6 [3]
-      * Fire Wall initial: 40 [28]; minimum: 28 [16]
 #### Items:
    * Adria sells scrolls only.
    * Griswold does not sell magical items.
@@ -61,9 +59,9 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Wirt sells staves in addition to his normal inventory.
    * The maximum price of items at Wirt has been reduced to 45,000 [135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
-   * Damage versus demons affix:
-      * Deadly Hunter: +50% [+200%]
-      * Civerb's Cudgel: +150% [+200%]
+   * Damage versus demons affix [+200%]:
+      * Deadly Hunter: +50%
+      * Civerb's Cudgel: +150%
    * Staff charges have been set to minimum values.
    * Set to maximum values:
       * Affixes with a range of values.
@@ -146,7 +144,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 </details>
 
 #### Shrines:
-   * Fascinating, Ornate and Sacred reduce magic instead of mana by 2% (-1 minimum) [10%].
+   * Fascinating, Ornate and Sacred reduce magic by -2% (-1 minimum) [-10% mana].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
 #### Monsters:

@@ -15,7 +15,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 ## Multiplayer:
    * ZeroTier does not need port forwarding or an extra application.
    * TCP/IP requires the host to expose port 6112.
-   * [Discord server](https://discord.gg/TeUFFnarUV).
+   * [Discord server](https://discord.gg/TeUFFnarUV)
 
 ## Saved Games and configuration file location:
 `C:\Users\[username]\AppData\Roaming\ikonomov\DiabloX`
@@ -29,7 +29,7 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Nightmare difficulty: 10 [20]
       * Hell difficulty: 20 [30]
    * Regenerate 1% (Sorcerer +0.01% per level) of max mana per second.
-   * Sorcerer receives the same 25% mana cost reduction (doens't extend below the minimum) as Rogue for all spells.
+   * Sorcerer receives the same 25% mana cost reduction (doesn't extend below the minimum) as Rogue for all spells.
    * +50% strength modifier to damage formula when using two-handed melee weapons.
    * Block bonus:
       * Warrior: 10 [30]

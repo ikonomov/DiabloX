@@ -18,7 +18,9 @@ Note: You'll need access to the data from the original game. If you don't have a
    * [Discord server](https://discord.gg/TeUFFnarUV)
 
 ## Saved Games and configuration file location:
-`C:\Users\[username]\AppData\Roaming\ikonomov\DiabloX`
+`%AppData%\diablox`
+
+*Type into the address bar of Windows File Explorer to open the folder.*
 
 ## [Summary of Changes in DevilutionX from Diablo](https://github.com/ikonomov/DiabloX/wiki/Summary-of-Changes-in-DevilutionX-from-Diablo)
 

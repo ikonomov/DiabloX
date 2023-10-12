@@ -62,23 +62,19 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
       * Civerb's Cudgel: +150%
-   * Staff charges have been set to minimum values.
+   * Set to minimum values:
+      * Staff charges.
+      * Armor class for armor.
+      * Armor class for shields.
    * Set to maximum values:
+      * Armor class for helms.
       * Affixes with a range of values.
-      * Base armor except:
-         * Kite Shield: 12 [8-15]
-         * Gothic Shield: 14 [14-18]
-         * Tower Shield: 15 [12-20]
-         * Field Plate: 40 [40-45]
-         * Plate Mail: 42 [42-50]
-         * Gothic Plate: 45 [50-60]
-         * Full Plate Mail: 50 [60-75]
    * Burgundy affix has been renamed to russet.
-   * Maximum base item ilvl for dungeon drops: +15 in Nightmare difficulty; +30 in Hell
+   * Maximum base item ilvl for dungeon drops (not from monsters): +15 in Nightmare difficulty; +30 in Hell
    * Maximum affix ilvl:
       * Wirt: clvl [2·clvl]
-      * dungeon drops: +1 in Normal difficulty; +9 in Nightmare; +17 in Hell
-      * monster drops: +8 in Nightmare difficulty; +16 in Hell
+      * dungeon drops (not from monsters): +1 in Normal difficulty; +11 in Nightmare; +21 in Hell
+      * monster drops: +10 in Nightmare difficulty; +20 in Hell
 <details>
   <summary>Qlvl (click to expand)</summary>
 
@@ -93,18 +89,21 @@ Note: You'll need access to the data from the original game. If you don't have a
          * perfection: 29 [23]
          * vigor: 18 [17]
          * life: 29 [23]
+         * trouble: 15 [12]
          * moon: 13 [11]
          * stars: 24 [17]
          * heavens: 35 [25]
-         * zodiac: 45 [30]
+         * zodiac: 48 [30]
          * tiger: 22 [21]
          * lion: 31 [27]
-         * mammoth: 38 [35]
-         * whale: 45 [60]
+         * mammoth: 39 [35]
+         * whale: 48 [60]
          * drake: 22 [21]
          * dragon: 31 [27]
-         * wyrm: 38 [35]
-         * hydra: 45 [60]
+         * wyrm: 39 [35]
+         * hydra: 48 [60]
+         * awesome: 30 [28]
+         * holy: 38 [35]
          * godly: 46 [60]
          * steel: 8 [6]
          * silver: 13 [9]
@@ -112,10 +111,10 @@ Note: You'll need access to the data from the original game. If you don't have a
          * platinum: 22 [16]
          * mithril: 27 [20]
          * meteoric: 32 [23]
-         * weird: 38 [35]
-         * strange: 46 [60]
-         * champion: 35 [40]
-         * king: 44 [28]
+         * weird: 40 [35]
+         * strange: 50 [60]
+         * champion: 36 [40]
+         * king: 45 [28]
          * jagged: 1 [4]
          * deadly: 4 [6]
          * heavy: 8 [9]
@@ -124,12 +123,12 @@ Note: You'll need access to the data from the original game. If you don't have a
          * massive: 22 [20]
          * savage: 27 [23]
          * ruthless: 32 [35]
-         * merciless: 38 [60]
+         * merciless: 40 [60]
          * gore: 24 [25]
-         * carnage: 32 [35]
+         * carnage: 33 [35]
          * slaughter: 42 [60]
          * osmosis: 30 [50]
-         * thunder: 46 [60]
+         * thunder: 50 [60]
          * blood: 24 [19]
          * vampires: 24 [19]
          * amber: 14 [12]
@@ -141,6 +140,8 @@ Note: You'll need access to the data from the original game. If you don't have a
          * speed: 24 [19]
          * haste: 32 [27]
          * harmony: 24 [20]
+         * bear: 15 [5]
+         * blocking: 10 [5]
 </details>
 
 #### Shrines:

@@ -1583,10 +1583,10 @@ void SetupBaseItem(Point position, _item_indexes idx, bool onlygood, bool sendms
 
 	switch (sgGameInitInfo.nDifficulty) {
 	case DIFF_NIGHTMARE:
-		curlv += 4;
+		curlv += 5;
 		break;
 	case DIFF_HELL:
-		curlv += 8;
+		curlv += 10;
 		break;
 	}
 
@@ -3336,10 +3336,10 @@ void SpawnItem(Monster &monster, Point position, bool sendmsg, bool spawn /*= fa
 
 	switch (sgGameInitInfo.nDifficulty) {
 	case DIFF_NIGHTMARE:
-		mLevel += 8;
+		mLevel += 10;
 		break;
 	case DIFF_HELL:
-		mLevel += 16;
+		mLevel += 20;
 		break;
 	}
 

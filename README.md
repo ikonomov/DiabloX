@@ -64,8 +64,7 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Civerb's Cudgel: +150%
    * Set to minimum values:
       * Staff charges.
-      * Armor class for armor.
-      * Armor class for shields.
+      * Armor class for shields and armor.
    * Set to maximum values:
       * Armor class for helms.
       * Affixes with a range of values.

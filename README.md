@@ -141,7 +141,7 @@ Note: You'll need access to the data from the original game. If you don't have a
          * haste: 32 [27]
          * harmony: 26 [20]
          * bear: 15 [5]
-         * blocking: 10 [5]
+         * blocking: 13 [5]
 </details>
 
 #### Shrines:

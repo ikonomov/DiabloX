@@ -1014,8 +1014,8 @@ GameplayOptions::GameplayOptions()
     , testBarbarian("Test Barbarian", OptionEntryFlags::Invisible, N_("Test Barbarian"), N_("Force the Barbarian character type to appear in the hero selection menu."), false)
     , experienceBar("Experience Bar", OptionEntryFlags::None, N_("Experience Bar"), N_("Experience Bar is added to the UI at the bottom of the screen."), true)
     , showItemGraphicsInStores("Show Item Graphics in Stores", OptionEntryFlags::Invisible, N_("Show Item Graphics in Stores"), N_("Show item graphics to the left of item descriptions in store menus."), true)
-    , showHealthValues("Show health values", OptionEntryFlags::Invisible, N_("Show health values"), N_("Displays current / max health value on health globe."), false)
-    , showManaValues("Show mana values", OptionEntryFlags::Invisible, N_("Show mana values"), N_("Displays current / max mana value on mana globe."), false)
+    , showHealthValues("Show health values", OptionEntryFlags::None, N_("Show health values"), N_("Displays current / max health value on health globe."), false)
+    , showManaValues("Show mana values", OptionEntryFlags::None, N_("Show mana values"), N_("Displays current / max mana value on mana globe."), false)
     , enemyHealthBar("Enemy Health Bar", OptionEntryFlags::None, N_("Enemy Health Bar"), N_("Enemy Health Bar is displayed at the top of the screen."), true)
     , autoGoldPickup("Auto Gold Pickup", OptionEntryFlags::None, N_("Auto Gold Pickup"), N_("Gold is automatically collected when in close proximity to the player."), false)
     , autoElixirPickup("Auto Elixir Pickup", OptionEntryFlags::Invisible, N_("Auto Elixir Pickup"), N_("Elixirs are automatically collected when in close proximity to the player."), false)
@@ -1054,6 +1054,8 @@ std::vector<OptionEntryBase *> GameplayOptions::GetEntries()
 {
 	return {
 		&experienceBar,
+		&showHealthValues,
+		&showManaValues,
 		&enemyHealthBar,
 		&showMonsterType,
 		&showItemLabels,

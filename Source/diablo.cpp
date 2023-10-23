@@ -1643,6 +1643,7 @@ void InitKeymapActions()
 		    nullptr,
 		    CanPlayerTakeAction,
 		    i + 1);
+	}
 	sgOptions.Keymapper.AddAction(
 	    "UseHealthPotion",
 	    N_("Use health potion"),
@@ -1659,7 +1660,6 @@ void InitKeymapActions()
 	    [] { UseBeltItem(BLT_MANA); },
 	    nullptr,
 	    CanPlayerTakeAction);
-	}
 	sgOptions.Keymapper.AddAction(
 	    "DisplaySpells",
 	    N_("Speedbook"),

@@ -1643,6 +1643,22 @@ void InitKeymapActions()
 		    nullptr,
 		    CanPlayerTakeAction,
 		    i + 1);
+	sgOptions.Keymapper.AddAction(
+	    "UseHealthPotion",
+	    N_("Use health potion"),
+	    N_("Use health potions from belt."),
+	    SDLK_UNKNOWN,
+	    [] { UseBeltItem(BLT_HEALING); },
+	    nullptr,
+	    CanPlayerTakeAction);
+	sgOptions.Keymapper.AddAction(
+	    "UseManaPotion",
+	    N_("Use mana potion"),
+	    N_("Use mana potions from belt."),
+	    SDLK_UNKNOWN,
+	    [] { UseBeltItem(BLT_MANA); },
+	    nullptr,
+	    CanPlayerTakeAction);
 	}
 	sgOptions.Keymapper.AddAction(
 	    "DisplaySpells",

@@ -169,6 +169,7 @@ Note: You'll need access to the data from the original game. If you don't have a
       * equip except for weapons and shields (configurable for weapons and shields)
       * refilling belt
       * quick cast
+   * The number of monsters per level in offline mode is 2/3 of the number of monsters in the other multi player modes, the same as vanilla's single player mode.
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.

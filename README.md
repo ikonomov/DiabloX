@@ -153,7 +153,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:
    * Removed:
-      * single player mode (replaced by offline mode)
+      * single player mode
       * support for Spawned Diablo and Diablo: Hellfire
       * multi-language support
       * arenas
@@ -169,7 +169,6 @@ Note: You'll need access to the data from the original game. If you don't have a
       * equip except for weapons and shields (configurable for weapons and shields)
       * refilling belt
       * quick cast
-   * Offline mode has 2/3 of the number of monsters per level compared to the other multi player modes.
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.

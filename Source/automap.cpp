@@ -755,6 +755,7 @@ void DrawAutomapText(const Surface &out)
 		description = std::string(_(QuestLevelNames[setlvlnum]));
 		if (ActiveMonsterCount == 4) {
 			description.append(std::string(_(" (Cleared)")));
+		}
 		DrawString(out, description, linePosition);
 		return;
 	}

@@ -354,9 +354,10 @@ void StartSmith()
 	stextscrl = false;
 	AddSText(0, 1, _("Welcome to the"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
 	AddSText(0, 3, _("Blacksmith's shop"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
-	AddSText(0, 9, _("Would you like to:"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
-	AddSText(0, 12, _("Talk to Griswold"), UiFlags::ColorBlue | UiFlags::AlignCenter, true);
-	AddSText(0, 14, _("Buy items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
+	AddSText(0, 7, _("Would you like to:"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
+	AddSText(0, 10, _("Talk to Griswold"), UiFlags::ColorBlue | UiFlags::AlignCenter, true);
+	AddSText(0, 12, _("Buy basic items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
+	AddSText(0, 14, _("Buy premium items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
 	AddSText(0, 16, _("Sell items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
 	AddSText(0, 18, _("Repair items"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
 	AddSText(0, 20, _("Leave the shop"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
@@ -1010,7 +1011,7 @@ void StartBoy()
 	if (!boyitem.isEmpty()) {
 		AddSText(0, 8, _("Talk to Wirt"), UiFlags::ColorBlue | UiFlags::AlignCenter, true);
 		AddSText(0, 12, _("I have something for sale,"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
-		AddSText(0, 14, _("but it will cost 50 gold"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
+		AddSText(0, 14, fmt::format(fmt::runtime(_("but it will cost {:d} gold")), 50 * MyPlayer->_pLevel), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
 		AddSText(0, 16, _("just to take a look. "), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
 		AddSText(0, 18, _("What have you got?"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
 		AddSText(0, 20, _("Say goodbye"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
@@ -1145,8 +1146,8 @@ bool IdItemOk(Item *i)
 void AddStoreHoldId(Item itm, int8_t i)
 {
 	storehold[storenumh] = itm;
-	storehold[storenumh]._ivalue = 100;
-	storehold[storenumh]._iIvalue = 100;
+	storehold[storenumh]._ivalue = 500;
+	storehold[storenumh]._iIvalue = 500;
 	storehidx[storenumh] = i;
 	storenumh++;
 }
@@ -1335,14 +1336,17 @@ void StartDrunk()
 void SmithEnter()
 {
 	switch (stextsel) {
-	case 12:
+	case 10:
 		talker = TOWN_SMITH;
-		stextlhold = 12;
+		stextlhold = 10;
 		stextshold = TalkID::Smith;
 		StartStore(TalkID::Gossip);
 		break;
-	case 14:
+	case 12:
 		StartStore(TalkID::SmithBuy);
+		break;
+	case 14:
+		StartStore(TalkID::SmithPremiumBuy);
 		break;
 	case 16:
 		StartStore(TalkID::SmithSell);
@@ -1731,14 +1735,15 @@ void WitchRechargeEnter()
 
 void BoyEnter()
 {
+	int entrycost = 50 * MyPlayer->_pLevel;
 	if (!boyitem.isEmpty() && stextsel == 18) {
-		if (!PlayerCanAfford(50)) {
+		if (!PlayerCanAfford(entrycost)) {
 			stextshold = TalkID::Boy;
 			stextlhold = 18;
 			stextvhold = stextsval;
 			StartStore(TalkID::NoMoney);
 		} else {
-			TakePlrsMoney(50);
+			TakePlrsMoney(entrycost);
 			StartStore(TalkID::BoyBuy);
 		}
 		return;
@@ -1771,26 +1776,16 @@ void BoyBuyItem(Item &item)
 void HealerBuyItem(Item &item)
 {
 	int idx = stextvhold + ((stextlhold - stextup) / 4);
-	if (MyPlayer->pDiabloKillLevel == 3) {
-		if (idx < 2)
-			item._iSeed = AdvanceRndSeed();
-	} else {
-		if (idx < 1)
-			item._iSeed = AdvanceRndSeed();
-	}
+	if (idx < 1)
+		item._iSeed = AdvanceRndSeed();
 
 	TakePlrsMoney(item._iIvalue);
 	if (item._iMagical == ITEM_QUALITY_NORMAL)
 		item._iIdentified = false;
 	StoreAutoPlace(item, true);
 
-	if (MyPlayer->pDiabloKillLevel == 3) {
-		if (idx < 2)
-			return;
-	} else {
-		if (idx < 1)
-			return;
-	}
+	if (idx < 1)
+		return;
 	idx = stextvhold + ((stextlhold - stextup) / 4);
 	if (idx == 19) {
 		healitem[19].clear();
@@ -2491,7 +2486,7 @@ void StoreESC()
 		break;
 	case TalkID::SmithBuy:
 		StartStore(TalkID::Smith);
-		stextsel = 14;
+		stextsel = 12;
 		break;
 	case TalkID::SmithPremiumBuy:
 		StartStore(TalkID::Smith);
@@ -2652,7 +2647,7 @@ void TakePlrsMoney(int cost)
 		cost = TakeGold(myPlayer, cost, false);
 	}
 
-	Stash.gold -= cost;
+	Stash.gold = Stash.gold <= cost ? 0 : Stash.gold - cost;
 	Stash.dirty = true;
 }
 

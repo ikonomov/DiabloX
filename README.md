@@ -47,17 +47,13 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
    * Stone Curse does not affect unique monsters.
+   * Golems receive no damage from players when in friendly mode.
    * The casting sound (spell sound unchanged) for Phasing and Teleport has been removed.
    * Mana cost:
       * Town Portal initial: 50 [35]; minimum: 35 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]
       * Teleport initial: 50 [35]; minimum: 30 [15]
 #### Items:
-   * Adria sells scrolls only.
-   * Griswold does not sell magical items.
-   * Pepin does not sell potions except arena potions which can be used on cleared levels and purchased by a character that has killed Diablo on Hell difficulty.
-   * Wirt sells staves in addition to his normal inventory.
-   * The maximum price of items at Wirt has been reduced to 45,000 [135,000] gold.
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
@@ -68,87 +64,128 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Set to maximum values:
       * Armor class for helms.
       * Affixes with a range of values.
-   * Burgundy affix has been renamed to russet.
+   * Burgundy affix has been renamed to Russet.
    * Maximum base item ilvl for dungeon drops (not from monsters): +15 in Nightmare difficulty; +30 in Hell
    * Maximum affix ilvl:
-      * Wirt: clvl [2·clvl]
-      * dungeon drops (not from monsters): +1 in Normal difficulty; +11 in Nightmare; +21 in Hell
+      * dungeon drops (not from monsters): -1 in Normal difficulty; +9 in Nightmare; +19 in Hell
       * monster drops: +10 in Nightmare difficulty; +20 in Hell
+<details>
+  <summary>Value in gold (click to expand)</summary>
+
+   * Value in gold:
+      * Potion:
+         * Healing: 3,000 [50]
+         * Mana: 3,000 [50]
+         * Full Healing: 9,000 [150]
+         * Full Mana: 9,000 [150]
+         * Rejuvenation: 7,200 [120]
+         * Full Rejuvenation: 36,000 [600]
+      * Elixirs: 10,000 [5,000]
+      * Scroll:
+         * Healing: 1,000 [50]
+         * Resurrect: 5,000 [250]
+         * Identify: 500 [100]
+         * Town Portal: 2,000 [200]
+         * Infravision: 1,200 [600]
+         * Mana Shield: 2,400 [1,200]
+      * Book:
+         * Healing: 10,000 [1,000]
+         * Heal Other: 10,000 [1,000]
+         * Town Portal: 15,000 [3,000]
+      * Staff multiplier:
+         * Healing: 100 [10]
+         * Heal Other: 100 [10]
+         * Resurrect: 500 [50]
+         * Town Portal: 200 [40]
+</details>
+
 <details>
   <summary>Qlvl (click to expand)</summary>
 
    * Qlvl:
       * Elixir of Strength, Magic and Dexterity: 20 [15]
       * Affix:
-         * giants: 18 [17]
-         * titans: 29 [23]
-         * sorcery: 18 [17]
-         * wizardry: 29 [23]
-         * precision: 18 [17]
-         * perfection: 29 [23]
-         * vigor: 18 [17]
-         * life: 29 [23]
-         * trouble: 15 [12]
-         * moon: 14 [11]
-         * stars: 25 [17]
-         * heavens: 36 [25]
-         * zodiac: 50 [30]
-         * tiger: 22 [21]
-         * lion: 31 [27]
-         * mammoth: 39 [35]
-         * whale: 48 [60]
-         * drake: 22 [21]
-         * dragon: 31 [27]
-         * wyrm: 39 [35]
-         * hydra: 48 [60]
-         * awesome: 30 [28]
-         * holy: 38 [35]
-         * godly: 49 [60]
-         * steel: 8 [6]
-         * silver: 13 [9]
-         * gold: 19 [12]
-         * platinum: 23 [16]
-         * mithril: 27 [20]
-         * meteoric: 32 [23]
-         * weird: 40 [35]
-         * strange: 47 [60]
-         * champion: 36 [40]
-         * king: 45 [28]
-         * jagged: 1 [4]
-         * deadly: 4 [6]
-         * heavy: 8 [9]
-         * vicious: 13 [12]
-         * brutal: 19 [16]
-         * massive: 23 [20]
-         * savage: 27 [23]
-         * ruthless: 32 [35]
-         * merciless: 40 [60]
-         * gore: 24 [25]
-         * carnage: 33 [35]
-         * slaughter: 42 [60]
-         * osmosis: 30 [50]
-         * thunder: 44 [60]
-         * blood: 25 [19]
-         * vampires: 25 [19]
-         * amber: 14 [12]
-         * jade: 22 [18]
-         * obsidian: 32 [24]
-         * emerald: 43 [31]
-         * readiness: 8 [1]
-         * swiftness: 17 [10]
-         * speed: 25 [19]
-         * haste: 32 [27]
-         * harmony: 26 [20]
-         * bear: 19 [5]
-         * blocking: 17 [5]
+         * Giants: 18 [17]
+         * Titans: 29 [23]
+         * Sorcery: 18 [17]
+         * Wizardry: 29 [23]
+         * Precision: 18 [17]
+         * Perfection: 29 [23]
+         * Vigor: 18 [17]
+         * Life: 29 [23]
+         * Trouble: 15 [12]
+         * Moon: 14 [11]
+         * Stars: 25 [17]
+         * Heavens: 36 [25]
+         * Zodiac: 50 [30]
+         * Tiger: 22 [21]
+         * Lion: 31 [27]
+         * Mammoth: 39 [35]
+         * Whale: 48 [60]
+         * Drake: 22 [21]
+         * Dragon: 31 [27]
+         * Wyrm: 39 [35]
+         * Hydra: 48 [60]
+         * Awesome: 30 [28]
+         * Holy: 38 [35]
+         * Godly: 49 [60]
+         * Steel: 8 [6]
+         * Silver: 13 [9]
+         * Gold: 19 [12]
+         * Platinum: 23 [16]
+         * Mithril: 27 [20]
+         * Meteoric: 32 [23]
+         * Weird: 40 [35]
+         * Strange: 47 [60]
+         * Champion: 36 [40]
+         * King: 45 [28]
+         * Jagged: 1 [4]
+         * Deadly: 4 [6]
+         * Heavy: 8 [9]
+         * Vicious: 13 [12]
+         * Brutal: 19 [16]
+         * Massive: 23 [20]
+         * Savage: 27 [23]
+         * Ruthless: 32 [35]
+         * Merciless: 40 [60]
+         * Gore: 24 [25]
+         * Carnage: 33 [35]
+         * Slaughter: 42 [60]
+         * Ages: 35 [25]
+         * Osmosis: 30 [50]
+         * Thunder: 44 [60]
+         * Blood: 25 [19]
+         * Vampires: 25 [19]
+         * Amber: 14 [12]
+         * Jade: 22 [18]
+         * Obsidian: 32 [24]
+         * Emerald: 43 [31]
+         * Readiness: 8 [1]
+         * Swiftness: 17 [10]
+         * Speed: 25 [19]
+         * Haste: 32 [27]
+         * Harmony: 26 [20]
+         * Bear: 19 [5]
+         * Blocking: 17 [5]
+
 </details>
 
+#### Stores:
+   * Adria and Pepin do not sell items in unlimited quantities except Arena Potions which can be used on cleared levels.
+   * Cain charges 500 [100] gold to identify items.
+   * Wirt charges 50×clvl [50] gold to show his item for sale.
+   * The maximum store price:
+      * Adria, Griswold and Pepin: 10,000 [140,000]
+      * Wirt: 75,000 [135,000]
+   * Maximum affix qlvl:
+      * Adria: 2×ilvl-1 [2×ilvl]
+      * Wirt: clvl [2×clvl]
 #### Shrines:
    * Fascinating, Ornate and Sacred reduce magic by -2% (-1 minimum) [-10% mana].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
 #### Monsters:
-   * All monsters are able to walk through fire wall.
+   * All monsters are able to walk through Fire Wall.
    * Black Deaths have been changed to reduce vitality instead of life by one point on successful hit.
    * Diablo has 100% more health, fastest hit recovery and resistance to Holy Bolt.
 #### Engine:
@@ -169,6 +206,10 @@ Note: You'll need access to the data from the original game. If you don't have a
       * equip except for weapons and shields (configurable for weapons and shields)
       * refilling belt
       * quick cast
+   * Restart In Town:
+      * renamed to Resurrect In Town
+      * half the gold not dropped after being killed is lost (no gold will be lost on level 16)
+      * if the level is not cleared 200×clvl gold is taken from the player's inventory or stash
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.

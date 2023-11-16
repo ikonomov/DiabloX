@@ -1590,7 +1590,7 @@ void SetupBaseItem(Point position, _item_indexes idx, bool onlygood, bool sendms
 		break;
 	}
 
-	SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), 2 * curlv + 1, 1, onlygood, false, delta);
+	SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), 2 * curlv - 1, 1, onlygood, false, delta);
 
 	if (sendmsg)
 		NetSendCmdPItem(false, CMD_DROPITEM, item.position, item);
@@ -1982,6 +1982,8 @@ bool PremiumItemOk(const Player &player, const ItemData &item)
 		return false;
 	if (item.itype == ItemType::Gold)
 		return false;
+	if (!gbIsHellfire && item.itype == ItemType::Staff)
+		return false;
 
 	if (gbIsMultiplayer) {
 		if (item.iMiscId == IMISC_OILOF)
@@ -2022,7 +2024,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 		GetItemBonus(player, premiumItem, plvl / 2, plvl, true, !gbIsHellfire);
 
 		if (!gbIsHellfire) {
-			if (premiumItem._iIvalue <= 140000) {
+			if (premiumItem._iIvalue <= 10000) {
 				break;
 			}
 		} else {
@@ -2075,23 +2077,11 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 
 bool WitchItemOk(const Player &player, const ItemData &item)
 {
-	if (item.itype != ItemType::Misc)
-		return false;
-	if (item.iMiscId == IMISC_BOOK)
-		return false;
-	if (item.iMiscId == IMISC_MANA)
-		return false;
-	if (item.iMiscId == IMISC_FULLMANA)
-		return false;
-	if (item.iSpell == SpellID::TownPortal)
+	if (IsNoneOf(item.itype, ItemType::Misc, ItemType::Staff))
 		return false;
 	if (item.iMiscId == IMISC_FULLHEAL)
 		return false;
 	if (item.iMiscId == IMISC_HEAL)
-		return false;
-	if (item.iMiscId == IMISC_REJUV)
-		return false;
-	if (item.iMiscId == IMISC_FULLREJUV)
 		return false;
 	if (item.iMiscId > IMISC_OILFIRST && item.iMiscId < IMISC_OILLAST)
 		return false;
@@ -2121,7 +2111,7 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 	if (item.iMiscId == IMISC_SCROLL)
 		return item.iSpell == SpellID::Healing;
 	if (item.iMiscId == IMISC_SCROLLT)
-		return item.iSpell == SpellID::HealOther && gbIsMultiplayer;
+		return item.iSpell == SpellID::Resurrect && gbIsMultiplayer;
 
 	if (!gbIsMultiplayer) {
 		if (item.iMiscId == IMISC_ELIXSTR)
@@ -2133,6 +2123,13 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 		if (item.iMiscId == IMISC_ELIXVIT)
 			return !gbIsHellfire || player._pBaseVit < player.GetMaximumAttributeValue(CharacterAttribute::Vitality);
 	}
+
+	if (item.iMiscId == IMISC_FULLHEAL)
+		return true;
+	if (item.iMiscId == IMISC_HEAL)
+		return true;
+	if (item.iMiscId == IMISC_REJUV)
+		return true;
 
 	return false;
 }
@@ -2179,7 +2176,7 @@ void RecreateBoyItem(const Player &player, Item &item, int lvl, int iseed)
 
 void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (IsAnyOf(idx, IDI_PORTAL)) {
+	if (IsAnyOf(idx, IDI_ARENAPOT, IDI_MANA)) {
 		GetItemAttrs(item, idx, lvl);
 	} else if (gbIsHellfire && idx >= 114 && idx <= 117) {
 		SetRndSeed(iseed);
@@ -2191,9 +2188,9 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 		GetItemAttrs(item, itype, lvl);
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl - 1;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl - 1;
 		if (iblvl != -1)
 			GetItemBonus(player, item, iblvl / 2, iblvl, true, true);
 	}
@@ -2205,7 +2202,7 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 
 void RecreateHealerItem(const Player &player, Item &item, _item_indexes idx, int lvl, int iseed)
 {
-	if (IsAnyOf(idx, IDI_ARENAPOT, IDI_RESURRECT)) {
+	if (IsAnyOf(idx, IDI_ARENAPOT, IDI_HEAL)) {
 		GetItemAttrs(item, idx, lvl);
 	} else {
 		SetRndSeed(iseed);
@@ -2339,9 +2336,9 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl - 1;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl - 1;
 		minlvl = iblvl / 2;
 		maxlvl = iblvl;
 	} else {
@@ -4267,7 +4264,7 @@ void SpawnSmith(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
 
-	int maxValue = 140000;
+	int maxValue = 10000;
 	int maxItems = 20;
 	if (gbIsHellfire) {
 		maxValue = 200000;
@@ -4330,16 +4327,16 @@ void SpawnPremium(const Player &player)
 
 void SpawnWitch(int lvl)
 {
-	constexpr int PinnedItemCount = 1;
-	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_PORTAL };
+	constexpr int PinnedItemCount = 2;
+	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_ARENAPOT, IDI_MANA };
 	constexpr int MaxPinnedBookCount = 4;
 	constexpr std::array<_item_indexes, MaxPinnedBookCount> PinnedBookTypes = { IDI_BOOK1, IDI_BOOK2, IDI_BOOK3, IDI_BOOK4 };
 
 	int bookCount = 0;
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
-	const int reservedItems = gbIsHellfire ? 10 : 22;
-	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 4;
-	const int maxValue = gbIsHellfire ? 200000 : 140000;
+	const int reservedItems = gbIsHellfire ? 10 : 17;
+	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 9;
+	const int maxValue = gbIsHellfire ? 200000 : 10000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
 		Item &item = witchitem[i];
@@ -4382,9 +4379,9 @@ void SpawnWitch(int lvl)
 			GetItemAttrs(item, itemData, lvl);
 			int maxlvl = -1;
 			if (GenerateRnd(100) <= 5)
-				maxlvl = 2 * lvl;
+				maxlvl = 2 * lvl - 1;
 			if (maxlvl == -1 && item._iMiscId == IMISC_STAFF)
-				maxlvl = 2 * lvl;
+				maxlvl = 2 * lvl - 1;
 			if (maxlvl != -1)
 				GetItemBonus(*MyPlayer, item, maxlvl / 2, maxlvl, true, true);
 		} while (item._iIvalue > maxValue);
@@ -4424,7 +4421,7 @@ void SpawnBoy(int lvl)
 		GetItemBonus(*MyPlayer, boyitem, lvl / 2, lvl, true, true);
 
 		if (!gbIsHellfire) {
-			if (boyitem._iIvalue > 30000) {
+			if (boyitem._iIvalue > 50000) {
 				keepgoing = true; // prevent breaking the do/while loop too early by failing hellfire's condition in while
 				continue;
 			}
@@ -4512,21 +4509,17 @@ void SpawnBoy(int lvl)
 
 void SpawnHealer(int lvl)
 {
-	constexpr int PinnedItemCount = 1;
-	constexpr std::array<_item_indexes, PinnedItemCount + 1> PinnedItemTypesArena = { IDI_ARENAPOT, IDI_RESURRECT };
-	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_RESURRECT };
+	constexpr int PinnedItemCount = 2;
+	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_ARENAPOT, IDI_HEAL };
 	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 4;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];
 		item = {};
 
-		if (i < PinnedItemCount || (MyPlayer->pDiabloKillLevel == 3 && i == PinnedItemCount)) {
+		if (i < PinnedItemCount) {
 			item._iSeed = AdvanceRndSeed();
-			if (MyPlayer->pDiabloKillLevel == 3)
-				GetItemAttrs(item, PinnedItemTypesArena[i], 1);
-			else
-				GetItemAttrs(item, PinnedItemTypes[i], 1);
+			GetItemAttrs(item, PinnedItemTypes[i], 1);
 			item._iCreateInfo = lvl;
 			item._iStatFlag = true;
 			continue;

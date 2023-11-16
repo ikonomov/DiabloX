@@ -212,6 +212,10 @@ bool MonsterMHit(int pnum, int monsterId, int mindam, int maxdam, int dist, Miss
 	int hper = 0;
 	const Player &player = Players[pnum];
 	const MissileData &missileData = GetMissileData(t);
+
+	if (monster.type().type == MT_GOLEM && sgGameInitInfo.bFriendlyFire == 0 && player.friendlyMode)
+		return false;
+
 	if (missileData.isArrow()) {
 		hper = player.GetRangedPiercingToHit();
 		hper -= player.CalculateArmorPierce(monster.armorClass, false);

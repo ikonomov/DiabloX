@@ -576,6 +576,9 @@ bool PlrHitMonst(Player &player, Monster &monster, bool adjacentDamage = false)
 	if (!monster.isPossibleToHit())
 		return false;
 
+	if (monster.type().type == MT_GOLEM && sgGameInitInfo.bFriendlyFire == 0 && player.friendlyMode)
+		return false;
+
 	if (adjacentDamage) {
 		if (player._pLevel > 20)
 			hper -= 30;

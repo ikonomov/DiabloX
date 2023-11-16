@@ -17,6 +17,7 @@
 #include "options.h"
 #include "pfile.h"
 #include "qol/floatingnumbers.h"
+#include "stores.h"
 #include "utils/language.h"
 
 namespace devilution {
@@ -47,12 +48,12 @@ TMenuItem sgSingleMenu[] = {
 /** Contains the game menu items of the multi player menu. */
 TMenuItem sgMultiMenu[] = {
 	// clang-format off
-	// dwFlags,      pszStr,                fnMenu
-	{ GMENU_ENABLED, N_("Options"),         &GamemenuOptions     },
-	{ GMENU_ENABLED, N_("New Game"),        &GamemenuNewGame     },
-	{ GMENU_ENABLED, N_("Restart In Town"), &GamemenuRestartTown },
-	{ GMENU_ENABLED, N_("Quit Game"),       &gamemenu_quit_game  },
-	{ GMENU_ENABLED, nullptr,               nullptr              },
+	// dwFlags,      pszStr,                  fnMenu
+	{ GMENU_ENABLED, N_("Options"),           &GamemenuOptions     },
+	{ GMENU_ENABLED, N_("New Game"),          &GamemenuNewGame     },
+	{ GMENU_ENABLED, N_("Resurrect In Town"), &GamemenuRestartTown },
+	{ GMENU_ENABLED, N_("Quit Game"),         &gamemenu_quit_game  },
+	{ GMENU_ENABLED, nullptr,                 nullptr              },
 	// clang-format on
 };
 TMenuItem sgOptionsMenu[] = {
@@ -114,6 +115,12 @@ void GamemenuNewGame(bool /*bActivate*/)
 
 void GamemenuRestartTown(bool /*bActivate*/)
 {
+	if (!MyPlayer->isOnLevel(16)) {
+		TakePlrsMoney(MyPlayer->_pGold);
+	}
+	if (ActiveMonsterCount != 4) {
+		TakePlrsMoney(200 * MyPlayer->_pLevel);
+	}
 	NetSendCmd(true, CMD_RETOWN);
 }
 

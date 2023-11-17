@@ -47,7 +47,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.
    * Stone Curse does not affect unique monsters.
-   * Golems receive no damage from players when in friendly mode.
+   * Golems receive no damage from players in friendly mode.
    * The casting sound (spell sound unchanged) for Phasing and Teleport has been removed.
    * Mana cost:
       * Town Portal initial: 50 [35]; minimum: 35 [18]

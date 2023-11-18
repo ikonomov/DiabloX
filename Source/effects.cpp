@@ -39,7 +39,7 @@ TSFX sgSFX[] = {
 // _sfx_id          bFlags                     pszName                        pSnd
 /*PS_WALK1*/      { sfx_MISC,                  "sfx\\misc\\walk1.wav",        nullptr },
 /*PS_BFIRE*/      { sfx_MISC,                  "sfx\\misc\\bfire.wav",        nullptr },
-/*PS_TMAG*/       { sfx_MISC,                  "sfx\\misc\\blank.wav",        nullptr },
+/*PS_TMAG*/       { sfx_MISC,                  "sfx\\misc\\tmag.wav",         nullptr },
 /*PS_SWING*/      { sfx_MISC,                  "sfx\\misc\\swing.wav",        nullptr },
 /*PS_SWING2*/     { sfx_MISC,                  "sfx\\misc\\swing2.wav",       nullptr },
 /*PS_DEAD*/       { sfx_MISC,                  "sfx\\misc\\dead.wav",         nullptr },
@@ -966,6 +966,7 @@ TSFX sgSFX[] = {
 /*TSFX_TRADER1*/  { sfx_STREAM,                "sfx\\hellfire\\trader1.wav",  nullptr },
 /*IS_CROPEN*/     { sfx_MISC | sfx_HELLFIRE,   "sfx\\items\\cropen.wav",      nullptr },
 /*IS_CRCLOS*/     { sfx_MISC | sfx_HELLFIRE,   "sfx\\items\\crclos.wav",      nullptr },
+/*PS_BLANK*/      { sfx_MISC,                  "sfx\\misc\\blank.wav",        nullptr },
 	// clang-format on
 };
 

@@ -2756,6 +2756,12 @@ Missile *AddMissile(Point src, Point dst, Direction midir, MissileID mitype,
 
 	if (*lSFX != SFX_NONE) {
 		PlaySfxLoc(*lSFX, missile.position.start);
+		if (&Players[missile._misource] != MyPlayer && missile._mitype == MissileID::Phasing) {
+			PlaySfxLoc(IS_CAST2, missile.position.start);
+		}
+		if (&Players[missile._misource] != MyPlayer && missile._mitype == MissileID::Teleport) {
+			PlaySfxLoc(IS_CAST6, missile.position.start);
+		}
 	}
 
 	AddMissileParameter parameter = { dst, midir, parent, false };

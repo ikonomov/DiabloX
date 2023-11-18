@@ -48,7 +48,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Apocalypse only works on monsters within the line of sight.
    * Stone Curse does not affect unique monsters.
    * Golems receive no damage from players in friendly mode.
-   * The casting sound (spell sound unchanged) for Phasing and Teleport has been removed.
+   * The casting sound for Phasing and Teleport can be heard by other players after landing.
    * Mana cost:
       * Town Portal initial: 50 [35]; minimum: 35 [18]
       * Phasing initial: 16 [12]; minimum: 8 [4]

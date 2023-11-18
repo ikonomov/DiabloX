@@ -1053,6 +1053,7 @@ enum _sfx_id : int16_t {
 	TSFX_TRADER1,
 	IS_CROPEN,
 	IS_CRCLOS,
+	PS_BLANK,
 	SFX_NONE = -1,
 };
 

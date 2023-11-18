@@ -308,6 +308,13 @@ void StartSpell(Player &player, Direction d, WorldTileCoord cx, WorldTileCoord c
 
 	PlaySfxLoc(GetSpellData(player.queuedSpell.spellId).sSFX, player.position.tile);
 
+	if (&player == MyPlayer && player.queuedSpell.spellId == SpellID::Phasing) {
+		PlaySfxLoc(IS_CAST2, player.position.tile);
+	}
+	if (&player == MyPlayer && player.queuedSpell.spellId == SpellID::Teleport) {
+		PlaySfxLoc(IS_CAST6, player.position.tile);
+	}
+
 	player._pmode = PM_SPELL;
 
 	FixPlayerLocation(player, d);

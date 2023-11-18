@@ -2330,15 +2330,15 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 		maxlvl = lvl;
 	} else if ((item._iCreateInfo & CF_BOY) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
-		minlvl = lvl / 2;
-		maxlvl = lvl;
+		minlvl = lvl;
+		maxlvl = lvl * 2;
 	} else if ((item._iCreateInfo & CF_WITCH) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl - 1;
+			iblvl = 2 * lvl;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl - 1;
+			iblvl = 2 * lvl;
 		minlvl = iblvl / 2;
 		maxlvl = iblvl;
 	} else {
@@ -4840,6 +4840,7 @@ void Item::updateRequiredStatsCacheForPlayer(const Player &player)
 
 StringOrView Item::getName() const
 {
+	return _iIdentified ? string_view(_iIName) : string_view(_iName);
 	if (isEmpty()) {
 		return string_view("");
 	} else if (!_iIdentified || _iCreateInfo == 0 || _iMagical == ITEM_QUALITY_NORMAL) {

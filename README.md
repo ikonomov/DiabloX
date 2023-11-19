@@ -104,7 +104,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 
    * Qlvl:
       * Elixir of Strength, Magic and Dexterity: 20 [15]
-      * Affix:
+      * [Affix](https://github.com/ikonomov/DiabloX/wiki/Affixes-(DiabloX)):
          * Giants: 18 [17]
          * Titans: 29 [23]
          * Sorcery: 18 [17]

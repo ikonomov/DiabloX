@@ -2024,7 +2024,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 		GetItemBonus(player, premiumItem, plvl / 2, plvl, true, !gbIsHellfire);
 
 		if (!gbIsHellfire) {
-			if (premiumItem._iIvalue <= 10000) {
+			if (premiumItem._iIvalue <= 20000) {
 				break;
 			}
 		} else {
@@ -4264,7 +4264,7 @@ void SpawnSmith(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
 
-	int maxValue = 10000;
+	int maxValue = 20000;
 	int maxItems = 20;
 	if (gbIsHellfire) {
 		maxValue = 200000;
@@ -4336,7 +4336,7 @@ void SpawnWitch(int lvl)
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
 	const int reservedItems = gbIsHellfire ? 10 : 17;
 	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 9;
-	const int maxValue = gbIsHellfire ? 200000 : 10000;
+	const int maxValue = gbIsHellfire ? 200000 : 20000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
 		Item &item = witchitem[i];
@@ -4384,7 +4384,7 @@ void SpawnWitch(int lvl)
 				maxlvl = 2 * lvl - 1;
 			if (maxlvl != -1)
 				GetItemBonus(*MyPlayer, item, maxlvl / 2, maxlvl, true, true);
-		} while (item._iIvalue > maxValue);
+		} while (item._iIvalue > maxValue || (item._iMiscId == IMISC_BOOK && item._iIvalue > 10000));
 
 		item._iCreateInfo = lvl | CF_WITCH;
 		item._iIdentified = true;

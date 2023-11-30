@@ -2701,7 +2701,7 @@ void CalcPlrItemVals(Player &player, bool loadgfx)
 		    || (player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Mace && player.InvBody[INVLOC_HAND_RIGHT]._iLoc == ILOC_TWOHAND)
 		    || (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Sword && player.InvBody[INVLOC_HAND_LEFT]._iLoc == ILOC_TWOHAND)
 		    || (player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Sword && player.InvBody[INVLOC_HAND_RIGHT]._iLoc == ILOC_TWOHAND)) {
-			player._pDamageMod = player._pLevel * (player._pStrength * 3 / 2 + player._pDexterity) / 200;
+			player._pDamageMod = player._pLevel * (player._pStrength + player._pDexterity) * 3 / 400;
 		} else {
 			player._pDamageMod = player._pLevel * (player._pStrength + player._pDexterity) / 200;
 		}
@@ -2751,6 +2751,14 @@ void CalcPlrItemVals(Player &player, bool loadgfx)
 		} else {
 			player._pDamageMod = player._pLevel * player._pStrength / 100;
 		}
+	}
+
+	if (player.InvBody[INVLOC_HAND_LEFT]._itype != ItemType::Shield && player.InvBody[INVLOC_HAND_RIGHT]._itype != ItemType::Shield
+	    && (player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe
+	        || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Staff || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Staff
+	        || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Mace || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Mace
+	        || player.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Sword || player.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Sword)) {
+		player._pIAC += player._pDexterity / 10;
 	}
 
 	player._pISpells = spl;

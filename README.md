@@ -30,7 +30,8 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Hell difficulty: 20 [30]
    * Regenerate 1% (Sorcerer +0.01% per level) of max mana per second.
    * Sorcerer receives the same 25% mana cost reduction (doesn't extend below the minimum) as Rogue for all spells.
-   * +50% strength modifier to damage formula when using two-handed melee weapons.
+   * +50% dexterity modifier to armor class formula when using melee weapons and no shield.
+   * +50% character damage when using two-handed melee weapons.
    * Block bonus:
       * Warrior: 10 [30]
       * Rogue: 0 [20]

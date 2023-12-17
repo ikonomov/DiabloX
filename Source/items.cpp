@@ -2011,7 +2011,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 	dexterity += dexterity / 5;
 	magic += magic / 5;
 
-	plvl = clamp(plvl, 1, 30);
+	plvl = clamp(plvl, 1, 32);
 
 	int maxCount = 150;
 	const bool unlimited = !gbIsHellfire; // TODO: This could lead to an infinite loop if a suitable item can never be generated
@@ -2024,7 +2024,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 		GetItemBonus(player, premiumItem, plvl / 2, plvl, true, !gbIsHellfire);
 
 		if (!gbIsHellfire) {
-			if (premiumItem._iIvalue <= 20000) {
+			if (premiumItem._iIvalue <= 40000) {
 				break;
 			}
 		} else {
@@ -2124,11 +2124,13 @@ bool HealerItemOk(const Player &player, const ItemData &item)
 			return !gbIsHellfire || player._pBaseVit < player.GetMaximumAttributeValue(CharacterAttribute::Vitality);
 	}
 
-	if (item.iMiscId == IMISC_FULLHEAL)
-		return true;
 	if (item.iMiscId == IMISC_HEAL)
 		return true;
+	if (item.iMiscId == IMISC_FULLHEAL)
+		return true;
 	if (item.iMiscId == IMISC_REJUV)
+		return true;
+	if (item.iMiscId == IMISC_FULLREJUV)
 		return true;
 
 	return false;
@@ -2188,9 +2190,9 @@ void RecreateWitchItem(const Player &player, Item &item, _item_indexes idx, int 
 		GetItemAttrs(item, itype, lvl);
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl - 1;
+			iblvl = 2 * lvl + 1;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl - 1;
+			iblvl = 2 * lvl + 1;
 		if (iblvl != -1)
 			GetItemBonus(player, item, iblvl / 2, iblvl, true, true);
 	}
@@ -4272,7 +4274,7 @@ void SpawnSmith(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
 
-	int maxValue = 20000;
+	int maxValue = 40000;
 	int maxItems = 20;
 	if (gbIsHellfire) {
 		maxValue = 200000;
@@ -4344,7 +4346,7 @@ void SpawnWitch(int lvl)
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
 	const int reservedItems = gbIsHellfire ? 10 : 17;
 	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 9;
-	const int maxValue = gbIsHellfire ? 200000 : 20000;
+	const int maxValue = gbIsHellfire ? 200000 : 40000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
 		Item &item = witchitem[i];
@@ -4387,12 +4389,12 @@ void SpawnWitch(int lvl)
 			GetItemAttrs(item, itemData, lvl);
 			int maxlvl = -1;
 			if (GenerateRnd(100) <= 5)
-				maxlvl = 2 * lvl - 1;
+				maxlvl = 2 * lvl + 1;
 			if (maxlvl == -1 && item._iMiscId == IMISC_STAFF)
-				maxlvl = 2 * lvl - 1;
+				maxlvl = 2 * lvl + 1;
 			if (maxlvl != -1)
 				GetItemBonus(*MyPlayer, item, maxlvl / 2, maxlvl, true, true);
-		} while (item._iIvalue > maxValue || (item._iMiscId == IMISC_BOOK && item._iIvalue > 10000));
+		} while (item._iIvalue > maxValue);
 
 		item._iCreateInfo = lvl | CF_WITCH;
 		item._iIdentified = true;
@@ -4429,7 +4431,7 @@ void SpawnBoy(int lvl)
 		GetItemBonus(*MyPlayer, boyitem, lvl / 2, lvl, true, true);
 
 		if (!gbIsHellfire) {
-			if (boyitem._iIvalue > 50000) {
+			if (boyitem._iIvalue > 60000) {
 				keepgoing = true; // prevent breaking the do/while loop too early by failing hellfire's condition in while
 				continue;
 			}

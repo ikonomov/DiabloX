@@ -306,13 +306,8 @@ void StartSpell(Player &player, Direction d, WorldTileCoord cx, WorldTileCoord c
 		animationFlags = static_cast<AnimationDistributionFlags>(animationFlags | AnimationDistributionFlags::RepeatedAction);
 	NewPlrAnim(player, GetPlayerGraphicForSpell(player.queuedSpell.spellId), d, animationFlags, 0, player._pSFNum);
 
-	PlaySfxLoc(GetSpellData(player.queuedSpell.spellId).sSFX, player.position.tile);
-
-	if (&player == MyPlayer && player.queuedSpell.spellId == SpellID::Phasing) {
-		PlaySfxLoc(IS_CAST2, player.position.tile);
-	}
-	if (&player == MyPlayer && player.queuedSpell.spellId == SpellID::Teleport) {
-		PlaySfxLoc(IS_CAST6, player.position.tile);
+	if (!(&player != MyPlayer && (player.queuedSpell.spellId == SpellID::Phasing || player.queuedSpell.spellId == SpellID::Teleport))) {
+		PlaySfxLoc(GetSpellData(player.queuedSpell.spellId).sSFX, player.position.tile);
 	}
 
 	player._pmode = PM_SPELL;

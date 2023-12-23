@@ -937,12 +937,12 @@ bool IsShopPriceValid(const Item &item)
 	if (!gbIsHellfire && (item._iCreateInfo & CF_BOY) != 0 && item._iIvalue > boyPriceLimit)
 		return false;
 
-	const int premiumPriceLimit = 40000;
+	const int premiumPriceLimit = 50000;
 	if (!gbIsHellfire && (item._iCreateInfo & CF_SMITHPREMIUM) != 0 && item._iIvalue > premiumPriceLimit)
 		return false;
 
 	const uint16_t smithOrWitch = CF_SMITH | CF_WITCH;
-	const int smithAndWitchPriceLimit = gbIsHellfire ? 200000 : 40000;
+	const int smithAndWitchPriceLimit = gbIsHellfire ? 200000 : 50000;
 	if ((item._iCreateInfo & smithOrWitch) != 0 && item._iIvalue > smithAndWitchPriceLimit)
 		return false;
 

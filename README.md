@@ -176,7 +176,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Cain charges 500 [100] gold to identify items.
    * Wirt charges 50 extra gold for every 5 clvls to show his item for sale.
    * The maximum store price:
-      * Adria, Griswold and Pepin: 40,000 [140,000]
+      * Adria, Griswold and Pepin: 50,000 [140,000]
       * Wirt: 90,000 [135,000]
    * Maximum affix qlvl:
       * Adria: 2×ilvl+1 [2×ilvl]

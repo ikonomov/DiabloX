@@ -66,6 +66,7 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Armor class for helms.
       * Affixes with a range of values.
    * Burgundy affix has been renamed to Russet.
+   * Town portal scrolls dropped as special items (from chests and barrels) are replaced by mana potions in Nightmare and Hell difficulty.
    * Maximum base item ilvl for dungeon drops (not from monsters): +15 in Nightmare difficulty; +30 in Hell
    * Maximum affix ilvl:
       * dungeon drops (not from monsters): -1 in Normal difficulty; +9 in Nightmare; +19 in Hell

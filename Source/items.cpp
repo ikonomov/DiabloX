@@ -1634,12 +1634,8 @@ void SetupAllUseful(Item &item, int iseed, int lvl)
 	} else {
 		idx = PickRandomlyAmong({ IDI_MANA, IDI_HEAL });
 
-		if (lvl > 1 && FlipCoin(3)) {
+		if (lvl > 1 && FlipCoin(3))
 			idx = IDI_PORTAL;
-			if (sgGameInitInfo.nDifficulty != DIFF_NORMAL) {
-				idx = IDI_MANA;
-			}
-		}
 	}
 
 	GetItemAttrs(item, idx, lvl);

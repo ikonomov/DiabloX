@@ -803,8 +803,8 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 		break;
 	case SpellID::RuneOfLight:
 	case SpellID::Lightning:
-		*mind = (6 + sl / 2);
-		*maxd = ((3 + myPlayer._pLevel) / 2) * (6 + sl / 2);
+		*mind = 2 * (6 + sl / 2);
+		*maxd = (2 + myPlayer._pLevel) * (6 + sl / 2);
 		break;
 	case SpellID::Flash:
 		*mind = ScaleSpellEffect(myPlayer._pLevel + 1, sl) * 57 / 256;
@@ -854,8 +854,8 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd)
 		*maxd = ScaleSpellEffect(base + 9, sl) / 2;
 	} break;
 	case SpellID::ChainLightning:
-		*mind = (6 + sl / 2);
-		*maxd = ((3 + myPlayer._pLevel) / 2) * (6 + sl / 2);
+		*mind = 2 * (6 + sl / 2);
+		*maxd = (2 + myPlayer._pLevel) * (6 + sl / 2);
 		break;
 	case SpellID::FlameWave:
 		*mind = myPlayer._pLevel + 1;
@@ -3313,7 +3313,7 @@ void ProcessLightningControl(Missile &missile)
 		dam = GenerateRnd(currlevel) + 2 * currlevel;
 	} else if (missile._micaster == TARGET_MONSTERS) {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		dam = ((GenerateRnd(3) + GenerateRnd(Players[missile._misource]._pLevel) + 2) / 2) << 6;
+		dam = (GenerateRnd(2) + GenerateRnd(Players[missile._misource]._pLevel) + 2) << 6;
 	} else {
 		auto &monster = Monsters[missile._misource];
 		dam = 2 * (monster.minDamage + GenerateRnd(monster.maxDamage - monster.minDamage + 1));
@@ -3542,7 +3542,7 @@ void ProcessChainLightning(Missile &missile)
 	Direction dir = GetDirection(position, dst);
 	AddMissile(position, dst, dir, MissileID::LightningControl, TARGET_MONSTERS, id, 1, missile._mispllvl);
 	int rad = std::min<int>(missile._mispllvl + 3, MaxCrawlRadius);
-	int maxTargets = 2 + missile._mispllvl / 4;
+	int maxTargets = 2 + missile._mispllvl / 5;
 	int targetCount = 0;
 	Crawl(1, rad, [&](Displacement displacement) {
 		Point target = position + displacement;

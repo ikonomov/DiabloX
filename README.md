@@ -42,8 +42,8 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Sorcerer's magic: 150 [250]
    * The 1/2 spell damage modifier in player versus player is applied to all missiles.
 #### Spells:
-   * Chain Lightning creates a maximum of 3+slvl/4 number of bolts.
-   * Lightning, Chain Lightning, Guardian, Elemental, Fireball and Flash do 1/2 of the original damage.
+   * Chain Lightning creates a maximum of 3+slvl/5 number of bolts.
+   * Guardian, Elemental, Fireball and Flash do 1/2 of the original damage.
    * Fire Wall has 1/2 of the original duration.
    * Information inside the spell book has been modified with more accurate values.
    * Apocalypse only works on monsters within the line of sight.

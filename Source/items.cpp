@@ -4521,7 +4521,7 @@ void SpawnHealer(int lvl)
 {
 	constexpr int PinnedItemCount = 2;
 	constexpr std::array<_item_indexes, PinnedItemCount> PinnedItemTypes = { IDI_ARENAPOT, IDI_HEAL };
-	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 3) + 4;
+	const int itemCount = GenerateRnd(gbIsHellfire ? 10 : 1) + 4;
 
 	for (int i = 0; i < 20; i++) {
 		Item &item = healitem[i];

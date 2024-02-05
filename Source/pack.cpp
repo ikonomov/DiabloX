@@ -104,6 +104,7 @@ bool IsCreationFlagComboValid(uint16_t iCreateInfo)
 
 bool IsTownItemValid(uint16_t iCreateInfo)
 {
+	return true;
 	const uint8_t level = iCreateInfo & CF_LEVEL;
 	const bool isBoyItem = (iCreateInfo & CF_BOY) != 0;
 	const uint8_t maxTownItemLevel = 30;
@@ -117,6 +118,7 @@ bool IsTownItemValid(uint16_t iCreateInfo)
 
 bool IsUniqueMonsterItemValid(uint16_t iCreateInfo, uint32_t dwBuff)
 {
+	return true;
 	const uint8_t level = iCreateInfo & CF_LEVEL;
 	const bool isHellfireItem = (dwBuff & CF_HELLFIRE) != 0;
 
@@ -141,6 +143,7 @@ bool IsUniqueMonsterItemValid(uint16_t iCreateInfo, uint32_t dwBuff)
 
 bool IsDungeonItemValid(uint16_t iCreateInfo, uint32_t dwBuff)
 {
+	return true;
 	const uint8_t level = iCreateInfo & CF_LEVEL;
 	const bool isHellfireItem = (dwBuff & CF_HELLFIRE) != 0;
 
@@ -197,6 +200,7 @@ bool RecreateHellfireSpellBook(const Player &player, const ItemNetPack &packedIt
 		return true;
 	}
 
+	ValidateFields(spellBook._iCreateInfo, spellBook.dwBuff, IsDungeonItemValid(spellBook._iCreateInfo, spellBook.dwBuff));
 	item = spellBook;
 	return true;
 }
@@ -522,6 +526,16 @@ bool UnPackNetItem(const Player &player, const ItemNetPack &packedItem, Item &it
 
 	uint16_t creationFlags = SDL_SwapLE16(packedItem.item.wCI);
 	uint32_t dwBuff = SDL_SwapLE16(packedItem.item.dwBuff);
+	if (idx != IDI_GOLD)
+		ValidateField(creationFlags, IsCreationFlagComboValid(creationFlags));
+	if ((creationFlags & CF_TOWN) != 0)
+		ValidateField(creationFlags, IsTownItemValid(creationFlags));
+	else if ((creationFlags & CF_USEFUL) == CF_UPER15)
+		ValidateFields(creationFlags, dwBuff, IsUniqueMonsterItemValid(creationFlags, dwBuff));
+	else if ((dwBuff & CF_HELLFIRE) != 0 && AllItemsList[idx].iMiscId == IMISC_BOOK)
+		return RecreateHellfireSpellBook(player, packedItem, item);
+	else
+		ValidateFields(creationFlags, dwBuff, IsDungeonItemValid(creationFlags, dwBuff));
 
 	RecreateItem(player, packedItem.item, item);
 	return true;

@@ -24,6 +24,7 @@
 #include "lighting.h"
 #include "monstdat.h"
 #include "monster.h"
+#include "pack.h"
 #include "plrmsg.h"
 #include "quests.h"
 #include "spells.h"
@@ -902,7 +903,29 @@ std::string DebugCmdItemInfo(const string_view parameter)
 		pItem = &Items[pcursitem];
 	}
 	if (pItem != nullptr) {
-		return StrCat("Name: ", pItem->_iIName, "\nIDidx: ", pItem->IDidx, "\nSeed: ", pItem->_iSeed, "\nCreateInfo: ", pItem->_iCreateInfo);
+		std::string_view netPackValidation { "N/A" };
+		if (gbIsMultiplayer) {
+			ItemNetPack itemPack;
+			Item unpacked;
+			PackNetItem(*pItem, itemPack);
+			netPackValidation = UnPackNetItem(myPlayer, itemPack, unpacked) ? "Success" : "Failure";
+		}
+		return StrCat("Name: ", pItem->_iIName,
+		    "\nIDidx: ", pItem->IDidx, " (", AllItemsList[pItem->IDidx].iName, ")",
+		    "\nSeed: ", pItem->_iSeed,
+		    "\nCreateInfo: ", pItem->_iCreateInfo,
+		    "\nLevel: ", pItem->_iCreateInfo & CF_LEVEL,
+		    "\nOnly Good: ", ((pItem->_iCreateInfo & CF_ONLYGOOD) == 0) ? "False" : "True",
+		    "\nUnique Monster: ", ((pItem->_iCreateInfo & CF_UPER15) == 0) ? "False" : "True",
+		    "\nDungeon Item: ", ((pItem->_iCreateInfo & CF_UPER1) == 0) ? "False" : "True",
+		    "\nUnique Item: ", ((pItem->_iCreateInfo & CF_UNIQUE) == 0) ? "False" : "True",
+		    "\nSmith: ", ((pItem->_iCreateInfo & CF_SMITH) == 0) ? "False" : "True",
+		    "\nSmith Premium: ", ((pItem->_iCreateInfo & CF_SMITHPREMIUM) == 0) ? "False" : "True",
+		    "\nBoy: ", ((pItem->_iCreateInfo & CF_BOY) == 0) ? "False" : "True",
+		    "\nWitch: ", ((pItem->_iCreateInfo & CF_WITCH) == 0) ? "False" : "True",
+		    "\nHealer: ", ((pItem->_iCreateInfo & CF_HEALER) == 0) ? "False" : "True",
+		    "\nPregen: ", ((pItem->_iCreateInfo & CF_PREGEN) == 0) ? "False" : "True",
+		    "\nNet Validation: ", netPackValidation);
 	}
 	return StrCat("Numitems: ", ActiveItemCount);
 }
@@ -1133,7 +1156,7 @@ bool CheckDebugTextCommand(const string_view text)
 	const auto result = dbgCmd.actionProc(parameter);
 	Log("DebugCmd: {} Result: {}", text, result);
 	if (result != "")
-		InitDiabloMsg(result);
+		EventPlrMsg(result, UiFlags::ColorRed);
 	return true;
 }
 

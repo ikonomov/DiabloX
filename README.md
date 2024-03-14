@@ -59,6 +59,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
       * Civerb's Cudgel: +150%
+   * Damage from Fire and Lightning affixes is applied twice.
    * Set to minimum values:
       * Staff charges.
       * Armor class for shields and armor.

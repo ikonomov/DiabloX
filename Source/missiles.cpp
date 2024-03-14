@@ -2814,8 +2814,9 @@ void ProcessElementalArrow(Missile &missile)
 				if (!missile.IsTrap()) {
 					// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
 					const Player &player = Players[p];
-					eMind = player._pILMinDam;
-					eMaxd = player._pILMaxDam;
+					int eDoubleDamage = player._pILMinDam + GenerateRnd(player._pILMaxDam - player._pILMinDam + 1);
+					eMind = player._pILMinDam + eDoubleDamage;
+					eMaxd = player._pILMaxDam + eDoubleDamage;
 				} else {
 					eMind = GenerateRnd(10) + 1 + currlevel;
 					eMaxd = GenerateRnd(10) + 1 + currlevel * 2;
@@ -2827,8 +2828,9 @@ void ProcessElementalArrow(Missile &missile)
 				if (!missile.IsTrap()) {
 					// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
 					const Player &player = Players[p];
-					eMind = player._pIFMinDam;
-					eMaxd = player._pIFMaxDam;
+					int eDoubleDamage = player._pIFMinDam + GenerateRnd(player._pIFMaxDam - player._pIFMinDam + 1);
+					eMind = player._pIFMinDam + eDoubleDamage;
+					eMaxd = player._pIFMaxDam + eDoubleDamage;
 				} else {
 					eMind = GenerateRnd(10) + 1 + currlevel;
 					eMaxd = GenerateRnd(10) + 1 + currlevel * 2;
@@ -3569,13 +3571,15 @@ void ProcessWeaponExplosion(Missile &missile)
 	DamageType damageType;
 	if (missile.var2 == 1) {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		mind = player._pIFMinDam;
-		maxd = player._pIFMaxDam;
+		int eDoubleDamage = player._pIFMinDam + GenerateRnd(player._pIFMaxDam - player._pIFMinDam + 1);
+		mind = player._pIFMinDam + eDoubleDamage;
+		maxd = player._pIFMaxDam + eDoubleDamage;
 		damageType = DamageType::Fire;
 	} else {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		mind = player._pILMinDam;
-		maxd = player._pILMaxDam;
+		int eDoubleDamage = player._pILMinDam + GenerateRnd(player._pILMaxDam - player._pILMinDam + 1);
+		mind = player._pILMinDam + eDoubleDamage;
+		maxd = player._pILMaxDam + eDoubleDamage;
 		damageType = DamageType::Lightning;
 	}
 	CheckMissileCol(missile, damageType, mind, maxd, false, missile.position.tile, false);

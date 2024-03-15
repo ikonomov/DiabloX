@@ -2814,7 +2814,7 @@ void ProcessElementalArrow(Missile &missile)
 				if (!missile.IsTrap()) {
 					// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
 					const Player &player = Players[p];
-					int eDoubleDamage = player._pILMinDam + GenerateRnd(player._pILMaxDam - player._pILMinDam + 1);
+					int eDoubleDamage = RandomIntBetween(player._pILMinDam, player._pILMaxDam);
 					eMind = player._pILMinDam + eDoubleDamage;
 					eMaxd = player._pILMaxDam + eDoubleDamage;
 				} else {
@@ -2828,7 +2828,7 @@ void ProcessElementalArrow(Missile &missile)
 				if (!missile.IsTrap()) {
 					// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
 					const Player &player = Players[p];
-					int eDoubleDamage = player._pIFMinDam + GenerateRnd(player._pIFMaxDam - player._pIFMinDam + 1);
+					int eDoubleDamage = RandomIntBetween(player._pIFMinDam, player._pIFMaxDam);
 					eMind = player._pIFMinDam + eDoubleDamage;
 					eMaxd = player._pIFMaxDam + eDoubleDamage;
 				} else {
@@ -3571,13 +3571,13 @@ void ProcessWeaponExplosion(Missile &missile)
 	DamageType damageType;
 	if (missile.var2 == 1) {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		int eDoubleDamage = player._pIFMinDam + GenerateRnd(player._pIFMaxDam - player._pIFMinDam + 1);
+		int eDoubleDamage = RandomIntBetween(player._pIFMinDam, player._pIFMaxDam);
 		mind = player._pIFMinDam + eDoubleDamage;
 		maxd = player._pIFMaxDam + eDoubleDamage;
 		damageType = DamageType::Fire;
 	} else {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		int eDoubleDamage = player._pILMinDam + GenerateRnd(player._pILMaxDam - player._pILMinDam + 1);
+		int eDoubleDamage = RandomIntBetween(player._pILMinDam, player._pILMaxDam);
 		mind = player._pILMinDam + eDoubleDamage;
 		maxd = player._pILMaxDam + eDoubleDamage;
 		damageType = DamageType::Lightning;

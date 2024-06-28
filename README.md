@@ -211,10 +211,8 @@ Note: You'll need access to the data from the original game. If you don't have a
       * equip except for weapons and shields (configurable for weapons and shields)
       * refilling belt
       * quick cast
-   * Restart In Town:
-      * renamed to Resurrect In Town
-      * half the gold not dropped after being killed is lost (no gold will be lost on level 16)
-      * if the level is not cleared 200×clvl gold is taken from the player's inventory or stash
+   * Half the gold not dropped after being killed is lost (no gold will be lost on level 16).
+   * Restart In Town has been renamed to Resurrect In Town.
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
    * The game name and application ID for Discord have been changed to DiabloX.

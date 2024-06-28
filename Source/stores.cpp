@@ -2647,7 +2647,7 @@ void TakePlrsMoney(int cost)
 		cost = TakeGold(myPlayer, cost, false);
 	}
 
-	Stash.gold = Stash.gold <= cost ? 0 : Stash.gold - cost;
+	Stash.gold -= cost;
 	Stash.dirty = true;
 }
 

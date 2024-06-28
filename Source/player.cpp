@@ -2762,6 +2762,7 @@ StartPlayerKill(Player &player, DeathReason deathReason)
 			}
 			if (dropGold) {
 				DropHalfPlayersGold(player);
+				TakePlrsMoney(player._pGold);
 			}
 			if (dropEar) {
 				Item ear;

@@ -115,12 +115,6 @@ void GamemenuNewGame(bool /*bActivate*/)
 
 void GamemenuRestartTown(bool /*bActivate*/)
 {
-	if (!MyPlayer->isOnLevel(16)) {
-		TakePlrsMoney(MyPlayer->_pGold);
-	}
-	if (ActiveMonsterCount != 4) {
-		TakePlrsMoney(200 * MyPlayer->_pLevel);
-	}
 	NetSendCmd(true, CMD_RETOWN);
 }
 

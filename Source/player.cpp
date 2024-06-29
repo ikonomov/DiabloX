@@ -1567,19 +1567,6 @@ HeroClass GetPlayerSpriteClass(HeroClass cls)
 
 PlayerWeaponGraphic GetPlayerWeaponGraphic(player_graphic graphic, PlayerWeaponGraphic weaponGraphic)
 {
-	if (leveltype == DTYPE_TOWN && IsAnyOf(graphic, player_graphic::Lightning, player_graphic::Fire, player_graphic::Magic)) {
-		// If the hero doesn't hold the weapon in town then we should use the unarmed animation for casting
-		switch (weaponGraphic) {
-		case PlayerWeaponGraphic::Mace:
-		case PlayerWeaponGraphic::Sword:
-			return PlayerWeaponGraphic::Unarmed;
-		case PlayerWeaponGraphic::SwordShield:
-		case PlayerWeaponGraphic::MaceShield:
-			return PlayerWeaponGraphic::UnarmedShield;
-		default:
-			break;
-		}
-	}
 	return weaponGraphic;
 }
 

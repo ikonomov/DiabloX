@@ -141,7 +141,7 @@ Note: You'll need access to the data from the original game. If you don't have a
          * Meteoric: 32 [23]
          * Weird: 40 [35]
          * Strange: 47 [60]
-         * Champion: 36 [40]
+         * Champion: 35 [40]
          * King: 45 [28]
          * Jagged: 1 [4]
          * Deadly: 4 [6]

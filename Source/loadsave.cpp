@@ -938,16 +938,16 @@ bool LevelFileExists(SaveWriter &archive)
 
 bool IsShopPriceValid(const Item &item)
 {
-	const int boyPriceLimit = 70000;
+	const int boyPriceLimit = 66667;
 	if (!gbIsHellfire && (item._iCreateInfo & CF_BOY) != 0 && item._iIvalue > boyPriceLimit)
 		return false;
 
-	const int premiumPriceLimit = 70000;
+	const int premiumPriceLimit = 100000;
 	if (!gbIsHellfire && (item._iCreateInfo & CF_SMITHPREMIUM) != 0 && item._iIvalue > premiumPriceLimit)
 		return false;
 
 	const uint16_t smithOrWitch = CF_SMITH | CF_WITCH;
-	const int smithAndWitchPriceLimit = gbIsHellfire ? 200000 : 70000;
+	const int smithAndWitchPriceLimit = gbIsHellfire ? 200000 : 100000;
 	if ((item._iCreateInfo & smithOrWitch) != 0 && item._iIvalue > smithAndWitchPriceLimit)
 		return false;
 

@@ -178,9 +178,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Adria and Pepin do not sell items in unlimited quantities except Arena Potions which can be used on cleared levels.
    * Cain charges 500 [100] gold to identify items.
    * Wirt charges 50 extra gold for every 5 clvls to show his item for sale.
-   * The maximum store price:
-      * Adria and Griswold: 70,000 [140,000]
-      * Wirt: 105,000 [135,000]
+   * The maximum store price has been changed to 100,000 [140,000/135,000]
    * Maximum affix qlvl:
       * Adria: 2×ilvl+1 [2×ilvl]
       * Griswold: 32 [30]

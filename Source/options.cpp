@@ -1164,6 +1164,7 @@ void OptionEntryLanguageCode::CheckLanguagesAreInitialized() const
 	languages.emplace_back("es", "Español");
 	languages.emplace_back("fr", "Français");
 	languages.emplace_back("hr", "Hrvatski");
+	languages.emplace_back("hu", "Magyar");
 	languages.emplace_back("it", "Italiano");
 
 	if (HaveExtraFonts()) {
@@ -1176,6 +1177,7 @@ void OptionEntryLanguageCode::CheckLanguagesAreInitialized() const
 	languages.emplace_back("ro", "Română");
 	languages.emplace_back("ru", "Русский");
 	languages.emplace_back("sv", "Svenska");
+	languages.emplace_back("tr", "Türkçe");
 	languages.emplace_back("uk", "Українська");
 
 	if (HaveExtraFonts()) {

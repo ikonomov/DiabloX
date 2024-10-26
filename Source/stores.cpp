@@ -1036,7 +1036,7 @@ void SStartBoyBuy()
 	if (gbIsHellfire)
 		AddSTextVal(10, boyitem._iIvalue - (boyitem._iIvalue / 4));
 	else
-		AddSTextVal(10, boyitem._iIvalue + (boyitem._iIvalue / 2));
+		AddSTextVal(10, boyitem._iIvalue * 2);
 	PrintStoreItem(boyitem, 11, itemColor, true);
 
 	{
@@ -1811,7 +1811,7 @@ void BoyBuyEnter()
 	if (gbIsHellfire)
 		price -= boyitem._iIvalue / 4;
 	else
-		price += boyitem._iIvalue / 2;
+		price * 2;
 
 	if (!PlayerCanAfford(price)) {
 		StartStore(TalkID::NoMoney);

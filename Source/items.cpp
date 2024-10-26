@@ -1443,6 +1443,16 @@ _item_indexes RndAllItems()
 _item_indexes RndTypeItems(ItemType itemType, int imid, int lvl)
 {
 	int itemMaxLevel = lvl * 2;
+
+	switch (sgGameInitInfo.nDifficulty) {
+	case DIFF_NIGHTMARE:
+		itemMaxLevel += 15;
+		break;
+	case DIFF_HELL:
+		itemMaxLevel += 30;
+		break;
+	}
+
 	return GetItemIndexForDroppableItem(false, [&itemMaxLevel, &itemType, &imid](const ItemData &item) {
 		if (itemMaxLevel < item.iMinMLvl)
 			return false;
@@ -2024,7 +2034,7 @@ void SpawnOnePremium(Item &premiumItem, int plvl, const Player &player)
 		GetItemBonus(player, premiumItem, plvl / 2, plvl, true, !gbIsHellfire);
 
 		if (!gbIsHellfire) {
-			if (premiumItem._iIvalue <= 100000) {
+			if (premiumItem._iIvalue <= 200000) {
 				break;
 			}
 		} else {
@@ -2242,7 +2252,17 @@ void CreateMagicItem(Point position, int lvl, ItemType itemType, int imid, int i
 
 	while (true) {
 		item = {};
-		SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), 2 * lvl, 1, true, false, delta);
+
+		switch (sgGameInitInfo.nDifficulty) {
+		case DIFF_NIGHTMARE:
+			lvl += 5;
+			break;
+		case DIFF_HELL:
+			lvl += 10;
+			break;
+		}
+
+		SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), 2 * lvl - 1, 1, true, false, delta);
 		if (item._iCurs == icurs)
 			break;
 
@@ -2332,15 +2352,15 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 		maxlvl = lvl;
 	} else if ((item._iCreateInfo & CF_BOY) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
-		minlvl = lvl;
-		maxlvl = lvl * 2;
+		minlvl = lvl / 2;
+		maxlvl = lvl;
 	} else if ((item._iCreateInfo & CF_WITCH) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		int iblvl = -1;
 		if (GenerateRnd(100) <= 5)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl + 1;
 		if (iblvl == -1 && item._iMiscId == IMISC_STAFF)
-			iblvl = 2 * lvl;
+			iblvl = 2 * lvl + 1;
 		minlvl = iblvl / 2;
 		maxlvl = iblvl;
 	} else {
@@ -4274,7 +4294,7 @@ void SpawnSmith(int lvl)
 {
 	constexpr int PinnedItemCount = 0;
 
-	int maxValue = 100000;
+	int maxValue = 200000;
 	int maxItems = 20;
 	if (gbIsHellfire) {
 		maxValue = 200000;
@@ -4346,7 +4366,7 @@ void SpawnWitch(int lvl)
 	const int pinnedBookCount = gbIsHellfire ? GenerateRnd(MaxPinnedBookCount) : 0;
 	const int reservedItems = gbIsHellfire ? 10 : 17;
 	const int itemCount = GenerateRnd(WITCH_ITEMS - reservedItems) + 9;
-	const int maxValue = gbIsHellfire ? 200000 : 100000;
+	const int maxValue = 200000;
 
 	for (int i = 0; i < WITCH_ITEMS; i++) {
 		Item &item = witchitem[i];
@@ -4431,7 +4451,7 @@ void SpawnBoy(int lvl)
 		GetItemBonus(*MyPlayer, boyitem, lvl / 2, lvl, true, true);
 
 		if (!gbIsHellfire) {
-			if (boyitem._iIvalue > 66667) {
+			if (boyitem._iIvalue > 100000) {
 				keepgoing = true; // prevent breaking the do/while loop too early by failing hellfire's condition in while
 				continue;
 			}
@@ -4590,7 +4610,17 @@ void CreateSpellBook(Point position, SpellID ispell, bool sendmsg, bool delta)
 
 	while (true) {
 		item = {};
-		SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), 2 * lvl, 1, true, false, delta);
+
+		switch (sgGameInitInfo.nDifficulty) {
+		case DIFF_NIGHTMARE:
+			lvl += 5;
+			break;
+		case DIFF_HELL:
+			lvl += 10;
+			break;
+		}
+
+		SetupAllItems(*MyPlayer, item, idx, AdvanceRndSeed(), 2 * lvl - 1, 1, true, false, delta);
 		if (item._iMiscId == IMISC_BOOK && item._iSpell == ispell)
 			break;
 	}

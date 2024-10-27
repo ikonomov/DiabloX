@@ -1811,7 +1811,7 @@ void BoyBuyEnter()
 	if (gbIsHellfire)
 		price -= boyitem._iIvalue / 4;
 	else
-		price * 2;
+		price *= 2;
 
 	if (!PlayerCanAfford(price)) {
 		StartStore(TalkID::NoMoney);

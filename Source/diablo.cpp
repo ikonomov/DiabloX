@@ -2717,6 +2717,7 @@ void LoadGameLevel(bool firstflag, lvl_entry lvldir)
 		qtextflag = false;
 		if (!HeadlessMode) {
 			InitInv();
+			ClearUniqueItemFlags();
 			InitQuestText();
 			InitInfoBoxGfx();
 			InitHelp();

@@ -59,7 +59,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
       * Civerb's Cudgel: +150%
-   * Damage from Fire and Lightning affixes is applied twice.
+   * Damage is applied 7 times for Lightning and 9 times for Fire affixes.
    * Set to minimum values:
       * Staff charges.
       * Armor class for shields and armor.
@@ -68,6 +68,10 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Affixes with a range of values.
    * Burgundy affix has been renamed to Russet.
    * All unique items are findable.
+   * Slain Hero drops:
+      * Warrior: Full Plate Mail in Nightmare and Hell difficulty
+      * Rogue: Long War Bow in Nightmare and Hell difficulty
+      * Sorcerer: Book of Fireball in Nightmare and Book of Chain Lightning in Hell difficulty
    * Town portal scrolls dropped as special items (from chests and barrels, replacing Mana or Healing potions) can be found on levels 2-8 [2-15].
    * Maximum base item ilvl for dungeon drops (not from monsters): +15 in Nightmare difficulty; +30 in Hell
    * Maximum affix ilvl:
@@ -183,7 +187,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Maximum affix qlvl:
       * Adria: 2×ilvl+1 [2×ilvl]
       * Griswold: 32 [30]
-      * Wirt: clvl [2×clvl]
+      * Wirt: (45×clvl/(clvl+40))×2+1 [2×clvl]
 #### Shrines:
    * Fascinating, Ornate and Sacred reduce magic by -2% (-1 minimum) [-10% mana].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].

@@ -2814,9 +2814,15 @@ void ProcessElementalArrow(Missile &missile)
 				if (!missile.IsTrap()) {
 					// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
 					const Player &player = Players[p];
-					int eDoubleDamage = RandomIntBetween(player._pILMinDam, player._pILMaxDam);
-					eMind = player._pILMinDam + eDoubleDamage;
-					eMaxd = player._pILMaxDam + eDoubleDamage;
+					int l_extra_dam = 0;
+					int l_extra_dam_c = 0;
+					int l_extra_dam_n = GenerateRnd(7);
+					while (l_extra_dam_c != l_extra_dam_n) {
+						l_extra_dam += RandomIntBetween(player._pILMinDam, player._pILMaxDam);
+						l_extra_dam_c++;
+					}
+					eMind = player._pILMinDam + l_extra_dam;
+					eMaxd = player._pILMaxDam + l_extra_dam;
 				} else {
 					eMind = GenerateRnd(10) + 1 + currlevel;
 					eMaxd = GenerateRnd(10) + 1 + currlevel * 2;
@@ -2828,9 +2834,15 @@ void ProcessElementalArrow(Missile &missile)
 				if (!missile.IsTrap()) {
 					// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
 					const Player &player = Players[p];
-					int eDoubleDamage = RandomIntBetween(player._pIFMinDam, player._pIFMaxDam);
-					eMind = player._pIFMinDam + eDoubleDamage;
-					eMaxd = player._pIFMaxDam + eDoubleDamage;
+					int f_extra_dam = 0;
+					int f_extra_dam_c = 0;
+					int f_extra_dam_n = GenerateRnd(9);
+					while (f_extra_dam_c != f_extra_dam_n) {
+						f_extra_dam += RandomIntBetween(player._pIFMinDam, player._pIFMaxDam);
+						f_extra_dam_c++;
+					}
+					eMind = player._pIFMinDam + f_extra_dam;
+					eMaxd = player._pIFMaxDam + f_extra_dam;
 				} else {
 					eMind = GenerateRnd(10) + 1 + currlevel;
 					eMaxd = GenerateRnd(10) + 1 + currlevel * 2;
@@ -3544,16 +3556,16 @@ void ProcessChainLightning(Missile &missile)
 	Direction dir = GetDirection(position, dst);
 	AddMissile(position, dst, dir, MissileID::LightningControl, TARGET_MONSTERS, id, 1, missile._mispllvl);
 	int rad = std::min<int>(missile._mispllvl + 3, MaxCrawlRadius);
-	int maxTargets = 2 + missile._mispllvl / 5;
-	int targetCount = 0;
+	int max_targets = 2 + missile._mispllvl / 5;
+	int target_count = 0;
 	Crawl(1, rad, [&](Displacement displacement) {
 		Point target = position + displacement;
 		if (InDungeonBounds(target) && dMonster[target.x][target.y] > 0) {
 			dir = GetDirection(position, target);
 			AddMissile(position, target, dir, MissileID::LightningControl, TARGET_MONSTERS, id, 1, missile._mispllvl);
-			targetCount++;
+			target_count++;
 		}
-		return targetCount >= maxTargets;
+		return target_count >= max_targets;
 	});
 	missile._mirange--;
 	if (missile._mirange == 0)
@@ -3571,15 +3583,27 @@ void ProcessWeaponExplosion(Missile &missile)
 	DamageType damageType;
 	if (missile.var2 == 1) {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		int eDoubleDamage = RandomIntBetween(player._pIFMinDam, player._pIFMaxDam);
-		mind = player._pIFMinDam + eDoubleDamage;
-		maxd = player._pIFMaxDam + eDoubleDamage;
+		int f_extra_dam = 0;
+		int f_extra_dam_c = 0;
+		int f_extra_dam_n = GenerateRnd(9);
+		while (f_extra_dam_c != f_extra_dam_n) {
+			f_extra_dam += RandomIntBetween(player._pIFMinDam, player._pIFMaxDam);
+			f_extra_dam_c++;
+		}
+		mind = player._pIFMinDam + f_extra_dam;
+		maxd = player._pIFMaxDam + f_extra_dam;
 		damageType = DamageType::Fire;
 	} else {
 		// BUGFIX: damage of missile should be encoded in missile struct; player can be dead/have left the game before missile arrives.
-		int eDoubleDamage = RandomIntBetween(player._pILMinDam, player._pILMaxDam);
-		mind = player._pILMinDam + eDoubleDamage;
-		maxd = player._pILMaxDam + eDoubleDamage;
+		int l_extra_dam = 0;
+		int l_extra_dam_c = 0;
+		int l_extra_dam_n = GenerateRnd(7);
+		while (l_extra_dam_c != l_extra_dam_n) {
+			l_extra_dam += RandomIntBetween(player._pILMinDam, player._pILMaxDam);
+			l_extra_dam_c++;
+		}
+		mind = player._pILMinDam + l_extra_dam;
+		maxd = player._pILMaxDam + l_extra_dam;
 		damageType = DamageType::Lightning;
 	}
 	CheckMissileCol(missile, damageType, mind, maxd, false, missile.position.tile, false);

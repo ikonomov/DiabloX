@@ -59,7 +59,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
       * Civerb's Cudgel: +150%
-   * Damage is applied 7 times for Lightning and 9 times for Fire affixes.
+   * Damage is applied 1 to 7 times for Lightning and 1 to 9 times for Fire affixes.
    * Set to minimum values:
       * Staff charges.
       * Armor class for shields and armor.

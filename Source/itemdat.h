@@ -182,7 +182,7 @@ enum item_cursor_graphic : uint8_t {
 	ICURS_SCALE_MAIL                  = 114,
 	ICURS_SHORT_BOW                   = 118,
 	ICURS_LONG_BATTLE_BOW             = 119,
-	ICURS_LONG_WAR_BOW                = 120,
+	ICURS_LONG_WAR_BOW                = 119,
 	ICURS_WAR_HAMMER                  = 121,
 	ICURS_MAUL                        = 122,
 	ICURS_LONG_STAFF                  = 123,

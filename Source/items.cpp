@@ -2254,13 +2254,13 @@ void CreateMagicItem(Point position, int lvl, ItemType itemType, int imid, int i
 	while (true) {
 		item = {};
 
-		int ilvl_diff;
+		int ilvl_diff = lvl;
 		switch (sgGameInitInfo.nDifficulty) {
 		case DIFF_NIGHTMARE:
-			ilvl_diff = lvl + 5;
+			ilvl_diff += 5;
 			break;
 		case DIFF_HELL:
-			ilvl_diff = lvl + 10;
+			ilvl_diff += 10;
 			break;
 		}
 

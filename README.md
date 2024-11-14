@@ -226,7 +226,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
       * Shrine List: D [Help: F1]
       * Quick Spells: F1-F8 [F5-F8]
-      * Shift+click stash 10 page buttons changes to 100 pages.
+      * Shift-click stash 10 page buttons change to 100 pages
 
 ## [Credits](https://github.com/ikonomov/DiabloX/graphs/contributors)
 

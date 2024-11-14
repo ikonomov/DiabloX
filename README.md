@@ -218,6 +218,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Restart In Town has been renamed to Resurrect In Town.
    * The lock-on target functionality has been replaced by rapid fire when playing with a mouse.
    * Gold pile size has been increased to 20,000 [5,000].
+   * Stash size has been increased to 500 [100] pages.
    * The game name and application ID for Discord have been changed to DiabloX.
    * GameID, Stash and character files have been assigned unique names and identifiers to prevent issues with different builds.
    * The game difficulty info has been moved from the automap to the version info pop-up message (hotkey `V`).
@@ -225,6 +226,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * [Keyboard controls](https://github.com/ikonomov/DiabloX/wiki/Keyboard-Controls):
       * Shrine List: D [Help: F1]
       * Quick Spells: F1-F8 [F5-F8]
+      * Shift+click stash 10 page buttons changes to 100 pages.
 
 ## [Credits](https://github.com/ikonomov/DiabloX/graphs/contributors)
 

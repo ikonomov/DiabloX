@@ -33,7 +33,7 @@ int WithdrawGoldValue;
 
 namespace {
 
-constexpr unsigned CountStashPages = 100;
+constexpr unsigned CountStashPages = 500;
 constexpr unsigned LastStashPage = CountStashPages - 1;
 
 int InitialWithdrawGoldValue;
@@ -309,7 +309,11 @@ void CheckStashButtonRelease(Point mousePosition)
 	if (stashButton.contains(mousePosition)) {
 		switch (StashButtonPressed) {
 		case 0:
-			Stash.PreviousPage(10);
+			if ((SDL_GetModState() & KMOD_SHIFT) != 0) {
+				Stash.PreviousPage(100);
+			} else {
+				Stash.PreviousPage(10);
+			}
 			break;
 		case 1:
 			Stash.PreviousPage();
@@ -321,7 +325,11 @@ void CheckStashButtonRelease(Point mousePosition)
 			Stash.NextPage();
 			break;
 		case 4:
-			Stash.NextPage(10);
+			if ((SDL_GetModState() & KMOD_SHIFT) != 0) {
+				Stash.NextPage(100);
+			} else {
+				Stash.NextPage(10);
+			}
 			break;
 		}
 	}

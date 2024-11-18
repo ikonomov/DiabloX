@@ -68,10 +68,6 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Affixes with a range of values.
    * Burgundy affix has been renamed to Russet.
    * All unique items are findable.
-   * Slain Hero drops:
-      * Warrior: Full Plate Mail in Nightmare and Hell difficulty
-      * Rogue: Long War Bow in Nightmare and Hell difficulty
-      * Sorcerer: Book of Fireball in Nightmare and Book of Chain Lightning in Hell difficulty
    * Town portal scrolls dropped as special items (from chests and barrels, replacing Mana or Healing potions) can be found on levels 2-8 [2-15].
    * Maximum base item ilvl for dungeon drops (not from monsters): +15 in Nightmare difficulty; +30 in Hell
    * Maximum affix ilvl:

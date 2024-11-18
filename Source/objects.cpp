@@ -2239,25 +2239,11 @@ void OperateSlainHero(const Player &player, Object &corpse, bool sendmsg)
 	SetRndSeed(corpse._oRndSeed);
 
 	if (player._pClass == HeroClass::Warrior) {
-		if (sgGameInitInfo.nDifficulty == DIFF_NORMAL) {
-			CreateMagicArmor(corpse.position, ItemType::HeavyArmor, ICURS_BREAST_PLATE, sendmsg, false);
-		} else {
-			CreateMagicArmor(corpse.position, ItemType::HeavyArmor, ICURS_FULL_PLATE_MAIL, sendmsg, false);
-		}
+		CreateMagicArmor(corpse.position, ItemType::HeavyArmor, ICURS_BREAST_PLATE, sendmsg, false);
 	} else if (player._pClass == HeroClass::Rogue) {
-		if (sgGameInitInfo.nDifficulty == DIFF_NORMAL) {
-			CreateMagicWeapon(corpse.position, ItemType::Bow, ICURS_LONG_BATTLE_BOW, sendmsg, false);
-		} else {
-			CreateMagicWeapon(corpse.position, ItemType::Bow, ICURS_LONG_WAR_BOW, sendmsg, false);
-		}
+		CreateMagicWeapon(corpse.position, ItemType::Bow, ICURS_LONG_WAR_BOW, sendmsg, false);
 	} else if (player._pClass == HeroClass::Sorcerer) {
-		if (sgGameInitInfo.nDifficulty == DIFF_NORMAL) {
-			CreateSpellBook(corpse.position, SpellID::Lightning, sendmsg, false);
-		} else if (sgGameInitInfo.nDifficulty == DIFF_NIGHTMARE) {
-			CreateSpellBook(corpse.position, SpellID::Fireball, sendmsg, false);
-		} else {
-			CreateSpellBook(corpse.position, SpellID::ChainLightning, sendmsg, false);
-		}
+		CreateSpellBook(corpse.position, SpellID::Lightning, sendmsg, false);
 	} else if (player._pClass == HeroClass::Monk) {
 		CreateMagicWeapon(corpse.position, ItemType::Staff, ICURS_WAR_STAFF, sendmsg, false);
 	} else if (player._pClass == HeroClass::Bard) {

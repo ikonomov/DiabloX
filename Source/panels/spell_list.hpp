@@ -19,7 +19,7 @@ struct SpellListItem {
 void DrawSpell(const Surface &out);
 void DrawSpellList(const Surface &out);
 std::vector<SpellListItem> GetSpellListItems();
-void SetSpell();
+bool SetSpell();
 void SetSpeedSpell(size_t slot);
 void ToggleSpell(size_t slot);
 

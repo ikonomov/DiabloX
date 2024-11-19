@@ -248,7 +248,7 @@ std::vector<SpellListItem> GetSpellListItems()
 	return spellListItems;
 }
 
-void SetSpell()
+bool SetSpell()
 {
 	SpellID pSpell;
 	SpellType pSplType;

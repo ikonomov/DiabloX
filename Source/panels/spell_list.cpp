@@ -370,7 +370,6 @@ void DoSpeedBook()
 			}
 		}
 	}
-
 }
 
 } // namespace devilution

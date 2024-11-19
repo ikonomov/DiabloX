@@ -1568,7 +1568,6 @@ void DisplaySpellsKeyPressed()
 	} else {
 		spselflag = false;
 	}
-	LastMouseButtonAction = MouseActionType::None;
 }
 
 void SpellBookKeyPressed()

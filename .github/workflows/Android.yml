@@ -34,6 +34,10 @@ jobs:
         distribution: 'adopt'
         cache: gradle
 
+    - name: Install CMake
+      run: |
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "cmake;3.31.0"
+
     - name: Cache CMake build folder
       uses: actions/cache@v3
       with:

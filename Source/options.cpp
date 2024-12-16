@@ -57,12 +57,6 @@ namespace devilution {
 
 namespace {
 
-#if defined(__ANDROID__) || defined(__APPLE__)
-constexpr OptionEntryFlags OnlyIfNoImplicitRenderer = OptionEntryFlags::Invisible;
-#else
-constexpr OptionEntryFlags OnlyIfNoImplicitRenderer = OptionEntryFlags::None;
-#endif
-
 #if defined(__ANDROID__) || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE == 1)
 constexpr OptionEntryFlags OnlyIfSupportsWindowed = OptionEntryFlags::Invisible;
 #else
@@ -316,13 +310,13 @@ void OptionLanguageCodeChanged()
 
 void OptionGameModeChanged()
 {
-	gbIsHellfire = *sgOptions.StartUp.gameMode == StartUpGameMode::Hellfire;
+	gbIsHellfire = *sgOptions.GameMode.gameMode == StartUpGameMode::Hellfire;
 	discord_manager::UpdateMenu(true);
 }
 
 void OptionSharewareChanged()
 {
-	gbIsSpawn = *sgOptions.StartUp.shareware;
+	gbIsSpawn = *sgOptions.GameMode.shareware;
 }
 
 void OptionAudioChanged()
@@ -561,15 +555,27 @@ string_view OptionCategoryBase::GetDescription() const
 	return _(description);
 }
 
-StartUpOptions::StartUpOptions()
-    : OptionCategoryBase("StartUp", N_("Start Up"), N_("Start Up Settings"))
-    , gameMode("Game", OptionEntryFlags::Invisible | OptionEntryFlags::NeedHellfireMpq, N_("Game Mode"), N_("Play Diablo or Hellfire."), StartUpGameMode::Diablo,
+GameModeOptions::GameModeOptions()
+    : OptionCategoryBase("GameMode", N_("Game Mode"), N_("Game Mode Settings"))
+    , gameMode("Game", OptionEntryFlags::Invisible | OptionEntryFlags::NeedHellfireMpq | OptionEntryFlags::RecreateUI, N_("Game Mode"), N_("Play Diablo or Hellfire."), StartUpGameMode::Diablo,
           {
               { StartUpGameMode::Diablo, N_("Diablo") },
               // Ask is missing, cause we want to hide it from UI-Settings.
               { StartUpGameMode::Hellfire, N_("Hellfire") },
           })
-    , shareware("Shareware", OptionEntryFlags::Invisible | OptionEntryFlags::NeedDiabloMpq, N_("Restrict to Shareware"), N_("Makes the game compatible with the demo. Enables multiplayer with friends who don't own a full copy of Diablo."), false)
+    , shareware("Shareware", OptionEntryFlags::Invisible | OptionEntryFlags::NeedDiabloMpq | OptionEntryFlags::RecreateUI, N_("Restrict to Shareware"), N_("Makes the game compatible with the demo. Enables multiplayer with friends who don't own a full copy of Diablo."), false)
+
+{
+	gameMode.SetValueChangedCallback(OptionGameModeChanged);
+	shareware.SetValueChangedCallback(OptionSharewareChanged);
+}
+std::vector<OptionEntryBase *> GameModeOptions::GetEntries()
+{
+	return {};
+}
+
+StartUpOptions::StartUpOptions()
+    : OptionCategoryBase("StartUp", N_("Start Up"), N_("Start Up Settings"))
     , diabloIntro("Diablo Intro", OptionEntryFlags::Invisible | OptionEntryFlags::OnlyDiablo, N_("Intro"), N_("Shown Intro cinematic."), StartUpIntro::On,
           {
               { StartUpIntro::Off, N_("OFF") },
@@ -589,8 +595,6 @@ StartUpOptions::StartUpOptions()
               { StartUpSplash::None, N_("None") },
           })
 {
-	gameMode.SetValueChangedCallback(OptionGameModeChanged);
-	shareware.SetValueChangedCallback(OptionSharewareChanged);
 }
 std::vector<OptionEntryBase *> StartUpOptions::GetEntries()
 {
@@ -929,7 +933,7 @@ GraphicsOptions::GraphicsOptions()
     , fitToScreen("Fit to Screen", OptionEntryFlags::CantChangeInGame | OptionEntryFlags::RecreateUI, N_("Fit to Screen"), N_("Automatically adjust the game window to your current desktop screen aspect ratio and resolution."), true)
 #endif
 #ifndef USE_SDL1
-    , upscale("Upscale", OnlyIfNoImplicitRenderer | OptionEntryFlags::CantChangeInGame | OptionEntryFlags::RecreateUI, N_("Upscale"), N_("Enables image scaling from the game resolution to your monitor resolution. Prevents changing the monitor resolution and allows window resizing."),
+    , upscale("Upscale", OptionEntryFlags::Invisible | OptionEntryFlags::CantChangeInGame | OptionEntryFlags::RecreateUI, N_("Upscale"), N_("Enables image scaling from the game resolution to your monitor resolution. Prevents changing the monitor resolution and allows window resizing."),
 #ifdef NXDK
           false
 #else
@@ -970,7 +974,6 @@ GraphicsOptions::GraphicsOptions()
 	fitToScreen.SetValueChangedCallback(ResizeWindowAndUpdateResolutionOptions);
 #endif
 #ifndef USE_SDL1
-	upscale.SetValueChangedCallback(ResizeWindowAndUpdateResolutionOptions);
 	scaleQuality.SetValueChangedCallback(ReinitializeTexture);
 	integerScaling.SetValueChangedCallback(ReinitializeIntegerScale);
 	vSync.SetValueChangedCallback(ReinitializeRenderer);

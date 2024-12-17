@@ -260,7 +260,7 @@ struct Player {
 	int _pMana;
 	int _pMaxMana;
 	int _pManaPer;
-	int _pRegenOverflow;
+	int _pManaRegenOverflow;
 	int _pIMinDam;
 	int _pIMaxDam;
 	int _pIAC;
@@ -591,11 +591,17 @@ struct Player {
 		int maxmanaregen = _pMaxMana;
 		if (_pClass == HeroClass::Sorcerer)
 			maxmanaregen += maxmanaregen * _pLevel / 100;
-		_pRegenOverflow += maxmanaregen % regendivisor;
-		int regenmana = maxmanaregen / regendivisor + _pRegenOverflow / regendivisor;
-		_pRegenOverflow %= regendivisor;
+		_pManaRegenOverflow += maxmanaregen % regendivisor;
+		int regenmana = maxmanaregen / regendivisor + _pManaRegenOverflow / regendivisor;
+		_pManaRegenOverflow %= regendivisor;
 		_pMana = clamp(_pMana + regenmana, _pMana, _pMaxMana);
 		_pManaBase = clamp(_pManaBase + regenmana, _pManaBase, _pMaxManaBase);
+	}
+
+		void RegenerateHitPoints()
+	{
+		_pHitPoints = clamp(_pHitPoints + 4, _pHitPoints, _pMaxHP);
+		_pHPBase = clamp(_pHPBase + 4, _pHPBase, _pMaxHPBase);
 	}
 
 	/**

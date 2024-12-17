@@ -3028,6 +3028,9 @@ void ProcessPlayers()
 				if (HasAnyOf(player._pIFlags, ItemSpecialEffect::DrainLife) && leveltype != DTYPE_TOWN) {
 					ApplyPlrDamage(DamageType::Physical, player, 0, 0, 4);
 				}
+				if (HasAnyOf(player._pIFlags, ItemSpecialEffect::MultipleArrows) && player._pHitPoints < player._pMaxHP && player._pMaxHP > 0) {
+					player.RegenerateHitPoints();
+				}
 				if (HasAnyOf(player._pIFlags, ItemSpecialEffect::NoMana) && player._pManaBase > 0) {
 					player._pManaBase -= player._pMana;
 					player._pMana = 0;

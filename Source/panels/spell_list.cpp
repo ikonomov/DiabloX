@@ -370,8 +370,6 @@ void DoSpeedBook()
 			}
 		}
 	}
-
-	SetCursorPos({ x, y });
 }
 
 } // namespace devilution

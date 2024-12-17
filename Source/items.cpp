@@ -3871,7 +3871,7 @@ bool DoOil(Player &player, int cii)
 	case IPL_LIGHT_CURSE:
 		return fmt::format(fmt::runtime(_(/*xgettext:no-c-format*/ "-{:d}% light radius")), -10 * item._iPLLight);
 	case IPL_MULT_ARROWS:
-		return _("multiple arrows per shot");
+		return _("regenerate life");
 	case IPL_FIRE_ARROWS:
 		if (item._iFMinDam == item._iFMaxDam)
 			return fmt::format(fmt::runtime(_("fire arrows damage: {:d}")), item._iFMinDam);

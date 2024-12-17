@@ -598,7 +598,7 @@ struct Player {
 		_pManaBase = clamp(_pManaBase + regenmana, _pManaBase, _pMaxManaBase);
 	}
 
-		void RegenerateHitPoints()
+	void RegenerateHitPoints()
 	{
 		_pHitPoints = clamp(_pHitPoints + 4, _pHitPoints, _pMaxHP);
 		_pHPBase = clamp(_pHPBase + 4, _pHPBase, _pMaxHPBase);

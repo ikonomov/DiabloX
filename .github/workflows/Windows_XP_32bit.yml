@@ -1,15 +1,12 @@
-name: Windows MinGW x86
+name: Windows XP MinGW
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
     paths-ignore:
       - '*.md'
-  pull_request:
-    types: [ opened, synchronize ]
-    paths-ignore:
-      - '*.md'
+      - 'docs/**'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,7 +17,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -34,16 +31,24 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}
-      run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TESTING=OFF -DCPACK=ON -DCMAKE_TOOLCHAIN_FILE=../CMake/platforms/mingwcc.toolchain.cmake -DDEVILUTIONX_SYSTEM_BZIP2=OFF -DDEVILUTIONX_STATIC_LIBSODIUM=ON -DDISCORD_INTEGRATION=ON
+      run: cmake -S. -Bbuild-windowsxp -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DCPACK=ON -DCMAKE_TOOLCHAIN_FILE=../CMake/platforms/mingwcc.toolchain.cmake  -DTARGET_PLATFORM=windowsXP
 
     - name: Build
       working-directory: ${{github.workspace}}
       shell: bash
-      run: cmake --build build -j $(nproc) --target package
+      run: |
+        cmake --build build-windowsxp -j $(nproc) --target package
+        mv build-windowsxp/devilutionx.zip devilutionx-windows-xp-32bit.zip
 
     - name: Upload-Package
       if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v4
       with:
-        name: devilutionx_x86.zip
-        path: build/devilutionx.zip
+        path: devilutionx-windows-xp-32bit.zip
+
+    - name: Update Release
+      if: ${{ github.event_name == 'release' && !env.ACT }}
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: devilutionx-windows-xp-32bit.zip
+        overwrite: true

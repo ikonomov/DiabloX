@@ -19,6 +19,7 @@
 #include "debug.h"
 #endif
 #include "DiabloUI/diabloui.h"
+#include "controls/devices/kbcontroller.h"
 #include "controls/plrctrls.h"
 #include "controls/remap_keyboard.h"
 #include "diablo.h"
@@ -484,10 +485,13 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 		}
 		sgOptions.Keymapper.KeyPressed(vkey);
 		if (vkey == SDLK_RETURN || vkey == SDLK_KP_ENTER) {
+#if HAS_KBCTRL == 0
 			if ((modState & KMOD_ALT) != 0) {
 				sgOptions.Graphics.fullscreen.SetValue(!IsFullScreen());
 				SaveOptions();
-			} else {
+			} else
+#endif
+			{
 				control_type_message();
 			}
 		}
@@ -519,10 +523,12 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 	sgOptions.Keymapper.KeyPressed(vkey);
 
 	if (PauseMode == 2) {
+#if HAS_KBCTRL == 0
 		if ((vkey == SDLK_RETURN || vkey == SDLK_KP_ENTER) && (modState & KMOD_ALT) != 0) {
 			sgOptions.Graphics.fullscreen.SetValue(!IsFullScreen());
 			SaveOptions();
 		}
+#endif
 		return;
 	}
 
@@ -558,8 +564,10 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 	case SDLK_RETURN:
 	case SDLK_KP_ENTER:
 		if ((modState & KMOD_ALT) != 0) {
+#if HAS_KBCTRL == 0
 			sgOptions.Graphics.fullscreen.SetValue(!IsFullScreen());
 			SaveOptions();
+#endif
 		} else if (stextflag != TalkID::None) {
 			StoreEnter();
 		} else if (QuestLogIsOpen) {
@@ -761,6 +769,43 @@ void GameEventHandler(const SDL_Event &event, uint16_t modState)
 		MousePosition = { event.button.x, event.button.y };
 		HandleMouseButtonUp(event.button.button, modState);
 		return;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case SDL_MOUSEWHEEL:
+		if (event.wheel.y > 0) { // Up
+			if (stextflag != TalkID::None) {
+				StoreUp();
+			} else if (QuestLogIsOpen) {
+				QuestlogUp();
+			} else if (HelpFlag) {
+				HelpScrollUp();
+			} else if (ChatLogFlag) {
+				ChatLogScrollUp();
+			} else if (IsStashOpen) {
+				Stash.PreviousPage();
+			} else {
+				sgOptions.Keymapper.KeyPressed(MouseScrollUpButton);
+			}
+		} else if (event.wheel.y < 0) { // down
+			if (stextflag != TalkID::None) {
+				StoreDown();
+			} else if (QuestLogIsOpen) {
+				QuestlogDown();
+			} else if (HelpFlag) {
+				HelpScrollDown();
+			} else if (ChatLogFlag) {
+				ChatLogScrollDown();
+			} else if (IsStashOpen) {
+				Stash.NextPage();
+			} else {
+				sgOptions.Keymapper.KeyPressed(MouseScrollDownButton);
+			}
+		} else if (event.wheel.x > 0) { // left
+			sgOptions.Keymapper.KeyPressed(MouseScrollLeftButton);
+		} else if (event.wheel.x < 0) { // right
+			sgOptions.Keymapper.KeyPressed(MouseScrollRightButton);
+		}
+		break;
+#endif
 	default:
 		if (IsCustomEvent(event.type)) {
 			if (gbIsMultiplayer)
@@ -2520,17 +2565,16 @@ bool TryIconCurs()
 	if (pcurs == CURSOR_TELEPORT) {
 		const SpellID spellID = myPlayer.inventorySpell;
 		const SpellType spellType = SpellType::Scroll;
-		const int spellLevel = myPlayer.GetSpellLevel(spellID);
 		const int spellFrom = myPlayer.spellFrom;
 		if (IsWallSpell(spellID)) {
 			Direction sd = GetDirection(myPlayer.position.tile, cursPosition);
-			NetSendCmdLocParam5(true, CMD_SPELLXYD, cursPosition, static_cast<int8_t>(spellID), static_cast<uint8_t>(spellType), static_cast<uint16_t>(sd), spellLevel, spellFrom);
+			NetSendCmdLocParam4(true, CMD_SPELLXYD, cursPosition, static_cast<int8_t>(spellID), static_cast<uint8_t>(spellType), static_cast<uint16_t>(sd), spellFrom);
 		} else if (pcursmonst != -1) {
-			NetSendCmdParam5(true, CMD_SPELLID, pcursmonst, static_cast<int8_t>(spellID), static_cast<uint8_t>(spellType), spellLevel, spellFrom);
+			NetSendCmdParam4(true, CMD_SPELLID, pcursmonst, static_cast<int8_t>(spellID), static_cast<uint8_t>(spellType), spellFrom);
 		} else if (pcursplr != -1 && !myPlayer.friendlyMode) {
-			NetSendCmdParam5(true, CMD_SPELLPID, pcursplr, static_cast<int8_t>(spellID), static_cast<uint8_t>(spellType), spellLevel, spellFrom);
+			NetSendCmdParam4(true, CMD_SPELLPID, pcursplr, static_cast<int8_t>(spellID), static_cast<uint8_t>(spellType), spellFrom);
 		} else {
-			NetSendCmdLocParam4(true, CMD_SPELLXY, cursPosition, static_cast<int8_t>(spellID), static_cast<uint8_t>(spellType), spellLevel, spellFrom);
+			NetSendCmdLocParam3(true, CMD_SPELLXY, cursPosition, static_cast<int8_t>(spellID), static_cast<uint8_t>(spellType), spellFrom);
 		}
 		NewCursor(CURSOR_HAND);
 		return true;

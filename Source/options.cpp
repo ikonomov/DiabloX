@@ -947,15 +947,28 @@ GraphicsOptions::GraphicsOptions()
               { ScalingQuality::AnisotropicFiltering, N_("Anisotropic") },
           })
     , integerScaling("Integer Scaling", OptionEntryFlags::Invisible, N_("Integer Scaling"), N_("Scales the image using whole number pixel ratio."), false)
-    , vSync("Vertical Sync",
+#endif
+    , frameRateControl("Frame Rate Control",
           OptionEntryFlags::RecreateUI
-#ifdef NXDK
+#if defined(NXDK) || defined(__ANDROID__)
               | OptionEntryFlags::Invisible
 #endif
           ,
-          N_("Vertical Sync"),
-          N_("Forces waiting for Vertical Sync. Prevents tearing effect when drawing a frame. Disabling it can help with mouse lag on some systems."), false)
+          N_("Frame Rate Control"),
+          N_("Manages frame rate to balance performance, reduce tearing, or save power."),
+#if defined(NXDK) || defined(USE_SDL1)
+          FrameRateControl::CPUSleep
+#else
+          FrameRateControl::VerticalSync
 #endif
+          ,
+          {
+              { FrameRateControl::None, N_("None") },
+#ifndef USE_SDL1
+              { FrameRateControl::VerticalSync, N_("Vertical Sync") },
+#endif
+              { FrameRateControl::CPUSleep, N_("Limit FPS") },
+          })
     , gammaCorrection("Gamma Correction", OptionEntryFlags::Invisible, "Gamma Correction", "Gamma correction level.", 100)
     , zoom("Zoom", OptionEntryFlags::None, N_("Zoom"), N_("Zoom on when enabled."), true)
     , colorCycling("Color Cycling", OptionEntryFlags::None, N_("Color Cycling"), N_("Color cycling effect used for water, lava, and acid animation."), true)
@@ -965,7 +978,6 @@ GraphicsOptions::GraphicsOptions()
     , hardwareCursorForItems("Hardware Cursor For Items", OptionEntryFlags::Invisible, N_("Hardware Cursor For Items"), N_("Use a hardware cursor for items."), false)
     , hardwareCursorMaxSize("Hardware Cursor Maximum Size", OptionEntryFlags::Invisible, N_("Hardware Cursor Maximum Size"), N_("Maximum width / height for the hardware cursor. Larger cursors fall back to software."), 128, { 0, 64, 128, 256, 512 })
 #endif
-    , limitFPS("FPS Limiter", OptionEntryFlags::Invisible, N_("FPS Limiter"), N_("FPS is limited to avoid high CPU load. Limit considers refresh rate."), true)
     , showFPS("Show FPS", OptionEntryFlags::None, N_("Show FPS"), N_("Displays the FPS in the upper left corner of the screen."), false)
 {
 	resolution.SetValueChangedCallback(ResizeWindow);
@@ -976,7 +988,7 @@ GraphicsOptions::GraphicsOptions()
 #ifndef USE_SDL1
 	scaleQuality.SetValueChangedCallback(ReinitializeTexture);
 	integerScaling.SetValueChangedCallback(ReinitializeIntegerScale);
-	vSync.SetValueChangedCallback(ReinitializeRenderer);
+	frameRateControl.SetValueChangedCallback(ReinitializeRenderer);
 #endif
 	showFPS.SetValueChangedCallback(OptionShowFPSChanged);
 }
@@ -993,8 +1005,8 @@ std::vector<OptionEntryBase *> GraphicsOptions::GetEntries()
 #endif
 #ifndef USE_SDL1
 		&upscale,
-		&vSync,
 #endif
+		&frameRateControl,
 		&gammaCorrection,
 		&zoom,
 		&showFPS,
@@ -1232,7 +1244,7 @@ std::vector<OptionEntryBase *> LanguageOptions::GetEntries()
 KeymapperOptions::KeymapperOptions()
     : OptionCategoryBase("Keymapping", N_("Keymapping"), N_("Keymapping Settings"))
 {
-	// Insert all supported keys: a-z, 0-9 and F1-F12.
+	// Insert all supported keys: a-z, 0-9 and F1-F24.
 	keyIDToKeyName.reserve(('Z' - 'A' + 1) + ('9' - '0' + 1) + 12);
 	for (char c = 'A'; c <= 'Z'; ++c) {
 		keyIDToKeyName.emplace(c, std::string(1, c));
@@ -1243,18 +1255,51 @@ KeymapperOptions::KeymapperOptions()
 	for (int i = 0; i < 12; ++i) {
 		keyIDToKeyName.emplace(SDLK_F1 + i, StrCat("F", i + 1));
 	}
+	for (int i = 0; i < 12; ++i) {
+		keyIDToKeyName.emplace(SDLK_F13 + i, StrCat("F", i + 13));
+	}
 
 	keyIDToKeyName.emplace(SDLK_LALT, "LALT");
 	keyIDToKeyName.emplace(SDLK_RALT, "RALT");
+
 	keyIDToKeyName.emplace(SDLK_SPACE, "SPACE");
+
 	keyIDToKeyName.emplace(SDLK_RCTRL, "RCONTROL");
 	keyIDToKeyName.emplace(SDLK_LCTRL, "LCONTROL");
+
 	keyIDToKeyName.emplace(SDLK_PRINTSCREEN, "PRINT");
 	keyIDToKeyName.emplace(SDLK_PAUSE, "PAUSE");
 	keyIDToKeyName.emplace(SDLK_TAB, "TAB");
 	keyIDToKeyName.emplace(SDL_BUTTON_MIDDLE | KeymapperMouseButtonMask, "MMOUSE");
 	keyIDToKeyName.emplace(SDL_BUTTON_X1 | KeymapperMouseButtonMask, "X1MOUSE");
 	keyIDToKeyName.emplace(SDL_BUTTON_X2 | KeymapperMouseButtonMask, "X2MOUSE");
+	keyIDToKeyName.emplace(MouseScrollUpButton, "SCROLLUPMOUSE");
+	keyIDToKeyName.emplace(MouseScrollDownButton, "SCROLLDOWNMOUSE");
+	keyIDToKeyName.emplace(MouseScrollLeftButton, "SCROLLLEFTMOUSE");
+	keyIDToKeyName.emplace(MouseScrollRightButton, "SCROLLRIGHTMOUSE");
+
+	keyIDToKeyName.emplace(SDLK_BACKQUOTE, "`");
+	keyIDToKeyName.emplace(SDLK_LEFTBRACKET, "[");
+	keyIDToKeyName.emplace(SDLK_RIGHTBRACKET, "]");
+	keyIDToKeyName.emplace(SDLK_BACKSLASH, "\\");
+	keyIDToKeyName.emplace(SDLK_SEMICOLON, ";");
+	keyIDToKeyName.emplace(SDLK_QUOTE, "'");
+	keyIDToKeyName.emplace(SDLK_COMMA, ",");
+	keyIDToKeyName.emplace(SDLK_PERIOD, ".");
+	keyIDToKeyName.emplace(SDLK_SLASH, "/");
+
+	keyIDToKeyName.emplace(SDLK_BACKSPACE, "BACKSPACE");
+	keyIDToKeyName.emplace(SDLK_CAPSLOCK, "CAPSLOCK");
+	keyIDToKeyName.emplace(SDLK_SCROLLLOCK, "SCROLLLOCK");
+	keyIDToKeyName.emplace(SDLK_INSERT, "INSERT");
+	keyIDToKeyName.emplace(SDLK_DELETE, "DELETE");
+	keyIDToKeyName.emplace(SDLK_HOME, "HOME");
+	keyIDToKeyName.emplace(SDLK_END, "END");
+
+	keyIDToKeyName.emplace(SDLK_KP_DIVIDE, "KEYPAD /");
+	keyIDToKeyName.emplace(SDLK_KP_MULTIPLY, "KEYPAD *");
+	keyIDToKeyName.emplace(SDLK_KP_ENTER, "KEYPAD ENTER");
+	keyIDToKeyName.emplace(SDLK_KP_PERIOD, "KEYPAD DECIMAL");
 
 	keyNameToKeyID.reserve(keyIDToKeyName.size());
 	for (const auto &kv : keyIDToKeyName) {

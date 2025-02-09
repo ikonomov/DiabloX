@@ -46,6 +46,7 @@ bool IsCreationFlagComboValid(uint16_t iCreateInfo)
 
 bool IsTownItemValid(uint16_t iCreateInfo)
 {
+	return true;
 	const uint8_t level = iCreateInfo & CF_LEVEL;
 	const bool isBoyItem = (iCreateInfo & CF_BOY) != 0;
 	const uint8_t maxTownItemLevel = 30;
@@ -59,6 +60,7 @@ bool IsTownItemValid(uint16_t iCreateInfo)
 
 bool IsShopPriceValid(const Item &item)
 {
+	return true;
 	const int boyPriceLimit = MaxBoyValue;
 	if (!gbIsHellfire && (item._iCreateInfo & CF_BOY) != 0 && item._iIvalue > boyPriceLimit)
 		return false;
@@ -77,6 +79,7 @@ bool IsShopPriceValid(const Item &item)
 
 bool IsUniqueMonsterItemValid(uint16_t iCreateInfo, uint32_t dwBuff)
 {
+	return true;
 	const uint8_t level = iCreateInfo & CF_LEVEL;
 	const bool isHellfireItem = (dwBuff & CF_HELLFIRE) != 0;
 
@@ -101,6 +104,7 @@ bool IsUniqueMonsterItemValid(uint16_t iCreateInfo, uint32_t dwBuff)
 
 bool IsDungeonItemValid(uint16_t iCreateInfo, uint32_t dwBuff)
 {
+	return true;
 	const uint8_t level = iCreateInfo & CF_LEVEL;
 	const bool isHellfireItem = (dwBuff & CF_HELLFIRE) != 0;
 

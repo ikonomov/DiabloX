@@ -1410,6 +1410,14 @@ _item_indexes GetItemIndexForDroppableItem(bool considerDropRate, tl::function_r
 _item_indexes RndUItem(Monster *monster)
 {
 	int itemMaxLevel = ItemsGetCurrlevel() * 2;
+	switch (sgGameInitInfo.nDifficulty) {
+	case DIFF_NIGHTMARE:
+		itemMaxLevel += 15;
+		break;
+	case DIFF_HELL:
+		itemMaxLevel += 30;
+		break;
+	}
 	if (monster != nullptr)
 		itemMaxLevel = monster->level(sgGameInitInfo.nDifficulty);
 	return GetItemIndexForDroppableItem(false, [&itemMaxLevel](const ItemData &item) {

@@ -903,14 +903,14 @@ void RunGameLoop(interface_mode uMsg)
 		discord_manager::UpdateGame();
 
 		// auto-clicker
-		if (sgbMouseDown == CLICK_LEFT || sgbMouseDown == CLICK_RIGHT) {
+		if (sgbMouseDown == CLICK_RIGHT || sgbMouseDown == CLICK_LEFT && (pcursmonst != -1 || pcursplr != -1)) {
 
 			// calculate how long a mouse button has been held down
 			int currentTickCount = SDL_GetTicks();
 			int ticksElapsed = currentTickCount - mouseHeldDownFor;
 
 			// check if 6 ticks have elapsed
-			if (ticksElapsed > gnTickDelay * 6 && (sgbMouseDown == CLICK_RIGHT || sgbMouseDown == CLICK_LEFT && (pcursmonst != -1 || pcursplr != -1))) {
+			if (ticksElapsed > gnTickDelay * 6) {
 				mouseHeldDownFor = SDL_GetTicks(); // reset timer
 
 				// re-press mouse button

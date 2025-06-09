@@ -914,7 +914,7 @@ void RunGameLoop(interface_mode uMsg)
 				mouseHeldDownFor = SDL_GetTicks(); // reset timer
 
 				// re-press mouse button
-				if (sgbMouseDown == CLICK_LEFT && (pcursmonst != -1 || pcursplr != -1)) {
+				if (sgbMouseDown == CLICK_LEFT) {
 					LeftMouseDown(modStateLast);
 				} else {
 					RightMouseDown(modStateLast);

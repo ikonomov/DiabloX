@@ -910,11 +910,11 @@ void RunGameLoop(interface_mode uMsg)
 			int ticksElapsed = currentTickCount - mouseHeldDownFor;
 
 			// check if 6 ticks have elapsed
-			if (ticksElapsed > gnTickDelay * 6 && (pcursmonst != -1 || pcursplr != -1)) {
+			if (ticksElapsed > gnTickDelay * 6) {
 				mouseHeldDownFor = SDL_GetTicks(); // reset timer
 
 				// re-press mouse button
-				if (sgbMouseDown == CLICK_LEFT) {
+				if (sgbMouseDown == CLICK_LEFT && (pcursmonst != -1 || pcursplr != -1)) {
 					LeftMouseDown(modStateLast);
 				} else {
 					RightMouseDown(modStateLast);

@@ -596,8 +596,8 @@ struct Player {
 
 	void RegenerateHitPoints()
 	{
-		_pHitPoints = clamp(_pHitPoints + 4, _pHitPoints, _pMaxHP);
-		_pHPBase = clamp(_pHPBase + 4, _pHPBase, _pMaxHPBase);
+		_pHitPoints = clamp(_pHitPoints + 12, _pHitPoints, _pMaxHP);
+		_pHPBase = clamp(_pHPBase + 12, _pHPBase, _pMaxHPBase);
 	}
 
 	/**

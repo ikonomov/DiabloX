@@ -56,7 +56,7 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Teleport initial: 50 [35]; minimum: 30 [15]
 #### Items:
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
-   * Helm of Spirits has an additional life regeneration magical effect of 1.25 hit points per second.
+   * Helm of Spirits applies life regeneration magical effect of 3.75 hit points per second.
    * Damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
       * Civerb's Cudgel: +150%

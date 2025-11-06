@@ -34,6 +34,7 @@
 #include "engine/load_cel.hpp"
 #include "engine/load_file.hpp"
 #include "engine/random.hpp"
+#include "engine/render/clx_render.hpp"
 #include "engine/sound.h"
 #include "error.h"
 #include "gamemenu.h"
@@ -356,7 +357,7 @@ void LeftMouseDown(uint16_t modState)
 			} else if (chrflag && GetLeftPanel().contains(MousePosition)) {
 				CheckChrBtns();
 			} else if (invflag && GetRightPanel().contains(MousePosition)) {
-				if (!dropGoldFlag)
+				if (!DropGoldFlag)
 					CheckInvItem(isShiftHeld, isCtrlHeld);
 			} else if (IsStashOpen && GetLeftPanel().contains(MousePosition)) {
 				if (!IsWithdrawGoldOpen)
@@ -380,7 +381,7 @@ void LeftMouseDown(uint16_t modState)
 			}
 		}
 	} else {
-		if (!talkflag && !dropGoldFlag && !IsWithdrawGoldOpen && !gmenu_is_active())
+		if (!talkflag && !DropGoldFlag && !IsWithdrawGoldOpen && !gmenu_is_active())
 			CheckInvScrn(isShiftHeld, isCtrlHeld);
 		DoPanBtn();
 		CheckStashButtonPress(MousePosition);
@@ -507,7 +508,7 @@ void PressKey(SDL_Keycode vkey, uint16_t modState)
 		return;
 	}
 
-	if (dropGoldFlag) {
+	if (DropGoldFlag) {
 		control_drop_gold(vkey);
 		return;
 	}
@@ -680,23 +681,6 @@ void HandleMouseButtonUp(Uint8 button, uint16_t modState)
 	}
 }
 
-bool HandleTextInput(string_view text)
-{
-	if (IsTalkActive()) {
-		control_new_text(text);
-		return true;
-	}
-	if (dropGoldFlag) {
-		GoldDropNewText(text);
-		return true;
-	}
-	if (IsWithdrawGoldOpen) {
-		GoldWithdrawNewText(text);
-		return true;
-	}
-	return false;
-}
-
 [[maybe_unused]] void LogUnhandledEvent(const char *name, int value)
 {
 	LogVerbose("Unhandled SDL event: {} {}", name, value);
@@ -726,34 +710,24 @@ void GameEventHandler(const SDL_Event &event, uint16_t modState)
 		return;
 	}
 
+	if (IsTalkActive() && HandleTalkTextInputEvent(event)) {
+		return;
+	}
+	if (DropGoldFlag && HandleGoldDropTextInputEvent(event)) {
+		return;
+	}
+	if (IsWithdrawGoldOpen && HandleGoldWithdrawTextInputEvent(event)) {
+		return;
+	}
+
 	switch (event.type) {
 	case SDL_KEYDOWN: {
-#ifdef USE_SDL1
-		// SDL1 does not support TEXTINPUT events, so we emulate them here.
-		const Uint16 bmpCodePoint = event.key.keysym.unicode;
-		if (bmpCodePoint >= ' ') {
-			std::string utf8;
-			AppendUtf8(bmpCodePoint, utf8);
-			if (HandleTextInput(utf8)) {
-				return;
-			}
-		}
-#endif
 		PressKey(event.key.keysym.sym, modState);
 		return;
 	}
 	case SDL_KEYUP:
 		ReleaseKey(event.key.keysym.sym);
 		return;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	case SDL_TEXTEDITING:
-		return;
-	case SDL_TEXTINPUT:
-		if (!HandleTextInput(event.text.text)) {
-			LogUnhandledEvent("SDL_TEXTINPUT", event.text.windowID);
-		}
-		return;
-#endif
 	case SDL_MOUSEMOTION:
 		if (ControlMode == ControlTypes::KeyboardAndMouse && invflag)
 			InvalidateInventorySlot();
@@ -782,6 +756,10 @@ void GameEventHandler(const SDL_Event &event, uint16_t modState)
 				ChatLogScrollUp();
 			} else if (IsStashOpen) {
 				Stash.PreviousPage();
+			} else if (SDL_GetModState() & KMOD_CTRL) {
+				if (AutomapActive) {
+					AutomapZoomIn();
+				}
 			} else {
 				sgOptions.Keymapper.KeyPressed(MouseScrollUpButton);
 			}
@@ -796,6 +774,10 @@ void GameEventHandler(const SDL_Event &event, uint16_t modState)
 				ChatLogScrollDown();
 			} else if (IsStashOpen) {
 				Stash.NextPage();
+			} else if (SDL_GetModState() & KMOD_CTRL) {
+				if (AutomapActive) {
+					AutomapZoomOut();
+				}
 			} else {
 				sgOptions.Keymapper.KeyPressed(MouseScrollDownButton);
 			}
@@ -2689,7 +2671,7 @@ bool PressEscKey()
 		rv = true;
 	}
 
-	if (dropGoldFlag) {
+	if (DropGoldFlag) {
 		control_drop_gold(SDLK_ESCAPE);
 		rv = true;
 	}
@@ -2753,6 +2735,7 @@ void LoadGameLevel(bool firstflag, lvl_entry lvldir)
 	IncProgress();
 	MakeLightTable();
 	SetDungeonMicros();
+	ClearClxDrawCache();
 	LoadLvlGFX();
 	IncProgress();
 

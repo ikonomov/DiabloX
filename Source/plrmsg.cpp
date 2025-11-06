@@ -11,6 +11,7 @@
 #include <fmt/format.h>
 
 #include "control.h"
+#include "engine/render/primitive_render.hpp"
 #include "engine/render/text_render.hpp"
 #include "inv.h"
 #include "qol/chatlog.h"
@@ -127,8 +128,8 @@ void DrawPlrMsg(const Surface &out)
 		int chatlines = CountLinesOfText(text);
 		y -= message.lineHeight * chatlines;
 
-		DrawString(out, text, { { x, y }, { width, 0 } }, message.style, 1, message.lineHeight);
-		DrawString(out, message.from, { { x, y }, { width, 0 } }, UiFlags::ColorWhitegold, 1, message.lineHeight);
+		DrawString(out, text, { { x, y }, { width, 0 } }, { message.style, 1, message.lineHeight });
+		DrawString(out, message.from, { { x, y }, { width, 0 } }, { UiFlags::ColorWhitegold, 1, message.lineHeight });
 	}
 }
 

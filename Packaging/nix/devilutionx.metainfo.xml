@@ -7,10 +7,15 @@
 	</developer>
 
 	<name>DevilutionX</name>
-	<summary>Diablo/Hellfire source port</summary>
+	<summary>Experience Diablo and Hellfire anew</summary>
 
 	<metadata_license>CC-BY-SA-4.0</metadata_license>
-	<project_license>LicenseRef-proprietary</project_license>
+	<project_license>SUL-1.0</project_license>
+
+	<branding>
+		<color type="primary" scheme_preference="light">#c86666</color>
+		<color type="primary" scheme_preference="dark">#640000</color>
+	</branding>
 
 	<url type="homepage">https://github.com/diasurgical/devilutionX</url>
 	<url type="bugtracker">https://github.com/diasurgical/devilutionX/issues</url>
@@ -71,6 +76,21 @@
 		</screenshot>
 	</screenshots>
 	<releases>
+		<release version="1.5.5" date="2025-10-31">
+			<description>
+				<p>This release includes the following updates:</p>
+				<ul>
+					<li>App icon on Linux is now aligned with Android</li>
+					<li>Adjusted game speeds for Multiplayer</li>
+					<li>You can now use CTRL+ Mouse Scroll to zoom the map</li>
+					<li>Murphy Shrine has been added to Crippling Shrines</li>
+					<li>Updates to Russian and Polish translations</li>
+					<li>Crash fixes</li>
+				</ul>
+				<p>Please visit the full changelog for more detailed notes</p>
+			</description>
+			<url>https://github.com/diasurgical/devilutionX/releases/tag/1.5.5</url>
+		</release>
 		<release version="1.5.4" date="2025-02-08">
 			<description>
 				<p>This release includes the following updates:</p>

@@ -5124,4 +5124,3 @@ void UpdateHellfireFlag(Item &item, const char *identifiedItemName)
 }
 
 } // namespace devilution
-

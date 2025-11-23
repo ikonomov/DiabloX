@@ -62,11 +62,11 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Civerb's Cudgel: +150%
    * Damage is applied 1 to 7 times for Lightning and 1 to 9 times for Fire affixes.
    * Set to minimum values:
-      * Staff charges.
       * Armor class for shields and armor.
    * Set to maximum values:
       * Armor class for helms.
       * Affixes with a range of values.
+      * Staff charges.
    * Burgundy affix has been renamed to Russet.
    * All unique items are findable.
    * Town portal scrolls dropped as special items (from chests and barrels, replacing Mana or Healing potions) can be found on levels 2-8 [2-15].

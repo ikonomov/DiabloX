@@ -2195,8 +2195,7 @@ void RecreateBoyItem(const Player &player, Item &item, int lvl, int iseed)
 	SetRndSeed(iseed);
 	_item_indexes itype = RndBoyItem(player, lvl);
 	GetItemAttrs(item, itype, lvl);
-	int ilvl_boy = (45 * lvl / (lvl + 40)) * 2 + 1;
-	GetItemBonus(player, item, ilvl_boy / 2, ilvl_boy, true, true);
+	GetItemBonus(player, item, lvl, 2 * lvl + 1, true, true);
 
 	item._iSeed = iseed;
 	item._iCreateInfo = lvl | CF_BOY;
@@ -2370,9 +2369,8 @@ std::string GetTranslatedItemNameMagical(const Item &item, bool hellfireItem, bo
 		maxlvl = lvl;
 	} else if ((item._iCreateInfo & CF_BOY) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
-		int ilvl_boy = (45 * lvl / (lvl + 40)) * 2 + 1;
-		minlvl = ilvl_boy / 2;
-		maxlvl = ilvl_boy;
+		minlvl = lvl;
+		maxlvl = lvl * 2 + 1;
 	} else if ((item._iCreateInfo & CF_WITCH) != 0) {
 		DiscardRandomValues(2); // RndVendorItem and GetItemAttrs
 		int iblvl = -1;
@@ -4471,8 +4469,7 @@ void SpawnBoy(int lvl)
 		SetRndSeed(boyitem._iSeed);
 		_item_indexes itype = RndBoyItem(*MyPlayer, lvl);
 		GetItemAttrs(boyitem, itype, lvl);
-		int ilvl_boy = (45 * lvl / (lvl + 40)) * 2 + 1;
-		GetItemBonus(*MyPlayer, boyitem, ilvl_boy / 2, ilvl_boy, true, true);
+		GetItemBonus(*MyPlayer, boyitem, lvl, 2 * lvl + 1, true, true);
 
 		if (!gbIsHellfire) {
 			if (boyitem._iIvalue > MaxBoyValue) {

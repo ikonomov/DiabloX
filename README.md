@@ -62,11 +62,11 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Civerb's Cudgel: +150%
    * Damage is applied 1 to 7 times for Lightning and 1 to 9 times for Fire affixes.
    * Set to minimum values:
-      * Staff charges.
       * Armor class for shields and armor.
    * Set to maximum values:
       * Armor class for helms.
       * Affixes with a range of values.
+      * Staff charges.
    * Burgundy affix has been renamed to Russet.
    * All unique items are findable.
    * Town portal scrolls dropped as special items (from chests and barrels, replacing Mana or Healing potions) can be found on levels 2-8 [2-15].
@@ -179,13 +179,13 @@ Note: You'll need access to the data from the original game. If you don't have a
 #### Stores:
    * Adria and Pepin do not sell items in unlimited quantities except Arena Potions which can be used on cleared levels.
    * Cain charges 500 [100] gold to identify items.
-   * Wirt charges 50 extra gold for every 5 clvls to show his item for sale.
+   * Wirt charges 100 [50] gold and an addtional 100 for every 2.5 clvls (1000 maximum) to show his item for sale.
    * Wirt's sale price increase has been changed to 100% [50%].
    * The maximum store price has been changed to 200,000 [140,000/135,000] gold.
    * Maximum affix qlvl:
-      * Adria: 2×ilvl+1 [2×ilvl]
+      * Adria: 2×clvl+1 [2×clvl]
       * Griswold: 32 [30]
-      * Wirt: (45×clvl/(clvl+40))×2+1 [2×clvl]
+      * Wirt: 2×clvl+1 [2×clvl]
 #### Shrines:
    * Fascinating, Ornate and Sacred reduce magic by -2% (-1 minimum) [-10% mana].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].

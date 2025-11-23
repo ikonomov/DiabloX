@@ -2811,5 +2811,3 @@ void ReleaseStoreBtn()
 }
 
 } // namespace devilution
-
-

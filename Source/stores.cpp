@@ -1012,7 +1012,7 @@ void StartBoy()
 	if (!boyitem.isEmpty()) {
 		AddSText(0, 8, _("Talk to Wirt"), UiFlags::ColorBlue | UiFlags::AlignCenter, true);
 		AddSText(0, 12, _("I have something for sale,"), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
-		AddSText(0, 14, fmt::format(fmt::runtime(_("but it will cost {:d} gold")), 50 * ((MyPlayer->_pLevel + 4) / 5)), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
+		AddSText(0, 14, fmt::format(fmt::runtime(_("but it will cost {:d} gold")), (((MyPlayer->_pLevel - 1) * 10) / 25 + 1) * 100), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
 		AddSText(0, 16, _("just to take a look. "), UiFlags::ColorWhitegold | UiFlags::AlignCenter, false);
 		AddSText(0, 18, _("What have you got?"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
 		AddSText(0, 20, _("Say goodbye"), UiFlags::ColorWhite | UiFlags::AlignCenter, true);
@@ -1735,7 +1735,7 @@ void WitchRechargeEnter()
 
 void BoyEnter()
 {
-	int entrycost = 50 * ((MyPlayer->_pLevel + 4) / 5);
+	int entrycost = (((MyPlayer->_pLevel - 1) * 10) / 25 + 1) * 100;
 	if (!boyitem.isEmpty() && stextsel == 18) {
 		if (!PlayerCanAfford(entrycost)) {
 			stextshold = TalkID::Boy;
@@ -2811,3 +2811,4 @@ void ReleaseStoreBtn()
 }
 
 } // namespace devilution
+

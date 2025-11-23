@@ -76,4 +76,3 @@ const SpellData SpellsData[] = {
 };
 
 } // namespace devilution
-

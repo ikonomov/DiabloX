@@ -179,7 +179,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 #### Stores:
    * Adria and Pepin do not sell items in unlimited quantities except Arena Potions which can be used on cleared levels.
    * Cain charges 500 [100] gold to identify items.
-   * Wirt charges 50 extra gold for every 5 clvls to show his item for sale.
+   * Wirt charges 100 [50] gold and an addtional 100 for every 2.5 clvls (1000 maximum) to show his item for sale.
    * Wirt's sale price increase has been changed to 100% [50%].
    * The maximum store price has been changed to 200,000 [140,000/135,000] gold.
    * Maximum affix qlvl:

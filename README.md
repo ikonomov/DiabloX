@@ -183,9 +183,9 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Wirt's sale price increase has been changed to 100% [50%].
    * The maximum store price has been changed to 200,000 [140,000/135,000] gold.
    * Maximum affix qlvl:
-      * Adria: 2×ilvl+1 [2×ilvl]
+      * Adria: 2×clvl+1 [2×clvl]
       * Griswold: 32 [30]
-      * Wirt: 2×ilvl+1 [2×clvl]
+      * Wirt: 2×clvl+1 [2×clvl]
 #### Shrines:
    * Fascinating, Ornate and Sacred reduce magic by -2% (-1 minimum) [-10% mana].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].

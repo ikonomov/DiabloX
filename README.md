@@ -185,7 +185,7 @@ Note: You'll need access to the data from the original game. If you don't have a
    * Maximum affix qlvl:
       * Adria: 2×ilvl+1 [2×ilvl]
       * Griswold: 32 [30]
-      * Wirt: (45×clvl/(clvl+40))×2+1 [2×clvl]
+      * Wirt: 2×ilvl+1 [2×clvl]
 #### Shrines:
    * Fascinating, Ornate and Sacred reduce magic by -2% (-1 minimum) [-10% mana].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].

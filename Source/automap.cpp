@@ -1439,7 +1439,12 @@ void DrawAutomapText(const Surface &out)
 	}
 
 	if (setlevel) {
-		DrawString(out, _(QuestLevelNames[setlvlnum]), linePosition);
+		std::string description;
+		description = std::string(_(QuestLevelNames[setlvlnum]));
+		if (ActiveMonsterCount == 4) {
+			description.append(std::string(_(" (Cleared)")));
+		}
+		DrawString(out, description, linePosition);
 		return;
 	}
 
@@ -1963,3 +1968,4 @@ void AutomapZoomReset()
 }
 
 } // namespace devilution
+

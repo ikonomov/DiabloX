@@ -17,6 +17,7 @@
 #endif
 
 #define WINDOW_ICON_NAME 0
+#define SDL_Window SDL_Surface
 
 //== Utility
 
@@ -50,6 +51,8 @@
 #define SDLK_KP_COMMA SDLK_COMMA
 #define SDLK_LGUI SDLK_LSUPER
 #define SDLK_RGUI SDLK_RSUPER
+
+#define SDL_SCANCODE_GRAVE 53
 
 // Haptic events are not supported in SDL1.
 #define SDL_INIT_HAPTIC 0
@@ -89,6 +92,7 @@ void SDL_LogInfo(int category, const char *fmt, ...) DVL_PRINTF_ATTRIBUTE(2, 3);
 void SDL_LogWarn(int category, const char *fmt, ...) DVL_PRINTF_ATTRIBUTE(2, 3);
 void SDL_LogError(int category, const char *fmt, ...) DVL_PRINTF_ATTRIBUTE(2, 3);
 void SDL_LogCritical(int category, const char *fmt, ...) DVL_PRINTF_ATTRIBUTE(2, 3);
+void SDL_LogMessage(int category, SDL_LogPriority priority, const char *fmt, ...) DVL_PRINTF_ATTRIBUTE(3, 4);
 void SDL_LogMessageV(int category, SDL_LogPriority priority, const char *fmt, va_list ap) DVL_PRINTF_ATTRIBUTE(3, 0);
 
 void SDL_LogSetAllPriority(SDL_LogPriority priority);
@@ -109,6 +113,21 @@ inline void SDL_SetTextInputRect(const SDL_Rect *r)
 {
 }
 
+inline bool SDLC_StartTextInput(SDL_Window *)
+{
+	SDL_StartTextInput();
+	return true;
+}
+inline bool SDLC_StopTextInput(SDL_Window *)
+{
+	SDL_StopTextInput();
+	return true;
+}
+inline bool SDL_SetTextInputArea(SDL_Window *, const SDL_Rect *, int)
+{
+	return true;
+}
+
 //== Graphics helpers
 
 typedef struct SDL_Point {
@@ -120,6 +139,8 @@ inline SDL_bool SDL_PointInRect(const SDL_Point *p, const SDL_Rect *r)
 {
 	return ((p->x >= r->x) && (p->x < (r->x + r->w)) && (p->y >= r->y) && (p->y < (r->y + r->h))) ? SDL_TRUE : SDL_FALSE;
 }
+
+inline bool SDLC_PointInRect(const SDL_Point *p, const SDL_Rect *r) { return SDL_PointInRect(p, r) == SDL_TRUE; }
 
 //= Messagebox (simply logged to stderr for now)
 
@@ -149,8 +170,6 @@ inline int SDL_ShowSimpleMessageBox(Uint32 flags,
 #endif
 
 //= Window handling
-
-#define SDL_Window SDL_Surface
 
 inline void SDL_GetWindowPosition(SDL_Window *window, int *x, int *y)
 {
@@ -319,5 +338,5 @@ int SDL_BlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
 
 Sint64 SDL_RWsize(SDL_RWops *context);
 
-char *SDL_GetBasePath();
-char *SDL_GetPrefPath(const char *org, const char *app);
+extern "C" char *SDL_GetBasePath();
+extern "C" char *SDL_GetPrefPath(const char *org, const char *app);

@@ -3,17 +3,22 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <string_view>
 
-#include <hoehrmann_utf8.h>
-
-#include "utils/attributes.h"
+#include <SheenBidi/SheenBidi.h>
 
 namespace devilution {
 
-namespace {
+char32_t DecodeFirstUtf8CodePoint(std::string_view input, std::size_t *len)
+{
+	SBUInteger index = 0;
+	const SBCodepoint result = SBCodepointDecodeNextFromUTF8(
+	    reinterpret_cast<const SBUInt8 *>(input.data()), static_cast<SBUInteger>(input.size()), &index);
+	*len = index;
+	return result;
+}
 
-/** Truncates `str` to at most `len` at a code point boundary. */
-string_view TruncateUtf8(string_view str, std::size_t len)
+std::string_view TruncateUtf8(std::string_view str, std::size_t len)
 {
 	if (str.size() > len) {
 		std::size_t truncIndex = len;
@@ -24,31 +29,14 @@ string_view TruncateUtf8(string_view str, std::size_t len)
 	return str;
 }
 
-} // namespace
-
-char32_t DecodeFirstUtf8CodePoint(string_view input, std::size_t *len)
-{
-	uint32_t codepoint = 0;
-	uint8_t state = UTF8_ACCEPT;
-	for (std::size_t i = 0; i < input.size(); ++i) {
-		state = utf8_decode_step(state, static_cast<uint8_t>(input[i]), &codepoint);
-		if (state == UTF8_ACCEPT) {
-			*len = i + 1;
-			return codepoint;
-		}
-		if (state == UTF8_REJECT) {
-			*len = i + 1;
-			return Utf8DecodeError;
-		}
-	}
-	*len = input.size();
-	return Utf8DecodeError;
-}
-
-void CopyUtf8(char *dest, string_view source, std::size_t bytes)
+void CopyUtf8(char *dest, std::string_view source, std::size_t bytes)
 {
 	source = TruncateUtf8(source, bytes - 1);
-	std::memcpy(dest, source.data(), source.size());
+	// source.empty() can mean source.data() == nullptr.
+	// It is UB to pass a null pointer to memcpy, so we guard against it.
+	if (!source.empty()) {
+		std::memcpy(dest, source.data(), source.size());
+	}
 	dest[source.size()] = '\0';
 }
 

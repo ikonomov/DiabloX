@@ -6,22 +6,24 @@
 #include <cstdint>
 #include <deque>
 #include <exception>
-#include <map>
-#include <set>
+#include <optional>
 #include <string>
 
+#include <ankerl/unordered_dense.h>
+
 #include "dvlnet/frame_queue.h"
+#include "dvlnet/packet.h"
+#include "utils/log.hpp"
 
 namespace devilution {
 namespace net {
 
-class protocol_exception : public std::exception {
-public:
-	const char *what() const throw() override
-	{
-		return "Protocol error";
-	}
-};
+template <typename... Args>
+PacketError ProtocolError(std::string_view fmt, Args &&...args)
+{
+	auto str = detail::format(fmt, std::forward<Args>(args)...);
+	return PacketError(str);
+}
 
 class protocol_zt {
 public:
@@ -55,26 +57,42 @@ public:
 			return buffer_t(addr.begin(), addr.end());
 		}
 
-		void unserialize(const buffer_t &buf)
+		tl::expected<void, PacketError> unserialize(const buffer_t &buf)
 		{
-			if (buf.size() != 16)
-				throw protocol_exception();
+			if (buf.size() != 16) {
+				std::string_view format = "Endpoint deserialization expected 16 bytes, got {}";
+				PacketError error = ProtocolError(format, buf.size());
+				return tl::make_unexpected(std::move(error));
+			}
 			std::copy(buf.begin(), buf.end(), addr.begin());
+			return {};
 		}
 
 		void from_string(const std::string &str);
+	};
+	struct EndpointHash {
+		using is_avalanching = void;
+
+		[[nodiscard]] uint64_t operator()(const endpoint &e) const noexcept
+		{
+			return ankerl::unordered_dense::hash<std::string_view> {}(
+			    std::string_view { reinterpret_cast<const char *>(e.addr.data()), e.addr.size() });
+		}
 	};
 
 	protocol_zt();
 	~protocol_zt();
 	void disconnect(const endpoint &peer);
-	bool send(const endpoint &peer, const buffer_t &data);
+	tl::expected<void, PacketError> send(const endpoint &peer, const buffer_t &data);
 	bool send_oob(const endpoint &peer, const buffer_t &data) const;
 	bool send_oob_mc(const buffer_t &data) const;
 	bool recv(endpoint &peer, buffer_t &data);
 	bool get_disconnected(endpoint &peer);
-	bool network_online();
+	tl::expected<bool, PacketError> network_online();
+	tl::expected<bool, PacketError> peers_ready();
 	bool is_peer_connected(endpoint &peer);
+	std::optional<bool> is_peer_relayed(const endpoint &peer) const;
+	std::optional<int> get_latency_to(const endpoint &peer) const;
 	static std::string make_default_gamename();
 
 private:
@@ -90,7 +108,7 @@ private:
 	std::deque<std::pair<endpoint, buffer_t>> oob_recv_queue;
 	std::deque<endpoint> disconnect_queue;
 
-	std::map<endpoint, peer_state> peer_list;
+	ankerl::unordered_dense::map<endpoint, peer_state, EndpointHash> peer_list;
 	int fd_tcp = -1;
 	int fd_udp = -1;
 
@@ -101,7 +119,7 @@ private:
 	static void set_nodelay(int fd);
 	static void set_reuseaddr(int fd);
 
-	bool send_queued_peer(const endpoint &peer);
+	tl::expected<bool, PacketError> send_queued_peer(const endpoint &peer);
 	bool recv_peer(const endpoint &peer);
 	bool send_queued_all();
 	bool recv_from_peers();

@@ -1,6 +1,15 @@
 #include "utils/paths.h"
 
+#include <optional>
+#include <string>
+#include <string_view>
+
+#ifdef USE_SDL3
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_filesystem.h>
+#else
 #include <SDL.h>
+#endif
 
 #include "appfat.h"
 #include "utils/file_util.h"
@@ -38,9 +47,9 @@ void AddTrailingSlash(std::string &path)
 		path += DirectorySeparator;
 }
 
-std::string FromSDL(char *s)
+[[maybe_unused]] std::string FromSDL(char *s)
 {
-	SDLUniquePtr<char> pinned(s);
+	const SDLUniquePtr<char> pinned(s);
 	std::string result = (s != nullptr ? s : "");
 	if (s == nullptr) {
 		Log("{}", SDL_GetError());
@@ -63,12 +72,31 @@ const std::string &NxdkGetPrefPath()
 }
 #endif
 
+std::string GetSdlBasePath()
+{
+	std::string result;
+#if defined(__DJGPP__)
+	// In DOS, use an empty base path.
+#elif defined(USE_SDL3)
+	const char *s = SDL_GetBasePath();
+	if (s == nullptr) {
+		LogError("{}", SDL_GetError());
+		SDL_ClearError();
+	} else {
+		result = s;
+	}
+#else
+	result = FromSDL(SDL_GetBasePath());
+#endif
+	return result;
+}
+
 } // namespace
 
 const std::string &BasePath()
 {
 	if (!basePath) {
-		basePath = FromSDL(SDL_GetBasePath());
+		basePath = GetSdlBasePath();
 	}
 	return *basePath;
 }
@@ -76,15 +104,17 @@ const std::string &BasePath()
 const std::string &PrefPath()
 {
 	if (!prefPath) {
-#if defined(__IPHONEOS__)
+#if defined(__DJGPP__)
+		prefPath = std::string();
+#elif defined(__IPHONEOS__)
 		prefPath = FromSDL(IOSGetPrefPath());
 #elif defined(NXDK)
 		prefPath = NxdkGetPrefPath();
 #else
 		prefPath = FromSDL(SDL_GetPrefPath("diasurgical", "devilution"));
-#if !defined(__amigaos__)
+#if !defined(__amigaos__) && !defined(__DJGPP__)
 		if (FileExistsAndIsWriteable("diablo.ini")) {
-			prefPath = std::string("." DIRECTORY_SEPARATOR_STR);
+			prefPath = std::string();
 		}
 #endif
 #endif
@@ -95,15 +125,17 @@ const std::string &PrefPath()
 const std::string &ConfigPath()
 {
 	if (!configPath) {
-#if defined(__IPHONEOS__)
+#if defined(__DJGPP__)
+		configPath = std::string();
+#elif defined(__IPHONEOS__)
 		configPath = FromSDL(IOSGetPrefPath());
 #elif defined(NXDK)
 		configPath = NxdkGetPrefPath();
 #else
 		configPath = FromSDL(SDL_GetPrefPath("diasurgical", "devilution"));
-#if !defined(__amigaos__)
+#if !defined(__amigaos__) && !defined(__DJGPP__)
 		if (FileExistsAndIsWriteable("diablo.ini")) {
-			configPath = std::string("." DIRECTORY_SEPARATOR_STR);
+			configPath = std::string();
 		}
 #endif
 #endif
@@ -114,14 +146,31 @@ const std::string &ConfigPath()
 const std::string &AssetsPath()
 {
 	if (!assetsPath) {
-#if __EMSCRIPTEN__
-		assetsPath.emplace("assets/");
+#if __EMSCRIPTEN__ || defined(__DJGPP__)
+		assetsPath.emplace("assets" DIRECTORY_SEPARATOR_STR);
 #elif defined(NXDK)
 		assetsPath.emplace("D:\\assets\\");
 #elif defined(__3DS__) || defined(__SWITCH__)
 		assetsPath.emplace("romfs:/");
+#elif defined(__APPLE__) && defined(USE_SDL1)
+		// In `Info.plist` we have
+		//
+		//    <key>SDL_FILESYSTEM_BASE_DIR_TYPE</key>
+		//    <string>resource</string>
+		//
+		// This means `SDL_GetBasePath()` returns exedir for non-bundled
+		// and the `app_dir.app/Resources/` for bundles.
+		//
+		// Our built-in resources are directly in the `devilutionx.app/Resources` directory
+		// and are normally looked up via a relative lookup in `FindAsset`.
+		// In SDL2, this is implemented by calling `SDL_OpenFPFromBundleOrFallback`
+		// from `SDL_RWFromFile` but SDL1 doesn't do it, so we set the directory explicitly.
+		//
+		// Note that SDL3 reverts to SDL1 behaviour!
+		// https://github.com/libsdl-org/SDL/blob/962268ca21ed10b9cee31198c22681099293f20a/docs/README-migration.md?plain=1#L1623
+		assetsPath.emplace(GetSdlBasePath());
 #else
-		assetsPath.emplace(FromSDL(SDL_GetBasePath()) + ("assets" DIRECTORY_SEPARATOR_STR));
+		assetsPath.emplace(GetSdlBasePath() + ("assets" DIRECTORY_SEPARATOR_STR));
 #endif
 	}
 	return *assetsPath;

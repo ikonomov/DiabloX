@@ -46,12 +46,15 @@ Checks: >
   performance-*,
   portability-*,
   readability-*,
+  -readability-identifier-length,
+  -bugprone-easily-swappable-parameters,
   -readability-magic-numbers,
   -misc-non-private-member-variables-in-classes,
   -modernize-avoid-c-arrays,
   -modernize-use-trailing-return-type,
   -modernize-concat-nested-namespaces,
-  -modernize-avoid-bind
+  -modernize-avoid-bind,
+  -modernize-use-constraints
 
 HeaderFilterRegex: "^(Source|test)\\.h$"
 
@@ -89,3 +92,6 @@ CheckOptions:
   - { key: bugprone-signed-char-misuse.CharTypdefsToIgnore, value: "std::int8_t" }
 
   - { key: readability-identifier-length.MinimumLoopCounterNameLength, value: 1 }
+
+  # Ignore warnings for individual SDL headers, e.g. SDL_video.h, SDL_render.h
+  - { key: misc-include-cleaner.IgnoreHeaders, value: 'SDL_.*\\.h' }

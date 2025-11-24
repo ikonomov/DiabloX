@@ -18,10 +18,9 @@ endif()
 
 target_link_libraries(libdevilutionx_vita PUBLIC
   DevilutionX::SDL
-  SDL_audiolib
   ScePower_stub
   SceAppUtil_stub
   SceNet_stub
   SceNetCtl_stub
-  tl
+  libdevilutionx_options
 )

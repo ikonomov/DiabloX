@@ -3,42 +3,80 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <optional>
 
-#include <SmackerDecoder.h>
+#ifdef USE_SDL3
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_pixels.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3/SDL_timer.h>
 
 #ifndef NOSOUND
+#include <SDL3/SDL_audio.h>
+#endif
+#else
+#include <SDL.h>
+
+#ifndef NOSOUND
+#include "utils/aulib.hpp"
 #include "utils/push_aulib_decoder.h"
 #endif
+#endif
+
+#include <SmackerDecoder.h>
 
 #include "engine/assets.hpp"
 #include "engine/dx.h"
 #include "engine/palette.h"
 #include "options.h"
-#include "utils/aulib.hpp"
 #include "utils/display.h"
 #include "utils/log.hpp"
 #include "utils/sdl_compat.h"
 #include "utils/sdl_wrap.h"
-#include "utils/stdcompat/optional.hpp"
 
 namespace devilution {
 namespace {
 
 #ifndef NOSOUND
+#ifdef USE_SDL3
+SDL_AudioStream *SVidAudioStream;
+bool SVidAutoStreamEnabled;
+#else
 std::optional<Aulib::Stream> SVidAudioStream;
 PushAulibDecoder *SVidAudioDecoder;
+#endif
 std::uint8_t SVidAudioDepth;
 std::unique_ptr<int16_t[]> SVidAudioBuffer;
 #endif
 
+// Smacker's atomic time unit is a one hundred thousand's of a second (i.e. 0.01 millisecond, or 10 microseconds).
+// We use SDL ticks for timing, which have millisecond resolution.
+// There are 100 Smacker time units in a millisecond.
+constexpr uint64_t SmackerTimeUnit = 100;
+constexpr uint64_t TimeMsToSmk(uint64_t ms) { return ms * SmackerTimeUnit; }
+constexpr uint64_t TimeSmkToMs(uint64_t time) { return time / SmackerTimeUnit; };
+uint64_t GetTicksSmk()
+{
+#if SDL_VERSION_ATLEAST(2, 0, 18) && !defined(USE_SDL3)
+	return TimeMsToSmk(SDL_GetTicks64());
+#else
+	return TimeMsToSmk(SDL_GetTicks());
+#endif
+}
+
 uint32_t SVidWidth, SVidHeight;
-double SVidFrameEnd;
-double SVidFrameLength;
 bool SVidLoop;
 SmackerHandle SVidHandle;
 std::unique_ptr<uint8_t[]> SVidFrameBuffer;
 SDLPaletteUniquePtr SVidPalette;
 SDLSurfaceUniquePtr SVidSurface;
+
+// The end of the current frame (time in SMK time units from the start of the program).
+uint64_t SVidFrameEnd;
+// The length of a frame in SMK time units.
+uint32_t SVidFrameLength;
 
 bool IsLandscapeFit(unsigned long srcW, unsigned long srcH, unsigned long dstW, unsigned long dstH)
 {
@@ -110,9 +148,16 @@ void TrySetVideoModeToSVidForSDL1()
 #endif
 
 #ifndef NOSOUND
-bool HasAudio()
+// Returns the volume scaled to [0.0F, 1.0F] range.
+float GetVolume() { return static_cast<float>(*GetOptions().Audio.soundVolume - VOLUME_MIN) / -VOLUME_MIN; }
+
+bool ShouldPushAudioData()
 {
+#ifdef USE_SDL3
+	return SVidAudioStream != nullptr && SVidAutoStreamEnabled;
+#else
 	return SVidAudioStream && SVidAudioStream->isPlaying();
+#endif
 }
 #endif
 
@@ -159,8 +204,15 @@ void UpdatePalette()
 		ErrSdl();
 	}
 #else
-	if (SDL_SetSurfacePalette(SVidSurface.get(), SVidPalette.get()) <= -1) {
+	if (!SDLC_SetSurfacePalette(SVidSurface.get(), SVidPalette.get())) {
 		ErrSdl();
+	}
+
+	const SDL_Surface *surface = GetOutputSurface();
+	if (SDLC_SURFACE_BITSPERPIXEL(surface) == 8) {
+		if (!SDLC_SetSurfacePalette(GetOutputSurface(), SVidPalette.get())) {
+			ErrSdl();
+		}
 	}
 #endif
 }
@@ -169,7 +221,13 @@ bool BlitFrame()
 {
 #ifndef USE_SDL1
 	if (renderer != nullptr) {
-		if (SDL_BlitSurface(SVidSurface.get(), nullptr, GetOutputSurface(), nullptr) <= -1) {
+		if (
+#ifdef USE_SDL3
+		    !SDL_BlitSurface(SVidSurface.get(), nullptr, GetOutputSurface(), nullptr)
+#else
+		    SDL_BlitSurface(SVidSurface.get(), nullptr, GetOutputSurface(), nullptr) <= -1
+#endif
+		) {
 			Log("{}", SDL_GetError());
 			return false;
 		}
@@ -180,7 +238,12 @@ bool BlitFrame()
 #ifdef USE_SDL1
 		const bool isIndexedOutputFormat = SDLBackport_IsPixelFormatIndexed(outputSurface->format);
 #else
+
+#ifdef USE_SDL3
+		const SDL_PixelFormat wndFormat = SDL_GetWindowPixelFormat(ghMainWnd);
+#else
 		const Uint32 wndFormat = SDL_GetWindowPixelFormat(ghMainWnd);
+#endif
 		const bool isIndexedOutputFormat = SDL_ISPIXELFORMAT_INDEXED(wndFormat);
 #endif
 		SDL_Rect outputRect;
@@ -201,7 +264,13 @@ bool BlitFrame()
 		if (isIndexedOutputFormat
 		    || outputSurface->w == static_cast<int>(SVidWidth)
 		    || outputSurface->h == static_cast<int>(SVidHeight)) {
-			if (SDL_BlitSurface(SVidSurface.get(), nullptr, outputSurface, &outputRect) <= -1) {
+			if (
+#ifdef USE_SDL3
+			    SDL_BlitSurface(SVidSurface.get(), nullptr, outputSurface, &outputRect)
+#else
+			    SDL_BlitSurface(SVidSurface.get(), nullptr, outputSurface, &outputRect) <= -1
+#endif
+			) {
 				ErrSdl();
 			}
 		} else {
@@ -212,7 +281,13 @@ bool BlitFrame()
 #else
 			SDLSurfaceUniquePtr converted = SDLWrap::ConvertSurfaceFormat(SVidSurface.get(), wndFormat, 0);
 #endif
-			if (SDL_BlitScaled(converted.get(), nullptr, outputSurface, &outputRect) <= -1) {
+			if (
+#ifdef USE_SDL3
+			    SDL_BlitSurfaceScaled(converted.get(), nullptr, outputSurface, &outputRect, SDL_SCALEMODE_LINEAR)
+#else
+			    SDL_BlitScaled(converted.get(), nullptr, outputSurface, &outputRect) <= -1
+#endif
+			) {
 				Log("{}", SDL_GetError());
 				return false;
 			}
@@ -222,6 +297,35 @@ bool BlitFrame()
 	RenderPresent();
 	return true;
 }
+
+#if defined(USE_SDL3) && !defined(NOSOUND)
+void SVidInitAudioStream(const SmackerAudioInfo &audioInfo)
+{
+	SVidAutoStreamEnabled = diablo_is_focused();
+	SDL_AudioSpec srcSpec = {};
+	srcSpec.channels = static_cast<int>(audioInfo.nChannels);
+	srcSpec.freq = static_cast<int>(audioInfo.sampleRate);
+	srcSpec.format = audioInfo.bitsPerSample == 8 ? SDL_AUDIO_U8 : SDL_AUDIO_S16LE;
+	SVidAudioStream = SDL_CreateAudioStream(&srcSpec, /*dstSpec=*/&srcSpec);
+	if (SVidAudioStream == nullptr) {
+		LogError(LogCategory::Audio, "SDL_CreateAudioStream (from SVidPlayBegin): {}", SDL_GetError());
+		SDL_ClearError();
+		SVidAudioStream = nullptr;
+		return;
+	}
+	if (!SDL_BindAudioStream(CurrentAudioDeviceId, SVidAudioStream)) {
+		LogError(LogCategory::Audio, "SDL_BindAudioStream (from SVidPlayBegin): {}", SDL_GetError());
+		SDL_ClearError();
+		SDL_DestroyAudioStream(SVidAudioStream);
+		SVidAudioStream = nullptr;
+		return;
+	}
+	if (!SDL_SetAudioStreamGain(SVidAudioStream, GetVolume())) {
+		LogWarn(LogCategory::Audio, "SDL_SetAudioStreamGain (from SVidPlayBegin): {}", SDL_GetError());
+		SDL_ClearError();
+	}
+}
+#endif
 
 } // namespace
 
@@ -241,7 +345,7 @@ bool SVidPlayBegin(const char *filename, int flags)
 	// 0x800000 // Edge detection
 	// 0x200800 // Clear FB
 
-	SDL_RWops *videoStream = OpenAssetAsSdlRwOps(filename);
+	auto *videoStream = OpenAssetAsSdlRwOps(filename);
 	SVidHandle = Smacker_Open(videoStream);
 	if (!SVidHandle.isValid) {
 		return false;
@@ -257,12 +361,18 @@ bool SVidPlayBegin(const char *filename, int flags)
 		sound_stop(); // Stop in-progress music and sound effects
 
 		SVidAudioDepth = audioInfo.bitsPerSample;
-		SVidAudioBuffer = std::unique_ptr<int16_t[]> { new int16_t[audioInfo.idealBufferSize] };
+		SVidAudioBuffer = std::unique_ptr<int16_t[]> { new int16_t[audioInfo.idealBufferSize / 2] };
+
+#ifndef USE_SDL3
 		auto decoder = std::make_unique<PushAulibDecoder>(audioInfo.nChannels, audioInfo.sampleRate);
 		SVidAudioDecoder = decoder.get();
 		SVidAudioStream.emplace(/*rwops=*/nullptr, std::move(decoder), CreateAulibResampler(audioInfo.sampleRate), /*closeRw=*/false);
-		const float volume = static_cast<float>(*sgOptions.Audio.soundVolume - VOLUME_MIN) / -VOLUME_MIN;
-		SVidAudioStream->setVolume(volume);
+		SVidAudioStream->setVolume(GetVolume());
+#endif
+
+#ifdef USE_SDL3
+		SVidInitAudioStream(audioInfo);
+#else
 		if (!diablo_is_focused())
 			SVidMute();
 		if (!SVidAudioStream->open()) {
@@ -275,27 +385,47 @@ bool SVidPlayBegin(const char *filename, int flags)
 			SVidAudioStream = std::nullopt;
 			SVidAudioDecoder = nullptr;
 		}
+#endif
 	}
 #endif
 
-	SVidFrameLength = 1000000.0 / Smacker_GetFrameRate(SVidHandle);
+	// SMK format internally defines the frame rate as the frame duration
+	// in either milliseconds or SMK time units (0.01ms). The library converts it
+	// to FPS, which is always an integer, and here we convert it back to SMK time units.
+	SVidFrameLength = 100000 / static_cast<uint32_t>(Smacker_GetFrameRate(SVidHandle));
 	Smacker_GetFrameSize(SVidHandle, SVidWidth, SVidHeight);
 
 #ifndef USE_SDL1
 	if (renderer != nullptr) {
-		int renderWidth = static_cast<int>(SVidWidth);
-		int renderHeight = static_cast<int>(SVidHeight);
-		texture = SDLWrap::CreateTexture(renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, renderWidth, renderHeight);
-		if (SDL_RenderSetLogicalSize(renderer, renderWidth, renderHeight) <= -1) {
+		const int renderWidth = static_cast<int>(SVidWidth);
+		const int renderHeight = static_cast<int>(SVidHeight);
+		texture = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, renderWidth, renderHeight);
+		if (
+#ifdef USE_SDL3
+		    !SDL_SetRenderLogicalPresentation(renderer, renderWidth, renderHeight,
+		        *GetOptions().Graphics.integerScaling ? SDL_LOGICAL_PRESENTATION_INTEGER_SCALE : SDL_LOGICAL_PRESENTATION_STRETCH)
+#else
+		    SDL_RenderSetLogicalSize(renderer, renderWidth, renderHeight) <= -1
+#endif
+		) {
 			ErrSdl();
 		}
 	}
+#if defined(DEVILUTIONX_DISPLAY_PIXELFORMAT) && DEVILUTIONX_DISPLAY_PIXELFORMAT == SDL_PIXELFORMAT_INDEX8
+	else {
+		const Size windowSize = { static_cast<int>(SVidWidth), static_cast<int>(SVidHeight) };
+		SDL_DisplayMode nearestDisplayMode = GetNearestDisplayMode(windowSize, DEVILUTIONX_DISPLAY_PIXELFORMAT);
+		if (SDL_SetWindowDisplayMode(ghMainWnd, &nearestDisplayMode) != 0) {
+			ErrSdl();
+		}
+	}
+#endif
 #else
 	TrySetVideoModeToSVidForSDL1();
 #endif
 
 	// Set the background to black.
-	SDL_FillRect(GetOutputSurface(), nullptr, 0x000000);
+	SDL_FillSurfaceRect(GetOutputSurface(), nullptr, 0x000000);
 
 	// The buffer for the frame. It is not the same as the SDL surface because the SDL surface also has pitch padding.
 	SVidFrameBuffer = std::unique_ptr<uint8_t[]> { new uint8_t[static_cast<size_t>(SVidWidth * SVidHeight)] };
@@ -318,7 +448,7 @@ bool SVidPlayBegin(const char *filename, int flags)
 	SVidPalette = SDLWrap::AllocPalette();
 	UpdatePalette();
 
-	SVidFrameEnd = SDL_GetTicks() * 1000.0 + SVidFrameLength;
+	SVidFrameEnd = GetTicksSmk() + SVidFrameLength;
 
 	return true;
 }
@@ -329,32 +459,44 @@ bool SVidPlayContinue()
 		UpdatePalette();
 	}
 
-	if (SDL_GetTicks() * 1000.0 >= SVidFrameEnd) {
+	if (GetTicksSmk() >= SVidFrameEnd) {
+#if defined(USE_SDL3) && !defined(NOSOUND)
+		if (ShouldPushAudioData()) SDL_ClearAudioStream(SVidAudioStream);
+#endif
 		return SVidLoadNextFrame(); // Skip video and audio if the system is to slow
 	}
 
 #ifndef NOSOUND
-	if (HasAudio()) {
+	if (ShouldPushAudioData()) {
 		std::int16_t *buf = SVidAudioBuffer.get();
 		const auto len = Smacker_GetAudioData(SVidHandle, 0, buf);
+#ifdef USE_SDL3
+		if (!SDL_PutAudioStreamData(SVidAudioStream, buf, static_cast<int>(len))) {
+			LogError(LogCategory::Audio, "SDL_PutAudioStreamData (from SVidPlayContinue): {}", SDL_GetError());
+			SDL_ClearError();
+			SDL_DestroyAudioStream(SVidAudioStream);
+			SVidAudioStream = nullptr;
+		}
+#else
 		if (SVidAudioDepth == 16) {
 			SVidAudioDecoder->PushSamples(buf, len / 2);
 		} else {
 			SVidAudioDecoder->PushSamples(reinterpret_cast<const std::uint8_t *>(buf), len);
 		}
+#endif
 	}
 #endif
 
-	if (SDL_GetTicks() * 1000.0 >= SVidFrameEnd) {
+	if (GetTicksSmk() >= SVidFrameEnd) {
 		return SVidLoadNextFrame(); // Skip video if the system is to slow
 	}
 
 	if (!BlitFrame())
 		return false;
 
-	double now = SDL_GetTicks() * 1000.0;
+	const uint64_t now = GetTicksSmk();
 	if (now < SVidFrameEnd) {
-		SDL_Delay(static_cast<Uint32>((SVidFrameEnd - now) / 1000.0)); // wait with next frame if the system is too fast
+		SDL_Delay(static_cast<Uint32>(TimeSmkToMs(SVidFrameEnd - now))); // wait with next frame if the system is too fast
 	}
 
 	return SVidLoadNextFrame();
@@ -363,9 +505,14 @@ bool SVidPlayContinue()
 void SVidPlayEnd()
 {
 #ifndef NOSOUND
-	if (HasAudio()) {
+	if (SVidAudioStream) {
+#ifdef USE_SDL3
+		SDL_DestroyAudioStream(SVidAudioStream);
+		SVidAudioStream = nullptr;
+#else
 		SVidAudioStream = std::nullopt;
 		SVidAudioDecoder = nullptr;
+#endif
 		SVidAudioBuffer = nullptr;
 	}
 #endif
@@ -379,11 +526,27 @@ void SVidPlayEnd()
 
 #ifndef USE_SDL1
 	if (renderer != nullptr) {
-		texture = SDLWrap::CreateTexture(renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth, gnScreenHeight);
-		if (renderer != nullptr && SDL_RenderSetLogicalSize(renderer, gnScreenWidth, gnScreenHeight) <= -1) {
+		texture = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth, gnScreenHeight);
+		if (
+#ifdef USE_SDL3
+		    !SDL_SetRenderLogicalPresentation(renderer, gnScreenWidth, gnScreenHeight,
+		        *GetOptions().Graphics.integerScaling ? SDL_LOGICAL_PRESENTATION_INTEGER_SCALE : SDL_LOGICAL_PRESENTATION_STRETCH)
+#else
+		    SDL_RenderSetLogicalSize(renderer, gnScreenWidth, gnScreenHeight) <= -1
+#endif
+		) {
 			ErrSdl();
 		}
 	}
+#if defined(DEVILUTIONX_DISPLAY_PIXELFORMAT) && DEVILUTIONX_DISPLAY_PIXELFORMAT == SDL_PIXELFORMAT_INDEX8
+	else {
+		const Size windowSize = { static_cast<int>(gnScreenWidth), static_cast<int>(gnScreenHeight) };
+		SDL_DisplayMode nearestDisplayMode = GetNearestDisplayMode(windowSize, DEVILUTIONX_DISPLAY_PIXELFORMAT);
+		if (SDL_SetWindowDisplayMode(ghMainWnd, &nearestDisplayMode) != 0) {
+			ErrSdl();
+		}
+	}
+#endif
 #else
 	if (IsSVidVideoMode) {
 		SetVideoModeToPrimary(IsFullScreen(), gnScreenWidth, gnScreenHeight);
@@ -395,16 +558,24 @@ void SVidPlayEnd()
 void SVidMute()
 {
 #ifndef NOSOUND
+#ifdef USE_SDL3
+	SVidAutoStreamEnabled = false;
+#else
 	if (SVidAudioStream)
 		SVidAudioStream->mute();
+#endif
 #endif
 }
 
 void SVidUnmute()
 {
 #ifndef NOSOUND
+#ifdef USE_SDL3
+	if (SVidAudioStream != nullptr) SVidAutoStreamEnabled = true;
+#else
 	if (SVidAudioStream)
 		SVidAudioStream->unmute();
+#endif
 #endif
 }
 

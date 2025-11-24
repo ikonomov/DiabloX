@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "cursor.h"
+#include "engine/assets.hpp"
 #include "inv.h"
 #include "player.h"
 #include "storm/storm_net.hpp"
@@ -8,14 +9,39 @@
 namespace devilution {
 namespace {
 
+constexpr const char MissingMpqAssetsSkipReason[] = "MPQ assets (spawn.mpq or DIABDAT.MPQ) not found - skipping test suite";
+
 class InvTest : public ::testing::Test {
 public:
 	void SetUp() override
 	{
 		Players.resize(1);
 		MyPlayer = &Players[0];
+		if (missingMpqAssets_) {
+			GTEST_SKIP() << MissingMpqAssetsSkipReason;
+		}
 	}
+
+	static void SetUpTestSuite()
+	{
+		LoadCoreArchives();
+		LoadGameArchives();
+
+		missingMpqAssets_ = !HaveMainData();
+		if (missingMpqAssets_) {
+			return;
+		}
+
+		InitCursor();
+		LoadSpellData();
+		LoadItemData();
+	}
+
+private:
+	static bool missingMpqAssets_;
 };
+
+bool InvTest::missingMpqAssets_ = false;
 
 /* Set up a given item as a spell scroll, allowing for its usage. */
 void set_up_scroll(Item &item, SpellID spell)
@@ -165,15 +191,15 @@ TEST_F(InvTest, RemoveInvItem)
 	EXPECT_EQ(MyPlayer->_pNumInv, 0);
 }
 
-// Test removing an item from inventory with other items in it.
-TEST_F(InvTest, RemoveInvItem_other_item)
+// Test removing an item from middle of inventory list.
+TEST_F(InvTest, RemoveInvItem_shiftsListFromMiddle)
 {
 	SNetInitializeProvider(SELCONN_LOOPBACK, nullptr);
 
 	clear_inventory();
-	// Put a two-slot misc item and a ring into the inventory:
-	// | (item) | (item) | (ring) | ...
-	MyPlayer->_pNumInv = 2;
+	// Put a two-slot misc item and a ring into the inventory, followed by another two-slot misc item:
+	// | (item) | (item) | (ring) | (item) | (item) | ...
+	MyPlayer->_pNumInv = 3;
 	MyPlayer->InvGrid[0] = 1;
 	MyPlayer->InvGrid[1] = -1;
 	MyPlayer->InvList[0]._itype = ItemType::Misc;
@@ -181,12 +207,54 @@ TEST_F(InvTest, RemoveInvItem_other_item)
 	MyPlayer->InvGrid[2] = 2;
 	MyPlayer->InvList[1]._itype = ItemType::Ring;
 
+	MyPlayer->InvGrid[3] = 3;
+	MyPlayer->InvGrid[4] = -3;
+	MyPlayer->InvList[2]._itype = ItemType::Misc;
+
+	MyPlayer->RemoveInvItem(1);
+	EXPECT_EQ(MyPlayer->InvGrid[0], 1);
+	EXPECT_EQ(MyPlayer->InvGrid[1], -1);
+	EXPECT_EQ(MyPlayer->InvGrid[2], 0);
+	EXPECT_EQ(MyPlayer->InvGrid[3], 2);
+	EXPECT_EQ(MyPlayer->InvGrid[4], -2);
+
+	EXPECT_EQ(MyPlayer->InvList[0]._itype, ItemType::Misc);
+	EXPECT_EQ(MyPlayer->InvList[1]._itype, ItemType::Misc);
+
+	EXPECT_EQ(MyPlayer->_pNumInv, 2);
+}
+
+// Test removing an item from front of inventory list.
+TEST_F(InvTest, RemoveInvItem_shiftsListFromFront)
+{
+	SNetInitializeProvider(SELCONN_LOOPBACK, nullptr);
+
+	clear_inventory();
+	// Put a two-slot misc item and a ring into the inventory, followed by another two-slot misc item:
+	// | (item) | (item) | (ring) | (item) | (item) | ...
+	MyPlayer->_pNumInv = 3;
+	MyPlayer->InvGrid[0] = 1;
+	MyPlayer->InvGrid[1] = -1;
+	MyPlayer->InvList[0]._itype = ItemType::Misc;
+
+	MyPlayer->InvGrid[2] = 2;
+	MyPlayer->InvList[1]._itype = ItemType::Ring;
+
+	MyPlayer->InvGrid[3] = 3;
+	MyPlayer->InvGrid[4] = -3;
+	MyPlayer->InvList[2]._itype = ItemType::Misc;
+
 	MyPlayer->RemoveInvItem(0);
 	EXPECT_EQ(MyPlayer->InvGrid[0], 0);
 	EXPECT_EQ(MyPlayer->InvGrid[1], 0);
 	EXPECT_EQ(MyPlayer->InvGrid[2], 1);
+	EXPECT_EQ(MyPlayer->InvGrid[3], 2);
+	EXPECT_EQ(MyPlayer->InvGrid[4], -2);
+
 	EXPECT_EQ(MyPlayer->InvList[0]._itype, ItemType::Ring);
-	EXPECT_EQ(MyPlayer->_pNumInv, 1);
+	EXPECT_EQ(MyPlayer->InvList[1]._itype, ItemType::Misc);
+
+	EXPECT_EQ(MyPlayer->_pNumInv, 2);
 }
 
 // Test removing an item from the belt
@@ -281,26 +349,40 @@ TEST_F(InvTest, RemoveCurrentSpellScrollFirstMatchFromBelt)
 	EXPECT_TRUE(MyPlayer->SpdList[3].isEmpty());
 }
 
-TEST_F(InvTest, ItemSize)
+TEST_F(InvTest, ItemSizeRuneOfStone)
 {
-	Item testItem {};
-
 	// Inventory sizes are currently determined by examining the sprite size
 	// rune of stone and grey suit are adjacent in the sprite list so provide an easy check for off-by-one errors
+	if (!gbIsHellfire) return;
+	Item testItem {};
 	InitializeItem(testItem, IDI_RUNEOFSTONE);
 	EXPECT_EQ(GetInventorySize(testItem), Size(1, 1));
+}
+
+TEST_F(InvTest, ItemSizeGreySuit)
+{
+	if (!gbIsHellfire) return;
+	Item testItem {};
 	InitializeItem(testItem, IDI_GREYSUIT);
 	EXPECT_EQ(GetInventorySize(testItem), Size(2, 2));
+}
 
-	// auric amulet is the first used hellfire sprite, but there's multiple unused sprites before it in the list.
+TEST_F(InvTest, ItemSizeAuric)
+{
+	// Auric amulet is the first used hellfire sprite, but there's multiple unused sprites before it in the list.
 	// unfortunately they're the same size so this is less valuable as a test.
+	if (!gbIsHellfire) return;
+	Item testItem {};
 	InitializeItem(testItem, IDI_AURIC);
 	EXPECT_EQ(GetInventorySize(testItem), Size(1, 1));
+}
 
-	// gold is the last diablo sprite, off by ones will end up loading a 1x1 unused sprite from hellfire but maybe
-	//  this'll segfault if we make a mistake in the future?
-	InitializeItem(testItem, IDI_GOLD);
-	EXPECT_EQ(GetInventorySize(testItem), Size(1, 1));
+TEST_F(InvTest, ItemSizeLastDiabloItem)
+{
+	// Short battle bow is the last diablo sprite, off by ones will end up loading a 1x1 unused sprite from hellfire,.
+	Item testItem {};
+	InitializeItem(testItem, IDI_SHORT_BATTLE_BOW);
+	EXPECT_EQ(GetInventorySize(testItem), Size(2, 3));
 }
 
 } // namespace

@@ -6,6 +6,18 @@
 
 #include <config.h>
 
+#ifdef USE_SDL3
+#include <SDL3/SDL_thread.h>
+#include <SDL3/SDL_timer.h>
+#else
+#include <SDL.h>
+
+#ifdef USE_SDL1
+#include "utils/sdl2_to_1_2_backports.h"
+#endif
+#include "utils/sdl_compat.h"
+#endif
+
 #include <fmt/format.h>
 
 #include "diablo.h"
@@ -22,8 +34,9 @@ namespace {
 
 /** Set to true when a fatal error is encountered and the application should shut down. */
 bool Terminating = false;
+
 /** Thread id of the last callee to FreeDlg(). */
-SDL_threadID CleanupThreadId;
+SDL_ThreadID CleanupThreadId;
 
 /**
  * @brief Cleans up after a fatal application error.
@@ -46,11 +59,16 @@ void FreeDlg()
 
 } // namespace
 
-void app_fatal(string_view str)
+void DisplayFatalErrorAndExit(std::string_view title, std::string_view body)
 {
 	FreeDlg();
-	UiErrorOkDialog(_("Error"), str);
+	UiErrorOkDialog(title, body);
 	diablo_quit(1);
+}
+
+void app_fatal(std::string_view str)
+{
+	DisplayFatalErrorAndExit(_("Error"), str);
 }
 
 #ifdef _DEBUG
@@ -60,34 +78,29 @@ void assert_fail(int nLineNo, const char *pszFile, const char *pszFail)
 }
 #endif
 
-void ErrDlg(const char *title, string_view error, string_view logFilePath, int logLineNr)
+void ErrDlg(const char *title, std::string_view error, std::string_view logFilePath, int logLineNr)
 {
-	FreeDlg();
-
-	std::string text = fmt::format(fmt::runtime(_(/* TRANSLATORS: Error message that displays relevant information for bug report */ "{:s}\n\nThe error occurred at: {:s} line {:d}")), error, logFilePath, logLineNr);
-
-	UiErrorOkDialog(title, text);
-	diablo_quit(1);
+	DisplayFatalErrorAndExit(
+	    title,
+	    fmt::format(fmt::runtime(_(/* TRANSLATORS: Error message that displays relevant information for bug report */ "{:s}\n\nThe error occurred at: {:s} line {:d}")),
+	        error, logFilePath, logLineNr));
 }
 
-void InsertCDDlg(string_view archiveName)
+void InsertCDDlg(std::string_view archiveName)
 {
-	std::string text = fmt::format(
-	    fmt::runtime(_("Unable to open main data archive ({:s}).\n"
-	                   "\n"
-	                   "Make sure that it is in the game folder.")),
-	    archiveName);
-
-	UiErrorOkDialog(_("Data File Error"), text);
-	diablo_quit(1);
+	DisplayFatalErrorAndExit(_("Data File Error"),
+	    fmt::format(fmt::runtime(_("Unable to open main data archive ({:s}).\n"
+	                               "\n"
+	                               "Make sure that it is in the game folder.")),
+	        archiveName));
 }
 
-void DirErrorDlg(string_view error)
+void DirErrorDlg(std::string_view error)
 {
-	std::string text = fmt::format(fmt::runtime(_(/* TRANSLATORS: Error when Program is not allowed to write data */ "Unable to write to location:\n{:s}")), error);
-
-	UiErrorOkDialog(_("Read-Only Directory Error"), text);
-	diablo_quit(1);
+	DisplayFatalErrorAndExit(
+	    _("Read-Only Directory Error"),
+	    fmt::format(fmt::runtime(_(/* TRANSLATORS: Error when Program is not allowed to write data */ "Unable to write to location:\n{:s}")),
+	        error));
 }
 
 } // namespace devilution

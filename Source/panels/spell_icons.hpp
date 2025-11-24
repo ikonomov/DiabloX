@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
+
+#include <expected.hpp>
 
 #include "engine/clx_sprite.hpp"
 #include "engine/point.hpp"
@@ -10,6 +13,60 @@
 #define SPLICONLENGTH 56
 
 namespace devilution {
+
+enum class SpellIcon : uint8_t {
+	Firebolt,
+	Healing,
+	Lightning,
+	Flash,
+	Identify,
+	FireWall,
+	TownPortal,
+	StoneCurse,
+	Infravision,
+	HealOther,
+	Nova,
+	Fireball,
+	ManaShield,
+	FlameWave,
+	Inferno,
+	ChainLightning,
+	Sentinel, // unused
+	DoomSerpents,
+	BloodRitual,  // unused
+	Invisibility, // unused
+	Golem,
+	Etherealize,
+	BloodBoil,
+	Teleport,
+	Apocalypse,
+	ItemRepair,
+	Empty,
+	Phasing,
+	StaffRecharge,
+	BoneSpirit,
+	RedSkull,  // unused
+	Pentagram, // unused
+	FireCloud, // unused
+	LongHorn,  // unused
+	PentaStar, // unused
+	BloodStar,
+	TrapDisarm,
+	Elemental,
+	ChargedBolt,
+	Telekinesis,
+	Resurrect,
+	HolyBolt,
+	Warp,
+	Search,
+	Reflect,
+	LightningWall,
+	Immolation,
+	Berserk,
+	RingOfFire,
+	Jester,
+	Mana,
+};
 
 /**
  * Draw a large (56x56) spell icon onto the given buffer.
@@ -52,10 +109,10 @@ void DrawSmallSpellIconBorder(const Surface &out, Point position);
  */
 void SetSpellTrans(SpellType t);
 
-void LoadLargeSpellIcons();
+tl::expected<void, std::string> LoadLargeSpellIcons();
 void FreeLargeSpellIcons();
 
-void LoadSmallSpellIcons();
+tl::expected<void, std::string> LoadSmallSpellIcons();
 void FreeSmallSpellIcons();
 
 } // namespace devilution

@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include "utils/stdcompat/optional.hpp"
-
 namespace devilution {
 
 namespace paths {

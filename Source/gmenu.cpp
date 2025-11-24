@@ -5,22 +5,35 @@
  */
 #include "gmenu.h"
 
+#include <algorithm>
 #include <cstdint>
+#include <optional>
+
+#ifdef USE_SDL3
+#include <SDL3/SDL_keycode.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3/SDL_timer.h>
+#else
+#include <SDL.h>
+#endif
 
 #include "DiabloUI/ui_flags.hpp"
+#include "appfat.h"
 #include "control.h"
 #include "controls/axis_direction.h"
 #include "controls/controller_motion.h"
-#include "engine.h"
 #include "engine/clx_sprite.hpp"
+#include "engine/demomode.h"
 #include "engine/load_cel.hpp"
 #include "engine/render/clx_render.hpp"
+#include "engine/render/primitive_render.hpp"
 #include "engine/render/text_render.hpp"
+#include "headless_mode.hpp"
 #include "options.h"
 #include "stores.h"
 #include "utils/language.h"
-#include "utils/stdcompat/algorithm.hpp"
-#include "utils/stdcompat/optional.hpp"
+#include "utils/sdl_compat.h"
 #include "utils/ui_fwd.h"
 
 namespace devilution {
@@ -79,7 +92,7 @@ void GmenuUpDown(bool isDown)
 			}
 			if (sgpCurrItem->enabled()) {
 				if (i != 0)
-					PlaySFX(IS_TITLEMOV);
+					PlaySFX(SfxID::MenuMove);
 				return;
 			}
 		}
@@ -115,21 +128,22 @@ int GmenuGetLineWidth(TMenuItem *pItem)
 
 void GmenuDrawMenuItem(const Surface &out, TMenuItem *pItem, int y)
 {
-	int w = GmenuGetLineWidth(pItem);
+	const int w = GmenuGetLineWidth(pItem);
 	if (pItem->isSlider()) {
-		int uiPositionX = GetUIRectangle().position.x;
+		const int uiPositionX = GetUIRectangle().position.x;
 		ClxDraw(out, { SliderValueBoxLeft + uiPositionX, y + 40 }, (*optbar_cel)[0]);
 		const uint16_t step = pItem->dwFlags & 0xFFF;
 		const uint16_t steps = std::max<uint16_t>(pItem->sliderSteps(), 2);
 		const uint16_t pos = SliderFillMin + step * (SliderFillMax - SliderFillMin) / steps;
 		SDL_Rect rect = MakeSdlRect(SliderValueLeft + uiPositionX, y + SliderValuePaddingTop, pos, SliderValueHeight);
-		SDL_FillRect(out.surface, &rect, 205);
+		SDL_FillSurfaceRect(out.surface, &rect, 205);
 		ClxDraw(out, { SliderValueLeft + pos - SliderMarkerWidth / 2 + uiPositionX, y + SliderValuePaddingTop + SliderValueHeight - 1 }, (*option_cel)[0]);
 	}
 
-	int x = (gnScreenWidth - w) / 2;
-	UiFlags style = pItem->enabled() ? UiFlags::ColorGold : UiFlags::ColorBlack;
-	DrawString(out, _(pItem->pszStr), Point { x, y }, style | UiFlags::FontSize46, 2);
+	const int x = (gnScreenWidth - w) / 2;
+	const UiFlags style = pItem->enabled() ? UiFlags::ColorGold : UiFlags::ColorBlack;
+	DrawString(out, _(pItem->pszStr), Point { x, y },
+	    { .flags = style | UiFlags::FontSize46, .spacing = 2 });
 	if (pItem == sgpCurrItem) {
 		const ClxSprite sprite = (*PentSpin_cel)[PentSpn2Spin()];
 		ClxDraw(out, { x - 54, y + 51 }, sprite);
@@ -149,7 +163,7 @@ void GameMenuMove()
 
 bool GmenuMouseIsOverSlider()
 {
-	int uiPositionX = GetUIRectangle().position.x;
+	const int uiPositionX = GetUIRectangle().position.x;
 	if (MousePosition.x < SliderValueLeft + uiPositionX) {
 		return false;
 	}
@@ -161,7 +175,7 @@ bool GmenuMouseIsOverSlider()
 
 int GmenuGetSliderFill()
 {
-	return clamp(MousePosition.x - SliderValueLeft - GetUIRectangle().position.x, SliderFillMin, SliderFillMax);
+	return std::clamp(MousePosition.x - SliderValueLeft - GetUIRectangle().position.x, SliderFillMin, SliderFillMax);
 }
 
 } // namespace
@@ -173,8 +187,8 @@ void gmenu_draw_pause(const Surface &out)
 	if (leveltype != DTYPE_TOWN)
 		RedBack(out);
 	if (sgpCurrentMenu == nullptr) {
-		LightTableIndex = 0;
-		DrawString(out, _("Pause"), { { 0, 0 }, { gnScreenWidth, GetMainPanel().position.y } }, UiFlags::FontSize46 | UiFlags::ColorGold | UiFlags::AlignCenter | UiFlags::VerticalCenter, 2);
+		DrawString(out, _("Pause"), { { 0, 0 }, { gnScreenWidth, GetMainPanel().position.y } },
+		    { .flags = UiFlags::FontSize46 | UiFlags::ColorGold | UiFlags::AlignCenter | UiFlags::VerticalCenter, .spacing = 2 });
 	}
 }
 
@@ -198,9 +212,8 @@ void gmenu_init_menu()
 	if (HeadlessMode)
 		return;
 
-	if (gbIsHellfire)
-		sgpLogo = LoadCel("data\\hf_logo3", 430);
-	else
+	sgpLogo = LoadOptionalCel("data\\hf_logo3", 430);
+	if (!sgpLogo.has_value())
 		sgpLogo = LoadCel("data\\diabsmal", 296);
 	PentSpin_cel = LoadCel("data\\pentspin", 48);
 	option_cel = LoadCel("data\\option", SliderMarkerWidth);
@@ -230,8 +243,9 @@ void gmenu_set_items(TMenuItem *pItem, void (*gmFunc)())
 	// BUGFIX: OOB access when sgCurrentMenuIdx is 0; should be set to NULL instead. (fixed)
 	sgpCurrItem = sgCurrentMenuIdx > 0 ? &sgpCurrentMenu[sgCurrentMenuIdx - 1] : nullptr;
 	GmenuUpDown(true);
-	if (sgpCurrentMenu == nullptr)
+	if (sgpCurrentMenu == nullptr && !demo::IsRunning()) {
 		SaveOptions();
+	}
 }
 
 void gmenu_draw(const Surface &out)
@@ -240,16 +254,15 @@ void gmenu_draw(const Surface &out)
 		GameMenuMove();
 		if (gmenu_current_option != nullptr)
 			gmenu_current_option();
-		if (gbIsHellfire) {
+		if (sgpLogo->numSprites() > 1) {
 			const uint32_t ticks = SDL_GetTicks();
 			if ((int)(ticks - LogoAnim_tick) > 25) {
 				++LogoAnim_frame;
-				if (LogoAnim_frame >= 16)
-					LogoAnim_frame = 0;
+				LogoAnim_frame = LogoAnim_frame % sgpLogo->numSprites();
 				LogoAnim_tick = ticks;
 			}
 		}
-		int uiPositionY = GetUIRectangle().position.y;
+		const int uiPositionY = GetUIRectangle().position.y;
 		const ClxSprite sprite = (*sgpLogo)[LogoAnim_frame];
 		ClxDraw(out, { (gnScreenWidth - sprite.width()) / 2, 102 + uiPositionY }, sprite);
 		int y = 110 + uiPositionY;
@@ -272,12 +285,12 @@ bool gmenu_presskeys(SDL_Keycode vkey)
 	case SDLK_KP_ENTER:
 	case SDLK_RETURN:
 		if (sgpCurrItem->enabled()) {
-			PlaySFX(IS_TITLEMOV);
+			PlaySFX(SfxID::MenuMove);
 			sgpCurrItem->fnMenu(true);
 		}
 		break;
 	case SDLK_ESCAPE:
-		PlaySFX(IS_TITLEMOV);
+		PlaySFX(SfxID::MenuMove);
 		gmenu_set_items(nullptr, nullptr);
 		break;
 	case SDLK_SPACE:
@@ -332,7 +345,7 @@ bool gmenu_left_mouse(bool isDown)
 	if (MousePosition.y - (GMenuTop + uiPosition.y) < 0) {
 		return true;
 	}
-	int i = (MousePosition.y - (GMenuTop + uiPosition.y)) / GMenuItemHeight;
+	const int i = (MousePosition.y - (GMenuTop + uiPosition.y)) / GMenuItemHeight;
 	if (i >= sgCurrentMenuIdx) {
 		return true;
 	}
@@ -340,8 +353,8 @@ bool gmenu_left_mouse(bool isDown)
 	if (!pItem->enabled()) {
 		return true;
 	}
-	int w = GmenuGetLineWidth(pItem);
-	uint16_t screenWidth = GetScreenWidth();
+	const int w = GmenuGetLineWidth(pItem);
+	const uint16_t screenWidth = GetScreenWidth();
 	if (MousePosition.x < screenWidth / 2 - w / 2) {
 		return true;
 	}
@@ -349,7 +362,7 @@ bool gmenu_left_mouse(bool isDown)
 		return true;
 	}
 	sgpCurrItem = pItem;
-	PlaySFX(IS_TITLEMOV);
+	PlaySFX(SfxID::MenuMove);
 	if (pItem->isSlider()) {
 		isDraggingSlider = GmenuMouseIsOverSlider();
 		gmenu_on_mouse_move();
@@ -362,14 +375,14 @@ bool gmenu_left_mouse(bool isDown)
 void gmenu_slider_set(TMenuItem *pItem, int min, int max, int value)
 {
 	assert(pItem);
-	uint16_t nSteps = std::max<uint16_t>(pItem->sliderSteps(), 2);
+	const uint16_t nSteps = std::max<uint16_t>(pItem->sliderSteps(), 2);
 	pItem->setSliderStep(((max - min - 1) / 2 + (value - min) * nSteps) / (max - min));
 }
 
 int gmenu_slider_get(TMenuItem *pItem, int min, int max)
 {
-	uint16_t step = pItem->sliderStep();
-	uint16_t steps = std::max<uint16_t>(pItem->sliderSteps(), 2);
+	const uint16_t step = pItem->sliderStep();
+	const uint16_t steps = std::max<uint16_t>(pItem->sliderSteps(), 2);
 	return min + (step * (max - min) + (steps - 1) / 2) / steps;
 }
 

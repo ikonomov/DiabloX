@@ -1,7 +1,16 @@
 #include "controls/menu_controls.h"
 
+#ifdef USE_SDL3
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_keyboard.h>
+#include <SDL3/SDL_keycode.h>
+#else
+#include <SDL.h>
+#endif
+
 #include "DiabloUI/diabloui.h"
 #include "controls/axis_direction.h"
+#include "controls/control_mode.hpp"
 #include "controls/controller.h"
 #include "controls/controller_motion.h"
 #include "controls/plrctrls.h"
@@ -32,7 +41,7 @@ std::vector<MenuAction> GetMenuActions(const SDL_Event &event)
 			continue;
 		}
 
-		bool isGamepadMotion = IsControllerMotion(event);
+		const bool isGamepadMotion = IsControllerMotion(event);
 		DetectInputMethod(event, ctrlEvent);
 		if (isGamepadMotion) {
 			menuActions.push_back(GetMenuHeldUpDownAction());
@@ -77,7 +86,13 @@ std::vector<MenuAction> GetMenuActions(const SDL_Event &event)
 		return menuActions;
 	}
 
-	if (event.type == SDL_MOUSEBUTTONDOWN) {
+	if (event.type ==
+#ifdef USE_SDL3
+	    SDL_EVENT_MOUSE_BUTTON_DOWN
+#else
+	    SDL_MOUSEBUTTONDOWN
+#endif
+	) {
 		switch (event.button.button) {
 		case SDL_BUTTON_X1:
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
@@ -88,8 +103,8 @@ std::vector<MenuAction> GetMenuActions(const SDL_Event &event)
 	}
 
 #if HAS_KBCTRL == 0
-	if (event.type == SDL_KEYDOWN) {
-		SDL_Keycode sym = event.key.keysym.sym;
+	if (event.type == SDL_EVENT_KEY_DOWN) {
+		SDL_Keycode sym = SDLC_EventKey(event);
 		remap_keyboard_key(&sym);
 		switch (sym) {
 		case SDLK_UP:
@@ -97,32 +112,41 @@ std::vector<MenuAction> GetMenuActions(const SDL_Event &event)
 		case SDLK_DOWN:
 			return { MenuAction_DOWN };
 		case SDLK_TAB:
-			if ((SDL_GetModState() & KMOD_SHIFT) != 0)
+			if ((SDL_GetModState() & SDL_KMOD_SHIFT) != 0) {
 				return { MenuAction_UP };
-			else
-				return { MenuAction_DOWN };
+			}
+			return { MenuAction_DOWN };
 		case SDLK_PAGEUP:
 			return { MenuAction_PAGE_UP };
 		case SDLK_PAGEDOWN:
 			return { MenuAction_PAGE_DOWN };
 		case SDLK_RETURN:
-			if ((SDL_GetModState() & KMOD_ALT) == 0) {
+			if ((SDL_GetModState() & SDL_KMOD_ALT) == 0) {
 				return { MenuAction_SELECT };
 			}
 			break;
 		case SDLK_KP_ENTER:
 			return { MenuAction_SELECT };
 		case SDLK_SPACE:
-			if (!textInputActive) {
+			if (!IsTextInputActive()) {
 				return { MenuAction_SELECT };
 			}
 			break;
 		case SDLK_DELETE:
-			return { MenuAction_DELETE };
+			if (!IsTextInputActive()) {
+				return { MenuAction_DELETE };
+			}
+			break;
 		case SDLK_LEFT:
-			return { MenuAction_LEFT };
+			if (!IsTextInputActive()) {
+				return { MenuAction_LEFT };
+			}
+			break;
 		case SDLK_RIGHT:
-			return { MenuAction_RIGHT };
+			if (!IsTextInputActive()) {
+				return { MenuAction_RIGHT };
+			}
+			break;
 		case SDLK_ESCAPE:
 			return { MenuAction_BACK };
 		default:

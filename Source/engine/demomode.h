@@ -7,7 +7,11 @@
 
 #include <cstdint>
 
+#ifdef USE_SDL3
+#include <SDL3/SDL_events.h>
+#else
 #include <SDL.h>
+#endif
 
 namespace devilution {
 
@@ -28,6 +32,8 @@ void RecordMessage(const SDL_Event &event, uint16_t modState);
 
 void NotifyGameLoopStart();
 void NotifyGameLoopEnd();
+
+uint32_t SimulateMillisecondsSinceStartup();
 #else
 inline void OverrideOptions()
 {
@@ -59,6 +65,10 @@ inline void NotifyGameLoopStart()
 }
 inline void NotifyGameLoopEnd()
 {
+}
+inline uint32_t SimulateMillisecondsSinceStartup()
+{
+	return 0;
 }
 #endif
 

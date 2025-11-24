@@ -9,7 +9,6 @@
 #include <cstring>
 #include <memory>
 
-#include <SDL.h>
 #include <pkware.h>
 
 #include "encrypt.h"
@@ -18,13 +17,23 @@ namespace devilution {
 
 namespace {
 
+struct TDataInfo {
+	std::byte *srcData;
+	uint32_t srcOffset;
+	uint32_t srcSize;
+	std::byte *destData;
+	uint32_t destOffset;
+	size_t destSize;
+	bool error;
+};
+
 unsigned int PkwareBufferRead(char *buf, unsigned int *size, void *param) // NOLINT(readability-non-const-parameter)
 {
 	auto *pInfo = reinterpret_cast<TDataInfo *>(param);
 
 	uint32_t sSize;
-	if (*size >= pInfo->size - pInfo->srcOffset) {
-		sSize = pInfo->size - pInfo->srcOffset;
+	if (*size >= pInfo->srcSize - pInfo->srcOffset) {
+		sSize = pInfo->srcSize - pInfo->srcOffset;
 	} else {
 		sSize = *size;
 	}
@@ -39,85 +48,35 @@ void PkwareBufferWrite(char *buf, unsigned int *size, void *param) // NOLINT(rea
 {
 	auto *pInfo = reinterpret_cast<TDataInfo *>(param);
 
+	pInfo->error = pInfo->error || pInfo->destOffset + *size > pInfo->destSize;
+	if (pInfo->error) {
+		return;
+	}
+
 	memcpy(pInfo->destData + pInfo->destOffset, buf, *size);
 	pInfo->destOffset += *size;
 }
 
-const std::array<std::array<uint32_t, 256>, 5> hashtable = []() {
-	uint32_t seed = 0x00100001;
-	std::array<std::array<uint32_t, 256>, 5> ret = {};
-
-	for (int i = 0; i < 256; i++) {
-		for (int j = 0; j < 5; j++) { // NOLINT(modernize-loop-convert)
-			seed = (125 * seed + 3) % 0x2AAAAB;
-			uint32_t ch = (seed & 0xFFFF);
-			seed = (125 * seed + 3) % 0x2AAAAB;
-			ret[j][i] = ch << 16 | (seed & 0xFFFF);
-		}
-	}
-	return ret;
-}();
-
 } // namespace
 
-void Decrypt(uint32_t *castBlock, uint32_t size, uint32_t key)
+uint32_t PkwareCompress(std::byte *srcData, uint32_t size)
 {
-	uint32_t seed = 0xEEEEEEEE;
-	for (uint32_t i = 0; i < (size >> 2); i++) {
-		uint32_t t = SDL_SwapLE32(*castBlock);
-		seed += hashtable[4][(key & 0xFF)];
-		t ^= seed + key;
-		*castBlock = t;
-		seed += t + (seed << 5) + 3;
-		castBlock++;
-		key = (((key << 0x15) ^ 0xFFE00000) + 0x11111111) | (key >> 0x0B);
-	}
-}
-
-void Encrypt(uint32_t *castBlock, uint32_t size, uint32_t key)
-{
-	uint32_t seed = 0xEEEEEEEE;
-	for (unsigned i = 0; i < (size >> 2); i++) {
-		uint32_t ch = *castBlock;
-		uint32_t t = ch;
-		seed += hashtable[4][(key & 0xFF)];
-		t ^= seed + key;
-		*castBlock = SDL_SwapLE32(t);
-		castBlock++;
-		seed += ch + (seed << 5) + 3;
-		key = (((key << 0x15) ^ 0xFFE00000) + 0x11111111) | (key >> 0x0B);
-	}
-}
-
-uint32_t Hash(const char *s, int type)
-{
-	uint32_t seed1 = 0x7FED7FED;
-	uint32_t seed2 = 0xEEEEEEEE;
-	while (s != nullptr && (*s != '\0')) {
-		int8_t ch = *s++;
-		ch = toupper(ch);
-		seed1 = hashtable[type][ch] ^ (seed1 + seed2);
-		seed2 += ch + seed1 + (seed2 << 5) + 3;
-	}
-	return seed1;
-}
-
-uint32_t PkwareCompress(byte *srcData, uint32_t size)
-{
-	std::unique_ptr<char[]> ptr = std::make_unique<char[]>(CMP_BUFFER_SIZE);
+	const std::unique_ptr<char[]> ptr = std::make_unique<char[]>(CMP_BUFFER_SIZE);
 
 	unsigned destSize = 2 * size;
 	if (destSize < 2 * 4096)
 		destSize = 2 * 4096;
 
-	std::unique_ptr<byte[]> destData { new byte[destSize] };
+	const std::unique_ptr<std::byte[]> destData { new std::byte[destSize] };
 
 	TDataInfo param;
 	param.srcData = srcData;
 	param.srcOffset = 0;
+	param.srcSize = size;
 	param.destData = destData.get();
 	param.destOffset = 0;
-	param.size = size;
+	param.destSize = destSize;
+	param.error = false;
 
 	unsigned type = 0;
 	unsigned dsize = 4096;
@@ -131,20 +90,27 @@ uint32_t PkwareCompress(byte *srcData, uint32_t size)
 	return size;
 }
 
-void PkwareDecompress(byte *inBuff, uint32_t recvSize, int maxBytes)
+uint32_t PkwareDecompress(std::byte *inBuff, uint32_t recvSize, size_t maxBytes)
 {
-	std::unique_ptr<char[]> ptr = std::make_unique<char[]>(CMP_BUFFER_SIZE);
-	std::unique_ptr<byte[]> outBuff { new byte[maxBytes] };
+	const std::unique_ptr<char[]> ptr = std::make_unique<char[]>(CMP_BUFFER_SIZE);
+	const std::unique_ptr<std::byte[]> outBuff { new std::byte[maxBytes] };
 
 	TDataInfo info;
 	info.srcData = inBuff;
 	info.srcOffset = 0;
+	info.srcSize = recvSize;
 	info.destData = outBuff.get();
 	info.destOffset = 0;
-	info.size = recvSize;
+	info.destSize = maxBytes;
+	info.error = false;
 
 	explode(PkwareBufferRead, PkwareBufferWrite, ptr.get(), &info);
+	if (info.error) {
+		return 0;
+	}
+
 	memcpy(inBuff, outBuff.get(), info.destOffset);
+	return info.destOffset;
 }
 
 } // namespace devilution

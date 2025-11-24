@@ -5,27 +5,27 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
 
-#include "engine.h"
+#include <expected.hpp>
+
 #include "engine/clx_sprite.hpp"
 #include "engine/point.hpp"
 #include "engine/rectangle.hpp"
 #include "engine/render/scrollrt.h"
 #include "engine/world_tile.hpp"
+#include "levels/dun_tile.hpp"
+#include "levels/gendung_defs.hpp"
 #include "utils/attributes.h"
 #include "utils/bitset2d.hpp"
 #include "utils/enum_traits.h"
-#include "utils/stdcompat/optional.hpp"
 
 namespace devilution {
-
-#define DMAXX 40
-#define DMAXY 40
-
-#define MAXDUNX (16 + DMAXX * 2 + 16)
-#define MAXDUNY (16 + DMAXY * 2 + 16)
 
 #define MAXTHEMES 50
 #define MAXTILES 1379
@@ -58,29 +58,8 @@ inline bool IsArenaLevel(_setlevels setLevel)
 	}
 }
 
-enum dungeon_type : int8_t {
-	DTYPE_TOWN,
-	DTYPE_CATHEDRAL,
-	DTYPE_CATACOMBS,
-	DTYPE_CAVES,
-	DTYPE_HELL,
-	DTYPE_NEST,
-	DTYPE_CRYPT,
-
-	DTYPE_LAST = DTYPE_CRYPT,
-	DTYPE_NONE = -1,
-};
-
-enum lvl_entry : uint8_t {
-	ENTRY_MAIN,
-	ENTRY_PREV,
-	ENTRY_SETLVL,
-	ENTRY_RTNLVL,
-	ENTRY_LOAD,
-	ENTRY_WARPLVL,
-	ENTRY_TWARPDN,
-	ENTRY_TWARPUP,
-};
+tl::expected<dungeon_type, std::string> ParseDungeonType(std::string_view value);
+tl::expected<_setlevels, std::string> ParseSetLevel(std::string_view value);
 
 enum class DungeonFlag : uint8_t {
 	// clang-format off
@@ -99,20 +78,6 @@ enum class DungeonFlag : uint8_t {
 };
 use_enum_as_flags(DungeonFlag);
 
-enum class TileProperties : uint8_t {
-	// clang-format off
-	None             = 0,
-	Solid            = 1 << 0,
-	BlockLight       = 1 << 1,
-	BlockMissile     = 1 << 2,
-	Transparent      = 1 << 3,
-	TransparentLeft  = 1 << 4,
-	TransparentRight = 1 << 5,
-	Trap             = 1 << 7,
-	// clang-format on
-};
-use_enum_as_flags(TileProperties);
-
 enum _difficulty : uint8_t {
 	DIFF_NORMAL,
 	DIFF_NIGHTMARE,
@@ -123,7 +88,7 @@ enum _difficulty : uint8_t {
 
 struct THEME_LOC {
 	RectangleOf<uint8_t> room;
-	int16_t ttval;
+	int8_t ttval;
 };
 
 struct MegaTile {
@@ -131,10 +96,6 @@ struct MegaTile {
 	uint16_t micro2;
 	uint16_t micro3;
 	uint16_t micro4;
-};
-
-struct MICROS {
-	uint16_t mt[16];
 };
 
 struct ShadowStruct {
@@ -158,16 +119,14 @@ extern Bitset2d<DMAXX, DMAXY> Protected;
 extern WorldTileRectangle SetPieceRoom;
 /** Specifies the active set quest piece in coordinate. */
 extern WorldTileRectangle SetPiece;
-/** Contains the contents of the single player quest DUN file. */
-extern std::unique_ptr<uint16_t[]> pSetPiece;
 extern OptionalOwnedClxSpriteList pSpecialCels;
 /** Specifies the tile definitions of the active dungeon type; (e.g. levels/l1data/l1.til). */
 extern DVL_API_FOR_TEST std::unique_ptr<MegaTile[]> pMegaTiles;
-extern std::unique_ptr<byte[]> pDungeonCels;
+extern DVL_API_FOR_TEST std::unique_ptr<std::byte[]> pDungeonCels;
 /**
  * List tile properties
  */
-extern DVL_API_FOR_TEST std::array<TileProperties, MAXTILES> SOLData;
+extern DVL_API_FOR_TEST TileProperties SOLData[MAXTILES];
 /** Specifies the minimum X,Y-coordinates of the map. */
 extern WorldTilePosition dminPosition;
 /** Specifies the maximum X,Y-coordinates of the map. */
@@ -179,7 +138,7 @@ extern DVL_API_FOR_TEST uint8_t currlevel;
 extern bool setlevel;
 /** Specifies the active quest level of the current game. */
 extern _setlevels setlvlnum;
-/** Specifies the player viewpoint X-coordinate of the map. */
+/** Specifies the dungeon type of the active quest level of the current game. */
 extern dungeon_type setlvltype;
 /** Specifies the player viewpoint X,Y-coordinates of the map. */
 extern DVL_API_FOR_TEST Point ViewPosition;
@@ -190,11 +149,11 @@ extern std::array<bool, 256> TransList;
 /** Contains the piece IDs of each tile on the map. */
 extern DVL_API_FOR_TEST uint16_t dPiece[MAXDUNX][MAXDUNY];
 /** Map of micros that comprises a full tile for any given dungeon piece. */
-extern MICROS DPieceMicros[MAXTILES];
+extern DVL_API_FOR_TEST MICROS DPieceMicros[MAXTILES];
 /** Specifies the transparency at each coordinate of the map. */
 extern DVL_API_FOR_TEST int8_t dTransVal[MAXDUNX][MAXDUNY];
 /** Current realtime lighting. Per tile. */
-extern uint8_t dLight[MAXDUNX][MAXDUNY];
+extern DVL_API_FOR_TEST uint8_t dLight[MAXDUNX][MAXDUNY];
 /** Precalculated static lights. dLight uses this as a base before applying lights. Per tile. */
 extern uint8_t dPreLight[MAXDUNX][MAXDUNY];
 /** Holds various information about dungeon tiles, @see DungeonFlag */
@@ -236,7 +195,7 @@ std::optional<WorldTileSize> GetSizeForThemeRoom();
 dungeon_type GetLevelType(int level);
 void CreateDungeon(uint32_t rseed, lvl_entry entry);
 
-constexpr bool InDungeonBounds(Point position)
+DVL_ALWAYS_INLINE constexpr bool InDungeonBounds(Point position)
 {
 	return position.x >= 0 && position.x < MAXDUNX && position.y >= 0 && position.y < MAXDUNY;
 }
@@ -334,9 +293,13 @@ struct Miniset {
 	}
 };
 
-bool TileHasAny(int tileId, TileProperties property);
-void LoadLevelSOLData();
-void SetDungeonMicros();
+[[nodiscard]] DVL_ALWAYS_INLINE bool TileHasAny(Point coords, TileProperties property)
+{
+	return HasAnyOf(SOLData[dPiece[coords.x][coords.y]], property);
+}
+
+tl::expected<void, std::string> LoadLevelSOLData();
+void SetDungeonMicros(std::unique_ptr<std::byte[]> &dungeonCels, uint_fast8_t &microTileLen);
 void DRLG_InitTrans();
 void DRLG_MRectTrans(WorldTilePosition origin, WorldTilePosition extent);
 void DRLG_MRectTrans(WorldTileRectangle area);
@@ -354,8 +317,10 @@ std::optional<Point> PlaceMiniSet(const Miniset &miniset, int tries = 199, bool 
 void PlaceDunTiles(const uint16_t *dunData, Point position, int floorId = 0);
 void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, bool rndSize);
 void DRLG_HoldThemeRooms();
-void SetSetPieceRoom(WorldTilePosition position, int floorId);
-void FreeQuestSetPieces();
+/**
+ * @brief Returns the size in tiles of the specified ".dun" Data
+ */
+WorldTileSize GetDunSize(const uint16_t *dunData);
 void DRLG_LPass3(int lv);
 
 /**

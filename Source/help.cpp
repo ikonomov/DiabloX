@@ -4,17 +4,17 @@
  * Implementation of the in-game help text.
  */
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "DiabloUI/ui_flags.hpp"
 #include "engine/render/clx_render.hpp"
 #include "engine/render/text_render.hpp"
-#include "init.h"
+#include "game_mode.hpp"
 #include "minitext.h"
 #include "qol/chatlog.h"
 #include "stores.h"
 #include "utils/language.h"
-#include "utils/stdcompat/string_view.hpp"
 
 namespace devilution {
 
@@ -144,7 +144,7 @@ void DrawHelpSlider(const Surface &out)
 	const Point uiPosition = GetUIRectangle().position;
 	const int sliderXPos = ContentTextWidth + uiPosition.x + 36;
 	int sliderStart = uiPosition.y + HeaderHeight() + LineHeight() + 3;
-	int sliderEnd = uiPosition.y + PaddingTop + PanelHeight - 12;
+	const int sliderEnd = uiPosition.y + PaddingTop + PanelHeight - 12;
 	ClxDraw(out, { sliderXPos, sliderStart }, (*pSTextSlidCels)[11]);
 	sliderStart += 12;
 	int sliderCurrent = sliderStart;
@@ -176,7 +176,7 @@ void InitHelp()
 
 		size_t previous = 0;
 		while (true) {
-			size_t next = paragraph.find('\n', previous);
+			const size_t next = paragraph.find('\n', previous);
 			HelpTextLines.emplace_back(paragraph.substr(previous, next - previous));
 			if (next == std::string::npos)
 				break;
@@ -195,7 +195,7 @@ void DrawHelp(const Surface &out)
 	const int lineHeight = LineHeight();
 	const int blankLineHeight = BlankLineHeight();
 
-	string_view title;
+	std::string_view title;
 	if (gbIsHellfire)
 		title = gbIsSpawn ? _("Shareware Hellfire Help") : _("Hellfire Help");
 	else
@@ -207,7 +207,7 @@ void DrawHelp(const Surface &out)
 
 	DrawString(out, title,
 	    { { sx, sy + PaddingTop + blankLineHeight }, { ContentTextWidth, lineHeight } },
-	    UiFlags::ColorWhitegold | UiFlags::AlignCenter);
+	    { .flags = UiFlags::ColorWhitegold | UiFlags::AlignCenter });
 
 	const int titleBottom = sy + HeaderHeight();
 	DrawSLine(out, titleBottom);
@@ -215,7 +215,7 @@ void DrawHelp(const Surface &out)
 	const int numLines = NumVisibleLines();
 	const int contentY = titleBottom + DividerLineMarginY() + ContentPaddingY();
 	for (int i = 0; i < numLines; i++) {
-		const string_view line = HelpTextLines[i + SkipLines];
+		const std::string_view line = HelpTextLines[i + SkipLines];
 		if (line.empty()) {
 			continue;
 		}
@@ -227,12 +227,13 @@ void DrawHelp(const Surface &out)
 			style = UiFlags::ColorBlue;
 		}
 
-		DrawString(out, line.substr(offset), { { sx, contentY + i * lineHeight }, { ContentTextWidth, lineHeight } }, style, /*spacing=*/1, lineHeight);
+		DrawString(out, line.substr(offset), { { sx, contentY + i * lineHeight }, { ContentTextWidth, lineHeight } },
+		    { .flags = style, .lineHeight = lineHeight });
 	}
 
 	DrawString(out, _("Press ESC to end or the arrow keys to scroll."),
 	    { { sx, contentY + ContentsTextHeight() + ContentPaddingY() + blankLineHeight }, { ContentTextWidth, lineHeight } },
-	    UiFlags::ColorWhitegold | UiFlags::AlignCenter);
+	    { .flags = UiFlags::ColorWhitegold | UiFlags::AlignCenter });
 
 	DrawHelpSlider(out);
 }

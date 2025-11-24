@@ -1,5 +1,10 @@
 #include "discord.h"
 
+#ifdef _WIN32
+// On Windows, discordsrc-src/cpp/discord.h includes windows.h
+#define NOMINMAX 1
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <discordsrc-src/cpp/discord.h>
 
 #include <algorithm>
@@ -12,9 +17,9 @@
 #include <fmt/format.h>
 
 #include "config.h"
-#include "init.h"
 #include "levels/gendung.h"
 #include "levels/setmaps.h"
+#include "lua/lua_global.hpp"
 #include "multi.h"
 #include "panels/charpanel.hpp"
 #include "player.h"
@@ -23,6 +28,14 @@
 #include "utils/str_cat.hpp"
 
 namespace devilution {
+namespace {
+void ModChanged()
+{
+	discord_manager::UpdateMenu(true);
+}
+const auto ModChangedHandler = (AddModsChangedHandler(ModChanged), true);
+} // namespace
+
 namespace discord_manager {
 
 // App ID used for DevilutionX's Diablo (classic Diablo's is 496571953147150354)
@@ -43,7 +56,7 @@ struct PlayerData {
 	dungeon_type dungeonArea;
 	_setlevels questMap;
 	Uint8 dungeonLevel;
-	Sint8 playerLevel;
+	Uint8 playerLevel;
 	int playerGfx;
 
 	// Why??? This is POD
@@ -88,8 +101,7 @@ std::string GetLocationString()
 
 std::string GetCharacterString()
 {
-	const string_view charClassStr = _(PlayersData[static_cast<int>(MyPlayer->_pClass)].className);
-	return fmt::format(fmt::runtime(_(/* TRANSLATORS: Discord character, i.e. "Lv 6 Warrior" */ "Lv {} {}")), tracked_data.playerLevel, charClassStr);
+	return fmt::format(fmt::runtime(_(/* TRANSLATORS: Discord character, i.e. "Lv 6 Warrior" */ "Lv {} {}")), tracked_data.playerLevel, MyPlayer->getClassName());
 }
 
 std::string GetDetailString()
@@ -100,7 +112,7 @@ std::string GetDetailString()
 std::string GetStateString()
 {
 	constexpr std::array<const char *, 3> DifficultyStrs = { N_("Normal"), N_("Nightmare"), N_("Hell") };
-	const string_view difficultyStr = _(DifficultyStrs[sgGameInitInfo.nDifficulty]);
+	const std::string_view difficultyStr = _(DifficultyStrs[sgGameInitInfo.nDifficulty]);
 	return fmt::format(fmt::runtime(_(/* TRANSLATORS: Discord state i.e. "Nightmare difficulty" */ "{} difficulty")), difficultyStr);
 }
 
@@ -112,7 +124,7 @@ std::string GetTooltipString()
 std::string GetPlayerAssetString()
 {
 	char chars[5] {
-		CharChar[static_cast<int>(MyPlayer->_pClass)],
+		GetPlayerSpriteDataForClass(MyPlayer->_pClass).classChar,
 		ArmourChar[tracked_data.playerGfx >> 4],
 		WepChar[tracked_data.playerGfx & 0xF],
 		'a',
@@ -137,7 +149,7 @@ void UpdateGame()
 		return;
 
 	auto newData = PlayerData {
-		leveltype, setlvlnum, currlevel, MyPlayer->_pLevel, MyPlayer->_pgfxnum
+		leveltype, setlvlnum, currlevel, MyPlayer->getCharacterLevel(), MyPlayer->_pgfxnum
 	};
 	if (newData != tracked_data) {
 		tracked_data = newData;

@@ -1,10 +1,25 @@
+#include <cstddef>
 #include <cstdint>
+#include <memory>
+#include <optional>
+#include <vector>
+
+#ifdef USE_SDL3
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_timer.h>
+#else
+#include <SDL.h>
+#endif
 
 #include "DiabloUI/diabloui.h"
-#include "DiabloUI/selok.h"
-#include "control.h"
+#include "DiabloUI/ui_flags.hpp"
+#include "DiabloUI/ui_item.h"
+#include "engine/assets.hpp"
 #include "engine/load_clx.hpp"
+#include "engine/point.hpp"
+#include "game_mode.hpp"
 #include "utils/language.h"
+#include "utils/ui_fwd.h"
 
 namespace devilution {
 namespace {
@@ -16,7 +31,7 @@ std::vector<std::unique_ptr<UiListItem>> vecMenuItems;
 
 _mainmenu_selections MainMenuResult;
 
-void UiMainMenuSelect(int value)
+void UiMainMenuSelect(size_t value)
 {
 	MainMenuResult = (_mainmenu_selections)vecMenuItems[value]->m_value;
 }
@@ -24,7 +39,7 @@ void UiMainMenuSelect(int value)
 #ifndef NOEXIT
 void MainmenuEsc()
 {
-	std::size_t last = vecMenuItems.size() - 1;
+	const std::size_t last = vecMenuItems.size() - 1;
 	if (SelectedItem == last) {
 		UiMainMenuSelect(last);
 	} else {
@@ -45,8 +60,7 @@ void MainmenuLoad(const char *name)
 #endif
 
 	if (!gbIsSpawn || gbIsHellfire) {
-		if (gbIsHellfire)
-			ArtBackgroundWidescreen = LoadOptionalClx("ui_art\\mainmenuw.clx");
+		ArtBackgroundWidescreen = LoadOptionalClx("ui_art\\mainmenuw.clx");
 		LoadBackgroundArt("ui_art\\mainmenu");
 	} else {
 		LoadBackgroundArt("ui_art\\swmmenu");
@@ -58,13 +72,13 @@ void MainmenuLoad(const char *name)
 	const Point uiPosition = GetUIRectangle().position;
 
 	if (gbIsSpawn && gbIsHellfire) {
-		SDL_Rect rect1 = { (Sint16)(uiPosition.x), (Sint16)(uiPosition.y + 145), 640, 30 };
+		const SDL_Rect rect1 = { (Sint16)(uiPosition.x), (Sint16)(uiPosition.y + 145), 640, 30 };
 		vecMainMenuDialog.push_back(std::make_unique<UiArtText>(_("Shareware").data(), rect1, UiFlags::FontSize30 | UiFlags::ColorUiSilver | UiFlags::AlignCenter, 8));
 	}
 
 	vecMainMenuDialog.push_back(std::make_unique<UiList>(vecMenuItems, vecMenuItems.size(), uiPosition.x + 64, (uiPosition.y + 192), 510, 43, UiFlags::FontSize42 | UiFlags::ColorUiGold | UiFlags::AlignCenter, 5));
 
-	SDL_Rect rect2 = { 17, (Sint16)(gnScreenHeight - 36), 605, 21 };
+	const SDL_Rect rect2 = { 17, (Sint16)(gnScreenHeight - 36), 605, 21 };
 	vecMainMenuDialog.push_back(std::make_unique<UiArtText>(name, rect2, UiFlags::FontSize12 | UiFlags::ColorUiSilverDark));
 
 #ifndef NOEXIT
@@ -103,7 +117,7 @@ bool UiMainMenuDialog(const char *name, _mainmenu_selections *pdwResult, int att
 		while (MainMenuResult == MAINMENU_NONE) {
 			UiClearScreen();
 			UiPollAndRender();
-			if (SDL_GetTicks() >= dwAttractTicks && (HaveDiabdat() || HaveHellfire())) {
+			if (SDL_GetTicks() >= dwAttractTicks && (HaveIntro() || gbIsHellfire)) {
 				MainMenuResult = MAINMENU_ATTRACT_MODE;
 			}
 		}

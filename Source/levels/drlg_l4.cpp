@@ -13,6 +13,8 @@
 #include "monster.h"
 #include "multi.h"
 #include "objdat.h"
+#include "player.h"
+#include "utils/is_of.hpp"
 
 namespace devilution {
 
@@ -158,13 +160,21 @@ void ApplyShadowsPatterns()
 	}
 }
 
-void LoadQuestSetPieces()
+void InitSetPiece()
 {
+	std::unique_ptr<uint16_t[]> setPieceData;
+
 	if (Quests[Q_WARLORD].IsAvailable()) {
-		pSetPiece = LoadFileInMem<uint16_t>("levels\\l4data\\warlord.dun");
+		setPieceData = LoadFileInMem<uint16_t>("levels\\l4data\\warlord.dun");
 	} else if (currlevel == 15 && UseMultiplayerQuests()) {
-		pSetPiece = LoadFileInMem<uint16_t>("levels\\l4data\\vile1.dun");
+		setPieceData = LoadFileInMem<uint16_t>("levels\\l4data\\vile1.dun");
+	} else {
+		return; // no setpiece needed for this level
 	}
+
+	const WorldTilePosition setPiecePosition = SetPieceRoom.position;
+	PlaceDunTiles(setPieceData.get(), setPiecePosition, 6);
+	SetPiece = { setPiecePosition, GetDunSize(setPieceData.get()) };
 }
 
 void InitDungeonFlags()
@@ -205,7 +215,7 @@ bool CheckRoom(WorldTileRectangle room)
 
 void GenerateRoom(WorldTileRectangle area, bool verticalLayout)
 {
-	bool rotate = !FlipCoin(4);
+	const bool rotate = !FlipCoin(4);
 	verticalLayout = (!verticalLayout && rotate) || (verticalLayout && !rotate);
 
 	bool placeRoom1;
@@ -263,10 +273,10 @@ void FirstRoom()
 		}
 	}
 
-	int xmin = (DMAXX / 2 - room.size.width) / 2;
-	int xmax = DMAXX / 2 - 1 - room.size.width;
-	int ymin = (DMAXY / 2 - room.size.height) / 2;
-	int ymax = DMAXY / 2 - 1 - room.size.height;
+	const int xmin = (DMAXX / 2 - room.size.width) / 2;
+	const int xmax = DMAXX / 2 - 1 - room.size.width;
+	const int ymin = (DMAXY / 2 - room.size.height) / 2;
+	const int ymax = DMAXY / 2 - 1 - room.size.height;
 	const int32_t randomX = GenerateRnd(xmax - xmin + 1) + xmin;
 	const int32_t randomY = GenerateRnd(ymax - ymin + 1) + ymin;
 	room.position = WorldTilePosition(randomX, randomY);
@@ -304,7 +314,7 @@ void MakeDmt()
 {
 	for (int y = 0; y < DMAXY - 1; y++) {
 		for (int x = 0; x < DMAXX - 1; x++) {
-			int val = (DungeonMask.test(x + 1, y + 1) << 3) | (DungeonMask.test(x, y + 1) << 2) | (DungeonMask.test(x + 1, y) << 1) | DungeonMask.test(x, y);
+			const int val = (DungeonMask.test(x + 1, y + 1) << 3) | (DungeonMask.test(x, y + 1) << 2) | (DungeonMask.test(x + 1, y) << 1) | (DungeonMask.test(x, y) << 0);
 			dungeon[x][y] = L4ConvTbl[val];
 		}
 	}
@@ -381,7 +391,7 @@ void HorizontalWall(int i, int j, int dx)
 		dungeon[i + dx][j] = 29;
 	}
 
-	int xx = GenerateRnd(dx - 3) + 1;
+	const int xx = GenerateRnd(dx - 3) + 1;
 	dungeon[i + xx][j] = 57;
 	dungeon[i + xx + 2][j] = 56;
 	dungeon[i + xx + 1][j] = 60;
@@ -426,7 +436,7 @@ void VerticalWall(int i, int j, int dy)
 		dungeon[i][j + dy] = 29;
 	}
 
-	int yy = GenerateRnd(dy - 3) + 1;
+	const int yy = GenerateRnd(dy - 3) + 1;
 	dungeon[i][j + yy] = 53;
 	dungeon[i][j + yy + 2] = 52;
 	dungeon[i][j + yy + 1] = 6;
@@ -449,7 +459,7 @@ void AddWall()
 			for (auto d : { 10, 12, 13, 15, 16, 21, 22 }) {
 				if (d == dungeon[i][j]) {
 					DiscardRandomValues(1);
-					int x = HorizontalWallOk(i, j);
+					const int x = HorizontalWallOk(i, j);
 					if (x != -1) {
 						HorizontalWall(i, j, x);
 					}
@@ -458,7 +468,7 @@ void AddWall()
 			for (auto d : { 8, 9, 11, 14, 15, 16, 21, 23 }) {
 				if (d == dungeon[i][j]) {
 					DiscardRandomValues(1);
-					int y = VerticalWallOk(i, j);
+					const int y = VerticalWallOk(i, j);
 					if (y != -1) {
 						VerticalWall(i, j, y);
 					}
@@ -822,7 +832,7 @@ void Substitution()
 	for (int y = 0; y < DMAXY; y++) {
 		for (int x = 0; x < DMAXX; x++) {
 			if (FlipCoin(3)) {
-				uint8_t c = L4BTYPES[dungeon[x][y]];
+				const uint8_t c = L4BTYPES[dungeon[x][y]];
 				if (c != 0 && !Protected.test(x, y)) {
 					int rv = GenerateRnd(16);
 					int i = -1;
@@ -844,9 +854,9 @@ void Substitution()
 	for (int y = 0; y < DMAXY; y++) {
 		for (int x = 0; x < DMAXX; x++) {
 			if (FlipCoin(10)) {
-				uint8_t c = dungeon[x][y];
+				const uint8_t c = dungeon[x][y];
 				if (L4BTYPES[c] == 6 && !Protected.test(x, y)) {
-					dungeon[x][y] = GenerateRnd(3) + 95;
+					dungeon[x][y] = PickRandomlyAmong({ 95, 96, 97 });
 				}
 			}
 		}
@@ -863,8 +873,8 @@ void PrepareInnerBorders()
 			if (!DungeonMask.test(x, y)) {
 				hallok[y] = false;
 			} else {
-				bool hasSouthWestRoom = y + 1 < DMAXY / 2 && DungeonMask.test(x, y + 1);
-				bool hasSouthRoom = x + 1 < DMAXX / 2 && y + 1 < DMAXY / 2 && DungeonMask.test(x + 1, y + 1);
+				const bool hasSouthWestRoom = y + 1 < DMAXY / 2 && DungeonMask.test(x, y + 1);
+				const bool hasSouthRoom = x + 1 < DMAXX / 2 && y + 1 < DMAXY / 2 && DungeonMask.test(x + 1, y + 1);
 				hallok[y] = hasSouthWestRoom && !hasSouthRoom;
 				x = 0;
 			}
@@ -896,8 +906,8 @@ void PrepareInnerBorders()
 			if (!DungeonMask.test(x, y)) {
 				hallok[x] = false;
 			} else {
-				bool hasSouthEastRoom = x + 1 < DMAXX / 2 && DungeonMask.test(x + 1, y);
-				bool hasSouthRoom = x + 1 < DMAXX / 2 && y + 1 < DMAXY / 2 && DungeonMask.test(x + 1, y + 1);
+				const bool hasSouthEastRoom = x + 1 < DMAXX / 2 && DungeonMask.test(x + 1, y);
+				const bool hasSouthRoom = x + 1 < DMAXX / 2 && y + 1 < DMAXY / 2 && DungeonMask.test(x + 1, y + 1);
 				hallok[x] = hasSouthEastRoom && !hasSouthRoom;
 				y = 0;
 			}
@@ -1130,13 +1140,15 @@ bool PlaceStairs(lvl_entry entry)
 
 void GenerateLevel(lvl_entry entry)
 {
-	LoadQuestSetPieces();
+	if (LevelSeeds[currlevel])
+		SetRndSeed(*LevelSeeds[currlevel]);
 
 	while (true) {
 		DRLG_InitTrans();
 
 		constexpr size_t Minarea = 692;
 		do {
+			LevelSeeds[currlevel] = GetLCGEngineState();
 			InitDungeonFlags();
 			FirstRoom();
 			CloseOuterBorders();
@@ -1160,15 +1172,13 @@ void GenerateLevel(lvl_entry entry)
 		AddWall();
 		FloodTransparencyValues(6);
 		FixTransparency();
-		SetSetPieceRoom(SetPieceRoom.position, 6);
+		InitSetPiece();
 		if (currlevel == 16) {
 			LoadDiabQuads(true);
 		}
 		if (PlaceStairs(entry))
 			break;
 	}
-
-	FreeQuestSetPieces();
 
 	GeneralFix();
 
@@ -1185,7 +1195,7 @@ void GenerateLevel(lvl_entry entry)
 	DRLG_CheckQuests(SetPieceRoom.position);
 
 	if (currlevel == 15) {
-		bool isGateOpen = UseMultiplayerQuests() || Quests[Q_DIABLO]._qactive == QUEST_ACTIVE;
+		const bool isGateOpen = UseMultiplayerQuests() || IsAnyOf(Quests[Q_DIABLO]._qactive, QUEST_ACTIVE, QUEST_DONE);
 		if (!isGateOpen)
 			L4PENTA.place(Quests[Q_DIABLO].position);
 

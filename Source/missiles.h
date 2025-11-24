@@ -7,41 +7,44 @@
 
 #include <cstdint>
 #include <list>
+#include <optional>
 
-#include "engine.h"
+#include "engine/displacement.hpp"
 #include "engine/point.hpp"
+#include "engine/world_tile.hpp"
 #include "misdat.h"
 #include "monster.h"
 #include "player.h"
 #include "spelldat.h"
-#include "utils/stdcompat/optional.hpp"
+#include "utils/is_of.hpp"
 
 namespace devilution {
 
 constexpr WorldTilePosition GolemHoldingCell = Point { 1, 0 };
 
 struct MissilePosition {
-	Point tile;
 	/** Sprite's pixel offset from tile. */
 	Displacement offset;
 	/** Pixel velocity while moving */
 	Displacement velocity;
-	/** Start position */
-	Point start;
-	/** Start position */
+	/** Pixels traveled as a numerator of 65,536. */
 	Displacement traveled;
+
+	WorldTilePosition tile;
+	/** Start position */
+	WorldTilePosition start;
 
 	/**
 	 * @brief Specifies the location (tile) while rendering
 	 */
-	Point tileForRendering;
+	WorldTilePosition tileForRendering;
 	/**
 	 * @brief Specifies the location (offset) while rendering
 	 */
 	Displacement offsetForRendering;
 
 	/**
-	 * @brief Stops the missile (set velocity to zero and set offset to last renderer location; shouldn't matter cause the missile don't move anymore)
+	 * @brief Stops the missile (set velocity to zero and set offset to last renderer location; shouldn't matter because the missile doesn't move anymore)
 	 */
 	void StopMissile()
 	{
@@ -51,52 +54,47 @@ struct MissilePosition {
 	}
 };
 
-/**
- * Represent a more fine-grained direction than the 8 value Direction enum.
- *
- * This is used when rendering projectiles like arrows which have additional sprites for "half-winds" on a 16-point compass.
- * The sprite sheets are typically 0-indexed and use the following layout (relative to the screen projection)
- *
- *      W  WSW   SW  SSW  S
- *               ^
- *     WNW       |       SSE
- *               |
- *     NW -------+------> SE
- *               |
- *     NNW       |       ESE
- *               |
- *      N  NNE   NE  ENE  E
- */
-enum class Direction16 : uint8_t {
-	South,
-	South_SouthWest,
-	SouthWest,
-	West_SouthWest,
-	West,
-	West_NorthWest,
-	NorthWest,
-	North_NorthWest,
-	North,
-	North_NorthEast,
-	NorthEast,
-	East_NorthEast,
-	East,
-	East_SouthEast,
-	SouthEast,
-	South_SouthEast,
-};
-
 enum class MissileSource : uint8_t {
 	Player,
 	Monster,
 	Trap,
 };
 
+enum class GuardianFrame : uint8_t {
+	Start = 0,
+	Idle = 1,
+	Attack = 2,
+};
+
+enum class AcidPuddleFrame : uint8_t {
+	Idle = 0,
+	End = 1,
+};
+
+enum class FireWallFrame : uint8_t {
+	Start = 0,
+	Idle = 1,
+};
+
+enum class PortalFrame : uint8_t {
+	Start = 0,
+	Idle = 1,
+};
+
+enum class RedPortalFrame : uint8_t {
+	Start = 0,
+	Idle = 1,
+};
+
 struct Missile {
 	/** Type of projectile */
 	MissileID _mitype;
 	MissilePosition position;
+
+private:
 	int _mimfnum; // The direction of the missile (direction enum)
+
+public:
 	int _mispllvl;
 	bool _miDelFlag; // Indicate whether the missile should be deleted
 	MissileGraphicID _miAnimType;
@@ -117,7 +115,8 @@ struct Missile {
 	bool _miLightFlag;
 	bool _miPreFlag;
 	uint32_t _miUniqTrans;
-	int _mirange; // Time to live for the missile in game ticks, oncs 0 the missile will be marked for deletion via _miDelFlag
+	/** @brief Time to live for the missile in game ticks; once 0, the missile will be marked for deletion via _miDelFlag */
+	int duration;
 	int _misource;
 	mienemy_type _micaster;
 	int _midam;
@@ -171,12 +170,79 @@ struct Missile {
 			return MissileSource::Monster;
 		return MissileSource::Player;
 	}
+
+	void setAnimation(MissileGraphicID animtype);
+
+	/**
+	 * @brief Sets the missile sprite to the given sheet frame
+	 * @param dir Sprite frame
+	 */
+	void setFrameGroupRaw(int frameGroup)
+	{
+		_mimfnum = frameGroup;
+		setAnimation(_miAnimType);
+	}
+
+	void setDefaultFrameGroup()
+	{
+		setFrameGroupRaw(0);
+	}
+
+	template <typename FrameEnum>
+	void setFrameGroup(FrameEnum frameGroup)
+	{
+		setFrameGroupRaw(static_cast<int>(frameGroup));
+	}
+
+	/**
+	 * @brief Sets the sprite for this missile so it matches the given Direction
+	 * @param dir Desired facing
+	 */
+	void setDirection(Direction dir)
+	{
+		setFrameGroupRaw(static_cast<int>(dir));
+	}
+
+	/**
+	 * @brief Sets the sprite for this missile so it matches the given Direction16
+	 * @param dir Desired facing at a 22.8125 degree resolution
+	 */
+	void setDirection(Direction16 dir)
+	{
+		setFrameGroupRaw(static_cast<int>(dir));
+	}
+
+	int getFrameGroupRaw() const
+	{
+		return _mimfnum;
+	}
+
+	template <typename FrameEnum>
+	FrameEnum getFrameGroup() const
+	{
+		static_assert(std::is_enum_v<FrameEnum>, "Frame group must be an enum");
+		return static_cast<FrameEnum>(_mimfnum);
+	}
+
+	[[nodiscard]] Direction getDirection() const
+	{
+		return static_cast<Direction>(_mimfnum);
+	}
+
+	[[nodiscard]] Direction16 getDirection16() const
+	{
+		return static_cast<Direction16>(_mimfnum);
+	}
 };
 
 extern std::list<Missile> Missiles;
 extern bool MissilePreFlag;
 
-void GetDamageAmt(SpellID i, int *mind, int *maxd);
+struct DamageRange {
+	int min;
+	int max;
+};
+DamageRange GetDamageAmt(SpellID spell, int spellLevel);
 
 /**
  * @brief Returns the direction a vector from p1(x1, y1) to p2(x2, y2) is pointing to.
@@ -198,45 +264,18 @@ void GetDamageAmt(SpellID i, int *mind, int *maxd);
  * @return the direction of the p1->p2 vector
  */
 Direction16 GetDirection16(Point p1, Point p2);
-bool MonsterTrapHit(int monsterId, int mindam, int maxdam, int dist, MissileID t, DamageType damageType, bool shift);
-bool PlayerMHit(int pnum, Monster *monster, int dist, int mind, int maxd, MissileID mtype, DamageType damageType, bool shift, DeathReason deathReason, bool *blocked);
+bool MonsterTrapHit(Monster &monster, int mindam, int maxdam, int dist, MissileID t, DamageType damageType, bool shift);
+bool PlayerMHit(Player &player, Monster *monster, int dist, int mind, int maxd, MissileID mtype, DamageType damageType, bool shift, DeathReason deathReason, bool *blocked);
 
 /**
  * @brief Could the missile collide with solid objects? (like walls or closed doors)
  */
-bool IsMissileBlockedByTile(Point position);
-
-/**
- * @brief Sets the missile sprite to the given sheet frame
- * @param missile this object
- * @param dir Sprite frame, typically representing a direction but there are some exceptions (arrows being 1 indexed, directionless spells)
- */
-void SetMissDir(Missile &missile, int dir);
-
-/**
- * @brief Sets the sprite for this missile so it matches the given Direction
- * @param missile this object
- * @param dir Desired facing
- */
-inline void SetMissDir(Missile &missile, Direction dir)
-{
-	SetMissDir(missile, static_cast<int>(dir));
-}
-
-/**
- * @brief Sets the sprite for this missile so it matches the given Direction16
- * @param missile this object
- * @param dir Desired facing at a 22.8125 degree resolution
- */
-inline void SetMissDir(Missile &missile, Direction16 dir)
-{
-	SetMissDir(missile, static_cast<int>(dir));
-}
+bool IsMissileBlockedByTile(Point tile);
 
 void InitMissiles();
 
 struct AddMissileParameter {
-	Point dst;
+	WorldTilePosition dst;
 	Direction midir;
 	Missile *pParent;
 	bool spellFizzled;
@@ -357,7 +396,7 @@ void AddIdentify(Missile &missile, AddMissileParameter &parameter);
  * var5: X coordinate of the second wave
  * var6: Y coordinate of the second wave
  */
-void AddFireWallControl(Missile &missile, AddMissileParameter &parameter);
+void AddWallControl(Missile &missile, AddMissileParameter &parameter);
 void AddInfravision(Missile &missile, AddMissileParameter &parameter);
 
 /**
@@ -386,9 +425,21 @@ void AddTelekinesis(Missile &missile, AddMissileParameter &parameter);
 void AddBoneSpirit(Missile &missile, AddMissileParameter &parameter);
 void AddRedPortal(Missile &missile, AddMissileParameter &parameter);
 void AddDiabloApocalypse(Missile &missile, AddMissileParameter &parameter);
-Missile *AddMissile(Point src, Point dst, Direction midir, MissileID mitype,
+Missile *AddMissile(WorldTilePosition src, WorldTilePosition dst, Direction midir, MissileID mitype,
     mienemy_type micaster, int id, int midam, int spllvl,
-    Missile *parent = nullptr, std::optional<_sfx_id> lSFX = std::nullopt);
+    Missile *parent = nullptr, std::optional<SfxID> lSFX = std::nullopt);
+inline Missile *AddMissile(WorldTilePosition src, WorldTilePosition dst, Direction midir, MissileID mitype,
+    mienemy_type micaster, const Player &player, int midam, int spllvl,
+    Missile *parent = nullptr, std::optional<SfxID> lSFX = std::nullopt)
+{
+	return AddMissile(src, dst, midir, mitype, micaster, player.getId(), midam, spllvl, parent, lSFX);
+}
+inline Missile *AddMissile(WorldTilePosition src, WorldTilePosition dst, Direction midir, MissileID mitype,
+    mienemy_type micaster, const Monster &monster, int midam, int spllvl,
+    Missile *parent = nullptr, std::optional<SfxID> lSFX = std::nullopt)
+{
+	return AddMissile(src, dst, midir, mitype, micaster, static_cast<int>(monster.getId()), midam, spllvl, parent, lSFX);
+}
 void ProcessElementalArrow(Missile &missile);
 void ProcessArrow(Missile &missile);
 void ProcessGenericProjectile(Missile &missile);
@@ -403,7 +454,6 @@ void ProcessBigExplosion(Missile &missile);
 void ProcessLightningBow(Missile &missile);
 void ProcessRingOfFire(Missile &missile);
 void ProcessSearch(Missile &missile);
-void ProcessLightningWallControl(Missile &missile);
 void ProcessImmolation(Missile &missile);
 void ProcessSpectralArrow(Missile &missile);
 void ProcessLightningControl(Missile &missile);
@@ -421,7 +471,7 @@ void ProcessTeleport(Missile &missile);
 void ProcessStoneCurse(Missile &missile);
 void ProcessApocalypseBoom(Missile &missile);
 void ProcessRhino(Missile &missile);
-void ProcessFireWallControl(Missile &missile);
+void ProcessWallControl(Missile &missile);
 void ProcessInfravision(Missile &missile);
 void ProcessApocalypse(Missile &missile);
 void ProcessFlameWaveControl(Missile &missile);
@@ -436,7 +486,7 @@ void ProcessBoneSpirit(Missile &missile);
 void ProcessResurrectBeam(Missile &missile);
 void ProcessRedPortal(Missile &missile);
 void ProcessMissiles();
-void missiles_process_charge();
+void SetUpMissileAnimationData();
 void RedoMissileFlags();
 
 #ifdef BUILD_TESTING

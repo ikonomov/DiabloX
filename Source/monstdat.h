@@ -5,11 +5,19 @@
  */
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
+#include <string>
+#include <vector>
 
+#include <magic_enum/magic_enum.hpp>
+
+#include "cursor.h"
 #include "textdat.h"
 
 namespace devilution {
+
+class DataFile;
 
 enum class MonsterAIID : int8_t {
 	Zombie,
@@ -88,47 +96,59 @@ enum class MonsterAvailability : uint8_t {
 };
 
 struct MonsterData {
-	const char *name;
-	const char *assetsSuffix;
-	const char *soundSuffix;
-	const char *trnFile;
-	MonsterAvailability availability;
-	uint16_t width;
-	uint16_t image;
-	bool hasSpecial;
-	bool hasSpecialSound;
-	int8_t frames[6];
-	int8_t rate[6];
-	int8_t minDunLvl;
-	int8_t maxDunLvl;
-	int8_t level;
-	uint16_t hitPointsMinimum;
-	uint16_t hitPointsMaximum;
-	MonsterAIID ai;
+	std::string name;
+	std::string soundSuffix;
+	std::string trnFile;
+	uint16_t spriteId = 0;
+	MonsterAvailability availability = MonsterAvailability::Never;
+	uint16_t width = 0;
+	uint16_t image = 0;
+	bool hasSpecial = false;
+	bool hasSpecialSound = false;
+	int8_t frames[6] {};
+	int8_t rate[6] {};
+	int8_t minDunLvl = 0;
+	int8_t maxDunLvl = 0;
+	int8_t level = 0;
+	uint16_t hitPointsMinimum = 0;
+	uint16_t hitPointsMaximum = 0;
+	MonsterAIID ai = MonsterAIID::Invalid;
 	/**
 	 * @brief Denotes monster's abilities defined in @p monster_flag as bitflags
 	 * For usage, see @p MonstersData in monstdat.cpp
 	 */
-	uint16_t abilityFlags;
-	uint8_t intelligence;
-	uint8_t toHit;
-	int8_t animFrameNum;
-	uint8_t minDamage;
-	uint8_t maxDamage;
-	uint8_t toHitSpecial;
-	int8_t animFrameNumSpecial;
-	uint8_t minDamageSpecial;
-	uint8_t maxDamageSpecial;
-	uint8_t armorClass;
-	MonsterClass monsterClass;
+	uint16_t abilityFlags = 0;
+	uint8_t intelligence = 0;
+	uint8_t toHit = 0;
+	int8_t animFrameNum = 0;
+	uint8_t minDamage = 0;
+	uint8_t maxDamage = 0;
+	uint8_t toHitSpecial = 0;
+	int8_t animFrameNumSpecial = 0;
+	uint8_t minDamageSpecial = 0;
+	uint8_t maxDamageSpecial = 0;
+	uint8_t armorClass = 0;
+	MonsterClass monsterClass {};
 	/** Using monster_resistance as bitflags */
-	uint8_t resistance;
+	uint8_t resistance = 0;
 	/** Using monster_resistance as bitflags */
-	uint8_t resistanceHell;
-	int8_t selectionType; // TODO Create enum
+	uint8_t resistanceHell = 0;
+	SelectionRegion selectionRegion = SelectionRegion::None;
 	/** Using monster_treasure */
-	uint16_t treasure;
-	uint16_t exp;
+	uint16_t treasure = 0;
+	uint16_t exp = 0;
+
+	[[nodiscard]] const char *spritePath() const;
+
+	[[nodiscard]] const char *soundPath() const
+	{
+		return !soundSuffix.empty() ? soundSuffix.c_str() : spritePath();
+	}
+
+	[[nodiscard]] bool hasAnim(size_t index) const
+	{
+		return frames[index] != 0;
+	}
 };
 
 enum _monster_id : int16_t {
@@ -270,7 +290,8 @@ enum _monster_id : int16_t {
 	MT_FLESTHNG,
 	MT_REAPER,
 	MT_NAKRUL,
-	NUM_MTYPES,
+	NUM_DEFAULT_MTYPES,
+	NUM_MAX_MTYPES = 200, // same as MaxMonsters, for the sake of save game compability
 	MT_INVALID = -1,
 };
 
@@ -294,8 +315,8 @@ enum class UniqueMonsterPack : uint8_t {
 
 struct UniqueMonsterData {
 	_monster_id mtype;
-	const char *mName;
-	const char *mTrnName;
+	std::string mName;
+	std::string mTrnName;
 	uint8_t mlevel;
 	uint16_t mmaxhp;
 	MonsterAIID mAi;
@@ -314,8 +335,31 @@ struct UniqueMonsterData {
 	_speech_id mtalkmsg;
 };
 
-extern const MonsterData MonstersData[];
+extern std::vector<MonsterData> MonstersData;
 extern const _monster_id MonstConvTbl[];
-extern const UniqueMonsterData UniqueMonstersData[];
+extern std::vector<UniqueMonsterData> UniqueMonstersData;
+
+void LoadMonstDatFromFile(DataFile &dataFile, std::string_view filename, bool grow);
+void LoadUniqueMonstDatFromFile(DataFile &dataFile, std::string_view filename);
+void LoadMonsterData();
+
+/**
+ * @brief Returns the number of the monster sprite files.
+ *
+ * Different monsters can use the same sprite with different TRNs, these count as 1.
+ */
+size_t GetNumMonsterSprites();
 
 } // namespace devilution
+
+template <>
+struct magic_enum::customize::enum_range<devilution::_monster_id> {
+	static constexpr int min = devilution::MT_INVALID;
+	static constexpr int max = devilution::NUM_DEFAULT_MTYPES;
+};
+
+template <>
+struct magic_enum::customize::enum_range<devilution::monster_resistance> {
+	static constexpr int min = 0;
+	static constexpr int max = 128;
+};

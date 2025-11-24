@@ -1,10 +1,16 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
+
+#ifdef USE_SDL3
+#include <SDL3/SDL_pixels.h>
+#else
+#include <SDL.h>
+#endif
 
 #include "engine/assets.hpp"
 #include "engine/clx_sprite.hpp"
-#include "utils/stdcompat/optional.hpp"
 
 namespace devilution {
 

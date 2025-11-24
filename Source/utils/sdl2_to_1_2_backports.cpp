@@ -1,17 +1,22 @@
-#include "./sdl2_to_1_2_backports.h"
+#include "utils/sdl2_to_1_2_backports.h"
 
 #include <algorithm>
 #include <cstddef>
+#include <cstring>
+#include <string_view>
 
-#include "./console.h"
-
-#if defined(_WIN32) && !defined(NXDK)
+#if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX 1
+#ifndef DEVILUTIONX_WINDOWS_NO_WCHAR
 #define UNICODE 1
 #include <shlobj.h>
+#endif
 #include <windows.h>
 #endif
+
+#include "utils/console.h"
+#include "utils/str_cat.hpp"
 
 #define DEFAULT_PRIORITY SDL_LOG_PRIORITY_CRITICAL
 #define DEFAULT_ASSERT_PRIORITY SDL_LOG_PRIORITY_WARN
@@ -162,7 +167,7 @@ void SDL_LogMessage(int category, SDL_LogPriority priority, const char *fmt, ...
 
 void SDL_LogMessageV(int category, SDL_LogPriority priority, const char *fmt, va_list ap)
 {
-	if (static_cast<int>(priority) < 0 || priority >= SDL_NUM_LOG_PRIORITIES || priority < SDL_LogGetPriority(category))
+	if (static_cast<int>(priority) < 0 || priority >= SDL_NUM_LOG_PRIORITIES || SDL_LogGetPriority(category) > priority)
 		return;
 
 	::devilution::printfInConsole("%s: ", SDL_priority_prefixes[priority]);
@@ -335,10 +340,10 @@ int SDL_BlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
 		return SDL_BlitSurface(src, srcrect, dst, dstrect);
 	}
 
-	double src_x0, src_y0, src_x1, src_y1;
-	double dst_x0, dst_y0, dst_x1, dst_y1;
+	float src_x0, src_y0, src_x1, src_y1;
+	float dst_x0, dst_y0, dst_x1, dst_y1;
 	SDL_Rect final_src, final_dst;
-	double scaling_w, scaling_h;
+	float scaling_w, scaling_h;
 	int src_w, src_h;
 	int dst_w, dst_h;
 
@@ -373,14 +378,14 @@ int SDL_BlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
 		return SDL_BlitSurface(src, srcrect, dst, dstrect);
 	}
 
-	scaling_w = (double)dst_w / src_w;
-	scaling_h = (double)dst_h / src_h;
+	scaling_w = (float)dst_w / src_w;
+	scaling_h = (float)dst_h / src_h;
 
 	if (NULL == dstrect) {
 		dst_x0 = 0;
 		dst_y0 = 0;
-		dst_x1 = dst_w - 1;
-		dst_y1 = dst_h - 1;
+		dst_x1 = static_cast<float>(dst_w - 1);
+		dst_y1 = static_cast<float>(dst_h - 1);
 	} else {
 		dst_x0 = dstrect->x;
 		dst_y0 = dstrect->y;
@@ -391,8 +396,8 @@ int SDL_BlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
 	if (NULL == srcrect) {
 		src_x0 = 0;
 		src_y0 = 0;
-		src_x1 = src_w - 1;
-		src_y1 = src_h - 1;
+		src_x1 = static_cast<float>(src_w - 1);
+		src_y1 = static_cast<float>(src_h - 1);
 	} else {
 		src_x0 = srcrect->x;
 		src_y0 = srcrect->y;
@@ -408,7 +413,7 @@ int SDL_BlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
 
 		if (src_x1 >= src->w) {
 			dst_x1 -= (src_x1 - src->w + 1) * scaling_w;
-			src_x1 = src->w - 1;
+			src_x1 = static_cast<float>(src->w - 1);
 		}
 
 		if (src_y0 < 0) {
@@ -418,7 +423,7 @@ int SDL_BlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
 
 		if (src_y1 >= src->h) {
 			dst_y1 -= (src_y1 - src->h + 1) * scaling_h;
-			src_y1 = src->h - 1;
+			src_y1 = static_cast<float>(src->h - 1);
 		}
 	}
 
@@ -437,7 +442,7 @@ int SDL_BlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
 
 	if (dst_x1 >= dst->clip_rect.w) {
 		src_x1 -= (dst_x1 - dst->clip_rect.w + 1) / scaling_w;
-		dst_x1 = dst->clip_rect.w - 1;
+		dst_x1 = static_cast<float>(dst->clip_rect.w - 1);
 	}
 
 	if (dst_y0 < 0) {
@@ -447,7 +452,7 @@ int SDL_BlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
 
 	if (dst_y1 >= dst->clip_rect.h) {
 		src_y1 -= (dst_y1 - dst->clip_rect.h + 1) / scaling_h;
-		dst_y1 = dst->clip_rect.h - 1;
+		dst_y1 = static_cast<float>(dst->clip_rect.h - 1);
 	}
 
 	/* Translate back to surface coordinates */
@@ -505,7 +510,7 @@ Sint64 SDL_RWsize(SDL_RWops *context)
 	return end - begin;
 }
 
-#if defined(_WIN32) && !defined(NXDK)
+#if defined(_WIN32) && !defined(DEVILUTIONX_WINDOWS_NO_WCHAR)
 
 namespace {
 
@@ -538,7 +543,7 @@ int WIN_SetError(const char *prefix)
 
 } // namespace
 
-char *SDL_GetBasePath(void)
+extern "C" char *SDL_GetBasePath(void)
 {
 	// From sdl2-2.0.9/src/filesystem/windows/SDL_sysfilesystem.c
 
@@ -605,7 +610,7 @@ char *SDL_GetBasePath(void)
 	return retval;
 }
 
-char *SDL_GetPrefPath(const char *org, const char *app)
+extern "C" char *SDL_GetPrefPath(const char *org, const char *app)
 {
 	// From sdl2-2.0.9/src/filesystem/windows/SDL_sysfilesystem.c
 
@@ -693,10 +698,11 @@ char *SDL_GetPrefPath(const char *org, const char *app)
 	return retval;
 }
 
-#else
+// For Apple, definitions are in Source/platform/macos_sdl1/SDL_filesystem.m
+#elif !defined(__APPLE__)
 
 namespace {
-#if !defined(__QNXNTO__) && !defined(__amigaos__)
+#if !defined(__QNXNTO__) && !defined(__amigaos__) && !(defined(WINVER) && WINVER <= 0x0500 && (!defined(_WIN32_WINNT) || _WIN32_WINNT == 0))
 char *readSymLink(const char *path)
 {
 	// From sdl2-2.0.9/src/filesystem/unix/SDL_sysfilesystem.c
@@ -730,13 +736,30 @@ char *readSymLink(const char *path)
 #endif
 } // namespace
 
-char *SDL_GetBasePath()
+extern "C" char *SDL_GetBasePath()
 {
 	// From sdl2-2.0.9/src/filesystem/unix/SDL_sysfilesystem.c
 
 	char *retval = NULL;
 
-#if defined(__FREEBSD__)
+#if defined(WINVER) && WINVER <= 0x0500 && (!defined(_WIN32_WINNT) || _WIN32_WINNT == 0)
+	TCHAR buffer[MAX_PATH] = { 0 };
+	GetModuleFileName(NULL, buffer, MAX_PATH);
+	size_t len = std::string_view(buffer).size();
+	while (len > 0) {
+		if (buffer[len - 1] == '\\') {
+			break;
+		}
+		--len;
+	}
+	buffer[len] = '\0';
+	retval = static_cast<char *>(SDL_malloc(len + 1));
+	if (!retval) {
+		SDL_OutOfMemory();
+		return NULL;
+	}
+	SDL_memcpy(retval, buffer, len + 1);
+#elif defined(__FREEBSD__)
 	char fullpath[PATH_MAX];
 	size_t buflen = sizeof(fullpath);
 	const int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
@@ -747,8 +770,7 @@ char *SDL_GetBasePath()
 			return NULL;
 		}
 	}
-#endif
-#if defined(__OPENBSD__)
+#elif defined(__OPENBSD__)
 	char **retvalargs;
 	size_t len;
 	const int mib[] = { CTL_KERN, KERN_PROC_ARGS, getpid(), KERN_PROC_ARGV };
@@ -765,8 +787,7 @@ char *SDL_GetBasePath()
 
 		SDL_free(retvalargs);
 	}
-#endif
-#if defined(__SOLARIS__)
+#elif defined(__SOLARIS__)
 	const char *path = getexecname();
 	if ((path != NULL) && (path[0] == '/')) { /* must be absolute path... */
 		retval = SDL_strdup(path);
@@ -775,8 +796,7 @@ char *SDL_GetBasePath()
 			return NULL;
 		}
 	}
-#endif
-#if defined(__3DS__)
+#elif defined(__3DS__)
 	retval = SDL_strdup("file:sdmc:/3ds/devilutionx/");
 #elif defined(__amigaos__)
 	retval = SDL_strdup("PROGDIR:");
@@ -831,7 +851,7 @@ char *SDL_GetBasePath()
 	return retval;
 }
 
-char *SDL_GetPrefPath(const char *org, const char *app)
+extern "C" char *SDL_GetPrefPath(const char *org, const char *app)
 {
 	// From sdl2-2.0.9/src/filesystem/unix/SDL_sysfilesystem.c
 	/*
@@ -841,6 +861,12 @@ char *SDL_GetPrefPath(const char *org, const char *app)
 	 *
 	 * https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 	 */
+#if (defined(WINVER) && WINVER <= 0x0500 && (!defined(_WIN32_WINNT) || _WIN32_WINNT == 0)) || defined(__DJGPP__)
+	// On Windows9x there is no such thing as PrefPath. Simply use the current directory.
+	char *result = (char *)SDL_malloc(1);
+	*result = '\0';
+	return result;
+#else
 	const char *envr = SDL_getenv("XDG_DATA_HOME");
 	const char *append;
 	char *retval = NULL;
@@ -892,9 +918,9 @@ char *SDL_GetPrefPath(const char *org, const char *app)
 	}
 
 	if (*org) {
-		SDL_snprintf(retval, len, "%s%s%s/%s", envr, append, org, app);
+		*devilution::BufCopy(retval, envr, append, org, "/", app) = '\0';
 	} else {
-		SDL_snprintf(retval, len, "%s%s%s", envr, append, app);
+		*devilution::BufCopy(retval, envr, append, app) = '\0';
 	}
 
 	for (ptr = retval + 1; *ptr; ptr++) {
@@ -920,6 +946,7 @@ char *SDL_GetPrefPath(const char *org, const char *app)
 	}
 
 	return retval;
+#endif
 }
 
 #endif

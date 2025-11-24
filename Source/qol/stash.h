@@ -6,10 +6,12 @@
 #pragma once
 
 #include <cstdint>
-#include <map>
 #include <vector>
 
+#include <ankerl/unordered_dense.h>
+
 #include "engine/point.hpp"
+#include "engine/points_in_rectangle_range.hpp"
 #include "items.h"
 
 namespace devilution {
@@ -21,7 +23,7 @@ public:
 	static constexpr StashCell EmptyCell = -1;
 
 	void RemoveStashItem(StashCell iv);
-	std::map<unsigned, StashGrid> stashGrids;
+	ankerl::unordered_dense::map<unsigned, StashGrid> stashGrids;
 	std::vector<Item> stashList;
 	int gold;
 	bool dirty = false;
@@ -72,6 +74,9 @@ extern StashStruct Stash;
 extern bool IsWithdrawGoldOpen;
 extern int WithdrawGoldValue;
 
+inline constexpr Size StashGridSize { 10, 10 };
+inline constexpr PointsInRectangle<int> StashGridRange { { { 0, 0 }, StashGridSize } };
+
 Point GetStashSlotCoord(Point slot);
 void InitStash();
 void FreeStashGFX();
@@ -88,9 +93,9 @@ void CheckStashButtonPress(Point mousePosition);
 
 void StartGoldWithdraw();
 void WithdrawGoldKeyPress(SDL_Keycode vkey);
-void DrawGoldWithdraw(const Surface &out, int amount);
+void DrawGoldWithdraw(const Surface &out);
 void CloseGoldWithdraw();
-void GoldWithdrawNewText(string_view text);
+bool HandleGoldWithdrawTextInputEvent(const SDL_Event &event);
 
 /**
  * @brief Checks whether the given item can be placed on the specified player's stash.

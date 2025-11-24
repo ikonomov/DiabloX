@@ -2,12 +2,21 @@
 
 #include <chrono>
 #include <cstdint>
+#include <cstring>
 #include <memory>
+#include <mutex>
 #include <queue>
+#include <variant>
 
 #include <Aulib/Decoder.h>
-#include <SDL_mutex.h>
 
+#ifdef USE_SDL3
+#include <SDL3/SDL_mutex.h>
+#else
+#include <SDL_mutex.h>
+#endif
+
+#include "utils/sdl_compat.h"
 #include "utils/sdl_mutex.h"
 
 namespace devilution {
@@ -23,11 +32,17 @@ public:
 	{
 	}
 
-	void PushSamples(const std::uint8_t *data, unsigned size) noexcept;
-	void PushSamples(const std::int16_t *data, unsigned size) noexcept;
+	template <typename T>
+	void PushSamples(const T *data, unsigned size) noexcept
+	{
+		AudioQueueItem item { data, size };
+		const auto lock = std::lock_guard(queue_mutex_);
+		queue_.push(std::move(item));
+	}
+
 	void DiscardPendingSamples() noexcept;
 
-	bool open(SDL_RWops *rwops) override;
+	bool open(SDL_IOStream *rwops) override;
 
 	[[nodiscard]] int getChannels() const override
 	{
@@ -48,9 +63,21 @@ protected:
 
 private:
 	struct AudioQueueItem {
-		std::unique_ptr<std::int16_t[]> data;
+		std::variant<
+		    std::unique_ptr<int16_t[]>,
+		    std::unique_ptr<uint8_t[]>>
+		    data;
 		unsigned len;
-		const std::int16_t *pos;
+		unsigned pos;
+
+		template <typename T>
+		AudioQueueItem(const T *data, unsigned size)
+		    : data { std::unique_ptr<T[]> { new T[size] } }
+		    , len { size }
+		    , pos { 0 }
+		{
+			std::memcpy(std::get<std::unique_ptr<T[]>>(this->data).get(), data, size * sizeof(T));
+		}
 	};
 
 	const int numChannels_;

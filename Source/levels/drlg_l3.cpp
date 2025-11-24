@@ -12,7 +12,9 @@
 #include "monster.h"
 #include "objdat.h"
 #include "objects.h"
+#include "player.h"
 #include "quests.h"
+#include "utils/is_of.hpp"
 
 namespace devilution {
 
@@ -757,8 +759,8 @@ void CreateBlock(int x, int y, int obs, int dir)
 	int x2;
 	int y2;
 
-	int blksizex = GenerateRnd(2) + 3;
-	int blksizey = GenerateRnd(2) + 3;
+	const int blksizex = RandomIntBetween(3, 4);
+	const int blksizey = RandomIntBetween(3, 4);
 
 	if (dir == 0) {
 		y2 = y - 1;
@@ -849,7 +851,7 @@ void FillDiagonals()
 {
 	for (int j = 0; j < DMAXY - 1; j++) {
 		for (int i = 0; i < DMAXX - 1; i++) {
-			int v = dungeon[i + 1][j + 1] + 2 * dungeon[i][j + 1] + 4 * dungeon[i + 1][j] + 8 * dungeon[i][j];
+			const int v = dungeon[i + 1][j + 1] + 2 * dungeon[i][j + 1] + 4 * dungeon[i + 1][j] + 8 * dungeon[i][j];
 			if (v == 6) {
 				if (FlipCoin()) {
 					dungeon[i][j] = 1;
@@ -898,7 +900,7 @@ void FillStraights()
 			} else {
 				if (xs > 3 && !FlipCoin()) {
 					for (int k = xc; k < i; k++) {
-						int rv = GenerateRnd(2);
+						const int rv = GenerateRnd(2);
 						dungeon[k][j] = rv;
 					}
 				}
@@ -917,7 +919,7 @@ void FillStraights()
 			} else {
 				if (xs > 3 && !FlipCoin()) {
 					for (int k = xc; k < i; k++) {
-						int rv = GenerateRnd(2);
+						const int rv = GenerateRnd(2);
 						dungeon[k][j + 1] = rv;
 					}
 				}
@@ -936,7 +938,7 @@ void FillStraights()
 			} else {
 				if (ys > 3 && !FlipCoin()) {
 					for (int k = yc; k < j; k++) {
-						int rv = GenerateRnd(2);
+						const int rv = GenerateRnd(2);
 						dungeon[i][k] = rv;
 					}
 				}
@@ -955,7 +957,7 @@ void FillStraights()
 			} else {
 				if (ys > 3 && !FlipCoin()) {
 					for (int k = yc; k < j; k++) {
-						int rv = GenerateRnd(2);
+						const int rv = GenerateRnd(2);
 						dungeon[i + 1][k] = rv;
 					}
 				}
@@ -1016,14 +1018,14 @@ void River()
 	int riveramt;
 
 	int rivercnt = 0;
-	int trys = 0;
+	int tries = 0;
 	/// BUGFIX: pdir is uninitialized, add code `pdir = -1;`(fixed)
 	int pdir = -1;
 
-	while (trys < 200 && rivercnt < 4) {
+	while (tries < 200 && rivercnt < 4) {
 		bool bail = false;
-		while (!bail && trys < 200) {
-			trys++;
+		while (!bail && tries < 200) {
+			tries++;
 			int rx = 0;
 			int ry = 0;
 			int i = 0;
@@ -1075,8 +1077,8 @@ void River()
 			int nodir2 = 4;
 			int dircheck = 0;
 			while (dircheck < 4 && riveramt < 100) {
-				int px = rx;
-				int py = ry;
+				const int px = rx;
+				const int py = ry;
 				if (dircheck == 0) {
 					dir = GenerateRnd(4);
 				} else {
@@ -1102,10 +1104,10 @@ void River()
 				if (dungeon[rx][ry] == 7) {
 					dircheck = 0;
 					if (dir < 2) {
-						river[2][riveramt] = GenerateRnd(2) + 17;
+						river[2][riveramt] = PickRandomlyAmong({ 17, 18 });
 					}
 					if (dir > 1) {
-						river[2][riveramt] = GenerateRnd(2) + 15;
+						river[2][riveramt] = PickRandomlyAmong({ 15, 16 });
 					}
 					river[0][riveramt] = rx;
 					river[1][riveramt] = ry;
@@ -1278,7 +1280,7 @@ bool SpawnEdge(int x, int y, int *totarea)
 		return true;
 	}
 
-	uint8_t i = dungeon[x][y];
+	const uint8_t i = dungeon[x][y];
 	dungeon[x][y] |= 0x80;
 	*totarea += 1;
 
@@ -1327,7 +1329,7 @@ bool Spawn(int x, int y, int *totarea)
 		return true;
 	}
 
-	uint8_t i = dungeon[x][y];
+	const uint8_t i = dungeon[x][y];
 	dungeon[x][y] |= 0x80;
 	*totarea += 1;
 
@@ -1368,7 +1370,7 @@ bool CanReplaceTile(uint8_t replace, Point tile)
 		return true;
 	}
 
-	// BUGFIX: p2 is a workaround for a bug, only p1 should have been used (fixing this breaks compatability)
+	// BUGFIX: p2 is a workaround for a bug, only p1 should have been used (fixing this breaks compatibility)
 	constexpr auto ComparisonWithBoundsCheck = [](Point p1, Point p2) {
 		return (p1.x >= 0 && p1.x < DMAXX && p1.y >= 0 && p1.y < DMAXY)
 		    && (p2.x >= 0 && p2.x < DMAXX && p2.y >= 0 && p2.y < DMAXY)
@@ -1469,7 +1471,7 @@ bool PlaceLavaPool()
 			} else {
 				found = true;
 			}
-			bool placePool = GenerateRnd(100) < 25;
+			const bool placePool = GenerateRnd(100) < 25;
 			for (int j = std::max(duny - totarea, 0); j < std::min(duny + totarea, DMAXY); j++) {
 				for (int i = std::max(dunx - totarea, 0); i < std::min(dunx + totarea, DMAXX); i++) {
 					// BUGFIX: In the following swap the order to first do the
@@ -1477,7 +1479,7 @@ bool PlaceLavaPool()
 					if ((dungeon[i][j] & 0x80) != 0) {
 						dungeon[i][j] &= ~0x80;
 						if (totarea > 4 && placePool && !found) {
-							uint8_t k = Poolsub[dungeon[i][j]];
+							const uint8_t k = Poolsub[dungeon[i][j]];
 							if (k != 0 && k <= 37) {
 								dungeon[i][j] = k;
 							}
@@ -1502,17 +1504,17 @@ bool PlacePool()
 }
 
 /**
- * @brief Fill lava pools correctly, cause River() only generates the edges.
+ * @brief Fill lava pools correctly, because River() only generates the edges.
  */
 void PoolFix()
 {
-	for (Point tile : PointsInRectangle(Rectangle { { 1, 1 }, { DMAXX - 2, DMAXY - 2 } })) {
-		// Check if the tile is a the default dirt ceiling tile
+	for (const Point tile : PointsInRectangle(Rectangle { { 1, 1 }, { DMAXX - 2, DMAXY - 2 } })) {
+		// Check if the tile is the default dirt ceiling tile
 		if (dungeon[tile.x][tile.y] != 8)
 			continue;
 
-		for (Point adjacentTiles : PointsInRectangle(Rectangle { tile - Displacement(1, 1), { 3, 3 } })) {
-			int tileId = dungeon[adjacentTiles.x][adjacentTiles.y];
+		for (const Point adjacentTiles : PointsInRectangle(Rectangle { tile - Displacement(1, 1), { 3, 3 } })) {
+			const int tileId = dungeon[adjacentTiles.x][adjacentTiles.y];
 			// Check if the adjacent tile is a ground lava tile
 			if (tileId >= 25 && tileId <= 41) {
 				// A ground lava tile can never be directly connected to our ceiling tile.
@@ -1710,7 +1712,7 @@ void Fence()
 						skip = false;
 					}
 					if (y2 - y1 > 1 && skip) {
-						int rp = GenerateRnd(y2 - y1 - 1) + y1 + 1;
+						const int rp = GenerateRnd(y2 - y1 - 1) + y1 + 1;
 						for (int y = y1; y <= y2; y++) {
 							if (y == rp) {
 								continue;
@@ -1759,7 +1761,7 @@ void Fence()
 						skip = false;
 					}
 					if (x2 - x1 > 1 && skip) {
-						int rp = GenerateRnd(x2 - x1 - 1) + x1 + 1;
+						const int rp = GenerateRnd(x2 - x1 - 1) + x1 + 1;
 						for (int x = x1; x <= x2; x++) {
 							if (x == rp) {
 								continue;
@@ -1796,21 +1798,16 @@ void Fence()
 	FenceDoorFix();
 }
 
-void LoadQuestSetPieces()
-{
-	if (Quests[Q_ANVIL].IsAvailable())
-		pSetPiece = LoadFileInMem<uint16_t>("levels\\l3data\\anvil.dun");
-}
-
 bool PlaceAnvil()
 {
+	const std::unique_ptr<uint16_t[]> setPieceData = LoadFileInMem<uint16_t>("levels\\l3data\\anvil.dun");
 	// growing the size by 2 to allow a 1 tile border on all sides
-	WorldTileSize areaSize = WorldTileSize(SDL_SwapLE16(pSetPiece[0]), SDL_SwapLE16(pSetPiece[1])) + 2;
+	const WorldTileSize areaSize = GetDunSize(setPieceData.get()) + 2;
 	WorldTileCoord sx = GenerateRnd(DMAXX - areaSize.width);
 	WorldTileCoord sy = GenerateRnd(DMAXY - areaSize.height);
 
-	for (int trys = 0;; trys++, sx++) {
-		if (trys > 198)
+	for (int tries = 0;; tries++, sx++) {
+		if (tries > 198)
 			return false;
 
 		if (sx == DMAXX - areaSize.width) {
@@ -1822,7 +1819,7 @@ bool PlaceAnvil()
 		}
 
 		bool found = true;
-		for (WorldTilePosition tile : PointsInRectangle(WorldTileRectangle { { sx, sy }, areaSize })) {
+		for (const WorldTilePosition tile : PointsInRectangle(WorldTileRectangle { { sx, sy }, areaSize })) {
 			if (Protected.test(tile.x, tile.y) || dungeon[tile.x][tile.y] != 7) {
 				found = false;
 				break;
@@ -1832,10 +1829,10 @@ bool PlaceAnvil()
 			break;
 	}
 
-	PlaceDunTiles(pSetPiece.get(), { sx + 1, sy + 1 }, 7);
+	PlaceDunTiles(setPieceData.get(), { sx + 1, sy + 1 }, 7);
 	SetPiece = { { sx, sy }, areaSize };
 
-	for (WorldTilePosition tile : PointsInRectangle(SetPiece)) {
+	for (const WorldTilePosition tile : PointsInRectangle(SetPiece)) {
 		Protected.set(tile.x, tile.y);
 	}
 
@@ -1993,9 +1990,11 @@ bool PlaceStairs(lvl_entry entry)
 
 void GenerateLevel(lvl_entry entry)
 {
-	LoadQuestSetPieces();
+	if (LevelSeeds[currlevel])
+		SetRndSeed(*LevelSeeds[currlevel]);
 
 	while (true) {
+		LevelSeeds[currlevel] = GetLCGEngineState();
 		InitDungeonFlags();
 		int x1 = GenerateRnd(20) + 10;
 		int y1 = GenerateRnd(20) + 10;
@@ -2028,8 +2027,6 @@ void GenerateLevel(lvl_entry entry)
 		if (PlacePool())
 			break;
 	}
-
-	FreeQuestSetPieces();
 
 	if (leveltype == DTYPE_NEST) {
 		PlaceMiniSetRandom(L6ISLE1, 70);

@@ -1,14 +1,23 @@
-#include <gtest/gtest.h>
-
 #include "engine/path.h"
 
-// The following headers are included to access globals used in functions that have not been isolated yet.
-#include "levels/gendung.h"
-#include "objects.h"
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <span>
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+#include "engine/direction.hpp"
+#include "utils/algorithm/container.hpp"
 
 namespace devilution {
 
 extern int TestPathGetHeuristicCost(Point startPosition, Point destinationPosition);
+
+namespace {
+
+using ::testing::ElementsAreArray;
 
 TEST(PathTest, Heuristics)
 {
@@ -17,124 +26,127 @@ TEST(PathTest, Heuristics)
 	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 0) << "Wrong cost for travelling to the same tile";
 
 	destination = source + Direction::NorthEast;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 2) << "Wrong cost for travelling to horizontal/vertical adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathAxisAlignedStepCost) << "Wrong cost for travelling to horizontal/vertical adjacent tile";
 	destination = source + Direction::SouthEast;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 2) << "Wrong cost for travelling to horizontal/vertical adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathAxisAlignedStepCost) << "Wrong cost for travelling to horizontal/vertical adjacent tile";
 	destination = source + Direction::SouthWest;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 2) << "Wrong cost for travelling to horizontal/vertical adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathAxisAlignedStepCost) << "Wrong cost for travelling to horizontal/vertical adjacent tile";
 	destination = source + Direction::NorthWest;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 2) << "Wrong cost for travelling to horizontal/vertical adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathAxisAlignedStepCost) << "Wrong cost for travelling to horizontal/vertical adjacent tile";
 
 	destination = source + Direction::North;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 4) << "Wrong cost for travelling to diagonally adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathDiagonalStepCost) << "Wrong cost for travelling to diagonally adjacent tile";
 	destination = source + Direction::East;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 4) << "Wrong cost for travelling to diagonally adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathDiagonalStepCost) << "Wrong cost for travelling to diagonally adjacent tile";
 	destination = source + Direction::South;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 4) << "Wrong cost for travelling to diagonally adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathDiagonalStepCost) << "Wrong cost for travelling to diagonally adjacent tile";
 	destination = source + Direction::West;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 4) << "Wrong cost for travelling to diagonally adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathDiagonalStepCost) << "Wrong cost for travelling to diagonally adjacent tile";
 	destination = source + Direction::SouthWest + Direction::SouthEast; // Effectively the same as Direction::South
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 4) << "Wrong cost for travelling to diagonally adjacent tile";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathDiagonalStepCost) << "Wrong cost for travelling to diagonally adjacent tile";
 
 	destination = source + Direction::NorthEast + Direction::North;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 6) << "Wrong cost for travelling to a { 2, 1 } offset";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), PathAxisAlignedStepCost + PathDiagonalStepCost) << "Wrong cost for travelling to a { 2, 1 } offset";
 	destination = source + Direction::SouthEast + Direction::SouthEast;
-	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 4) << "Wrong cost for travelling to a { 2, 0 } offset";
+	EXPECT_EQ(TestPathGetHeuristicCost(source, destination), 2 * PathAxisAlignedStepCost) << "Wrong cost for travelling to a { 2, 0 } offset";
 }
 
-TEST(PathTest, Solid)
+// These symbols are in terms of coordinates (not in terms of on-screen direction).
+// -1, -1 is top-left.
+enum class Dir {
+	None,
+	Up,
+	Left,
+	Right,
+	Down,
+	UpLeft,
+	UpRight,
+	DownRight,
+	DownLeft
+};
+std::array<std::string_view, 9> DirSymbols = { "∅", "↑", "←", "→", "↓", "↖", "↗", "↘", "↙" };
+
+std::ostream &operator<<(std::ostream &os, Dir dir)
 {
-	dPiece[5][5] = 0;
-	SOLData[0] = TileProperties::Solid;
-	EXPECT_TRUE(IsTileSolid({ 5, 5 })) << "Solid in-bounds tiles are solid";
-	EXPECT_FALSE(IsTileNotSolid({ 5, 5 })) << "IsTileNotSolid returns the inverse of IsTileSolid for in-bounds tiles";
-
-	dPiece[6][6] = 1;
-	SOLData[1] = TileProperties::None;
-	EXPECT_FALSE(IsTileSolid({ 6, 6 })) << "Non-solid in-bounds tiles are not solid";
-	EXPECT_TRUE(IsTileNotSolid({ 6, 6 })) << "IsTileNotSolid returns the inverse of IsTileSolid for in-bounds tiles";
-
-	EXPECT_FALSE(IsTileSolid({ -1, 1 })) << "Out of bounds tiles are not solid"; // this reads out of bounds in the current code and may fail unexpectedly
-	EXPECT_FALSE(IsTileNotSolid({ -1, 1 })) << "Out of bounds tiles are also not not solid";
+	return os << DirSymbols[static_cast<size_t>(dir)];
 }
 
-TEST(PathTest, SolidPieces)
+std::vector<Dir> ToSyms(std::span<const std::string> strings)
 {
-	dPiece[0][0] = 0;
-	dPiece[0][1] = 0;
-	dPiece[1][0] = 0;
-	dPiece[1][1] = 0;
-	SOLData[0] = TileProperties::None;
-	EXPECT_TRUE(path_solid_pieces({ 0, 0 }, { 1, 1 })) << "A step in open space is free of solid pieces";
-	EXPECT_TRUE(path_solid_pieces({ 1, 1 }, { 0, 0 })) << "A step in open space is free of solid pieces";
-	EXPECT_TRUE(path_solid_pieces({ 1, 0 }, { 0, 1 })) << "A step in open space is free of solid pieces";
-	EXPECT_TRUE(path_solid_pieces({ 0, 1 }, { 1, 0 })) << "A step in open space is free of solid pieces";
-
-	SOLData[1] = TileProperties::Solid;
-	dPiece[1][0] = 1;
-	EXPECT_TRUE(path_solid_pieces({ 0, 1 }, { 1, 0 })) << "Can path to a destination which is solid";
-	EXPECT_TRUE(path_solid_pieces({ 1, 0 }, { 0, 1 })) << "Can path from a starting position which is solid";
-	EXPECT_TRUE(path_solid_pieces({ 0, 1 }, { 1, 1 })) << "Stepping in a cardinal direction ignores solid pieces";
-	EXPECT_TRUE(path_solid_pieces({ 1, 0 }, { 1, 1 })) << "Stepping in a cardinal direction ignores solid pieces";
-	EXPECT_TRUE(path_solid_pieces({ 0, 0 }, { 1, 0 })) << "Stepping in a cardinal direction ignores solid pieces";
-	EXPECT_TRUE(path_solid_pieces({ 1, 1 }, { 1, 0 })) << "Stepping in a cardinal direction ignores solid pieces";
-
-	EXPECT_FALSE(path_solid_pieces({ 0, 0 }, { 1, 1 })) << "Can't cut a solid corner";
-	EXPECT_FALSE(path_solid_pieces({ 1, 1 }, { 0, 0 })) << "Can't cut a solid corner";
-	dPiece[0][1] = 1;
-	EXPECT_FALSE(path_solid_pieces({ 0, 0 }, { 1, 1 })) << "Can't walk through the boundary between two corners";
-	EXPECT_FALSE(path_solid_pieces({ 1, 1 }, { 0, 0 })) << "Can't walk through the boundary between two corners";
-	dPiece[1][0] = 0;
-	EXPECT_FALSE(path_solid_pieces({ 0, 0 }, { 1, 1 })) << "Can't cut a solid corner";
-	EXPECT_FALSE(path_solid_pieces({ 1, 1 }, { 0, 0 })) << "Can't cut a solid corner";
-	dPiece[0][1] = 0;
-
-	dPiece[0][0] = 1;
-	EXPECT_FALSE(path_solid_pieces({ 1, 0 }, { 0, 1 })) << "Can't cut a solid corner";
-	EXPECT_FALSE(path_solid_pieces({ 0, 1 }, { 1, 0 })) << "Can't cut a solid corner";
-	dPiece[1][1] = 1;
-	EXPECT_FALSE(path_solid_pieces({ 1, 0 }, { 0, 1 })) << "Can't walk through the boundary between two corners";
-	EXPECT_FALSE(path_solid_pieces({ 0, 1 }, { 1, 0 })) << "Can't walk through the boundary between two corners";
-	dPiece[0][0] = 0;
-	EXPECT_FALSE(path_solid_pieces({ 1, 0 }, { 0, 1 })) << "Can't cut a solid corner";
-	EXPECT_FALSE(path_solid_pieces({ 0, 1 }, { 1, 0 })) << "Can't cut a solid corner";
-	dPiece[1][1] = 0;
+	std::vector<Dir> result;
+	result.reserve(strings.size());
+	for (const std::string &str : strings)
+		result.emplace_back(static_cast<Dir>(std::distance(DirSymbols.begin(), c_find(DirSymbols, str))));
+	return result;
 }
 
-void CheckPath(Point startPosition, Point destinationPosition, std::vector<int8_t> expectedSteps)
+std::vector<Dir> ToSyms(std::span<const int8_t> indices)
 {
-	static int8_t pathSteps[MaxPathLength];
-	auto pathLength = FindPath([](Point) { return true; }, startPosition, destinationPosition, pathSteps);
-
-	EXPECT_EQ(pathLength, expectedSteps.size()) << "Wrong path length for a path from " << startPosition << " to " << destinationPosition;
-	// Die early if the wrong path length is returned as we don't want to read oob in expectedSteps
-	ASSERT_LE(pathLength, expectedSteps.size()) << "Path is longer than expected.";
-
-	for (int i = 0; i < pathLength; i++) {
-		EXPECT_EQ(pathSteps[i], expectedSteps[i]) << "Path step " << i << " differs from expectation for a path from "
-		                                          << startPosition << " to " << destinationPosition; // this shouldn't be a requirement but...
-
-		// Path directions are all jacked up compared to the Direction enum. Most consumers have their own mapping definition
-		// startPosition += Direction { path[i] - 1 };
-	}
-	// Given that we can't really make any assumptions about how the path is actually used.
-	// EXPECT_EQ(startPosition, destinationPosition) << "Path doesn't lead to destination";
+	std::vector<Dir> result;
+	result.reserve(indices.size());
+	for (const int8_t idx : indices)
+		result.emplace_back(static_cast<Dir>(idx));
+	return result;
 }
 
-TEST(PathTest, FindPath)
+void CheckPath(Point startPosition, Point destinationPosition, std::vector<std::string> expectedSteps)
+{
+	// Restrict tests to the longest possible path length in vanilla Diablo
+	constexpr size_t MaxPathLength = 24;
+	int8_t pathSteps[MaxPathLength];
+	auto pathLength = FindPath(
+	    /*canStep=*/[](Point, Point) { return true; },
+	    /*posOk=*/[](Point) { return true; },
+	    startPosition, destinationPosition, pathSteps, MaxPathLength);
+	EXPECT_THAT(ToSyms(std::span<const int8_t>(pathSteps, pathLength)), ElementsAreArray(ToSyms(expectedSteps)))
+	    << "Path steps differs from expectation for a path from "
+	    << startPosition << " to " << destinationPosition;
+}
+
+TEST(PathTest, FindPathToSelf)
 {
 	CheckPath({ 8, 8 }, { 8, 8 }, {});
+}
 
-	// Traveling in cardinal directions is the only way to get a first step in a cardinal direction
-	CheckPath({ 8, 8 }, { 8, 6 }, { 1, 1 });
-	CheckPath({ 8, 8 }, { 6, 8 }, { 2, 2 });
-	CheckPath({ 8, 8 }, { 10, 8 }, { 3, 3 });
-	CheckPath({ 8, 8 }, { 8, 10 }, { 4, 4 });
+TEST(PathTest, FindPathTwoStepsUp)
+{
+	CheckPath({ 8, 8 }, { 8, 6 }, { "↑", "↑" });
+}
 
-	// Otherwise pathing biases along diagonals and the diagonal steps will always be first
-	CheckPath({ 8, 8 }, { 5, 6 }, { 5, 5, 2 });
-	CheckPath({ 8, 8 }, { 4, 4 }, { 5, 5, 5, 5 });
-	CheckPath({ 8, 8 }, { 12, 20 }, { 7, 7, 7, 7, 4, 4, 4, 4, 4, 4, 4, 4 });
+TEST(PathTest, FindPathTwoStepsLeft)
+{
+	CheckPath({ 8, 8 }, { 6, 8 }, { "←", "←" });
+}
+
+TEST(PathTest, FindPathTwoStepsRight)
+{
+	CheckPath({ 8, 8 }, { 10, 8 }, { "→", "→" });
+}
+
+TEST(PathTest, FindPathTwoStepsDown)
+{
+	CheckPath({ 8, 8 }, { 8, 10 }, { "↓", "↓" });
+}
+
+TEST(PathTest, FindPathDiagonalsFirst3Left2Up)
+{
+	// Pathing biases along diagonals and the diagonal steps will always be first
+	CheckPath({ 8, 8 }, { 5, 6 }, { "↖", "↖", "←" });
+}
+
+TEST(PathTest, FindPathDiagonalsFirst4Left4Up)
+{
+	CheckPath({ 8, 8 }, { 4, 4 }, { "↖", "↖", "↖", "↖" });
+}
+
+TEST(PathTest, FindPathDiagonalsFirst2Right4Down)
+{
+	CheckPath({ 8, 8 }, { 10, 12 }, { "↘", "↘", "↓", "↓" });
+}
+
+TEST(PathTest, FindPathDiagonalsFirst4Right12Down)
+{
+	CheckPath({ 8, 8 }, { 12, 20 }, { "↘", "↘", "↘", "↘", "↓", "↓", "↓", "↓", "↓", "↓", "↓", "↓" });
 }
 
 TEST(PathTest, LongPaths)
@@ -142,41 +154,12 @@ TEST(PathTest, LongPaths)
 	// Starting from the middle of the world and trying to path to a border exceeds the maximum path size
 	CheckPath({ 56, 56 }, { 0, 0 }, {});
 
-	// Longest possible path is currently 24 steps meaning tiles 24 units away are reachable
-	Point startingPosition { 56, 56 };
-	CheckPath(startingPosition, startingPosition + Displacement { 24, 24 }, std::vector<int8_t>(24, 7));
+	// Longest possible path used to be 24 steps meaning tiles 24 units away are reachable
+	const Point startingPosition { 56, 56 };
+	CheckPath(startingPosition, startingPosition + Displacement { 24, 24 }, std::vector<std::string>(24, "↘"));
 
 	// But trying to navigate 25 units fails
 	CheckPath(startingPosition, startingPosition + Displacement { 25, 25 }, {});
-}
-
-TEST(PathTest, Walkable)
-{
-	dPiece[5][5] = 0;
-	SOLData[0] = TileProperties::Solid; // Doing this manually to save running through the code in gendung.cpp
-	EXPECT_FALSE(IsTileWalkable({ 5, 5 })) << "Tile which is marked as solid should be considered blocked";
-	EXPECT_FALSE(IsTileWalkable({ 5, 5 }, true)) << "Solid non-door tiles remain unwalkable when ignoring doors";
-
-	SOLData[0] = TileProperties::None;
-	EXPECT_TRUE(IsTileWalkable({ 5, 5 })) << "Non-solid tiles are walkable";
-	EXPECT_TRUE(IsTileWalkable({ 5, 5 }, true)) << "Non-solid tiles remain walkable when ignoring doors";
-
-	dObject[5][5] = 1;
-	Objects[0]._oSolidFlag = true;
-	EXPECT_FALSE(IsTileWalkable({ 5, 5 })) << "Tile occupied by a solid object is unwalkable";
-	EXPECT_FALSE(IsTileWalkable({ 5, 5 }, true)) << "Tile occupied by a solid non-door object are unwalkable when ignoring doors";
-
-	Objects[0]._otype = _object_id::OBJ_L1LDOOR;
-	EXPECT_FALSE(IsTileWalkable({ 5, 5 })) << "Tile occupied by a door which is marked as solid should be considered blocked";
-	EXPECT_TRUE(IsTileWalkable({ 5, 5 }, true)) << "Tile occupied by a door is considered walkable when ignoring doors";
-
-	Objects[0]._oSolidFlag = false;
-	EXPECT_TRUE(IsTileWalkable({ 5, 5 })) << "Tile occupied by an open door is walkable";
-	EXPECT_TRUE(IsTileWalkable({ 5, 5 }, true)) << "Tile occupied by a door is considered walkable when ignoring doors";
-
-	SOLData[0] = TileProperties::Solid;
-	EXPECT_FALSE(IsTileWalkable({ 5, 5 })) << "Solid tiles occupied by an open door remain unwalkable";
-	EXPECT_TRUE(IsTileWalkable({ 5, 5 }, true)) << "Solid tiles occupied by an open door become walkable when ignoring doors";
 }
 
 TEST(PathTest, FindClosest)
@@ -184,7 +167,7 @@ TEST(PathTest, FindClosest)
 	{
 		std::array<std::array<int, 101>, 101> searchedTiles {};
 
-		std::optional<Point> nearPosition = FindClosestValidPosition(
+		const std::optional<Point> nearPosition = FindClosestValidPosition(
 		    [&searchedTiles](Point testPosition) {
 			    searchedTiles[testPosition.x][testPosition.y]++;
 			    return false;
@@ -206,7 +189,7 @@ TEST(PathTest, FindClosest)
 	{
 		std::array<std::array<int, 5>, 5> searchedTiles {};
 
-		std::optional<Point> nearPosition = FindClosestValidPosition(
+		const std::optional<Point> nearPosition = FindClosestValidPosition(
 		    [&searchedTiles](Point testPosition) {
 			    searchedTiles[testPosition.x][testPosition.y]++;
 			    return false;
@@ -230,7 +213,7 @@ TEST(PathTest, FindClosest)
 	{
 		std::array<std::array<int, 3>, 3> searchedTiles {};
 
-		std::optional<Point> nearPosition = FindClosestValidPosition(
+		const std::optional<Point> nearPosition = FindClosestValidPosition(
 		    [&searchedTiles](Point testPosition) {
 			    searchedTiles[testPosition.x][testPosition.y]++;
 			    return false;
@@ -253,7 +236,7 @@ TEST(PathTest, FindClosest)
 	{
 		std::array<std::array<int, 7>, 7> searchedTiles {};
 
-		std::optional<Point> nearPosition = FindClosestValidPosition(
+		const std::optional<Point> nearPosition = FindClosestValidPosition(
 		    [&searchedTiles](Point testPosition) {
 			    searchedTiles[testPosition.x][testPosition.y]++;
 			    return false;
@@ -285,4 +268,6 @@ TEST(PathTest, FindClosest)
 		EXPECT_EQ(*nearPosition, (Point { 50, 50 } + Displacement { 0, 21 })) << "First candidate position with a minimum radius should be at {0, +y}";
 	}
 }
+
+} // namespace
 } // namespace devilution

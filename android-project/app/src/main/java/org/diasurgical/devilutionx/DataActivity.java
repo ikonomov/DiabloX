@@ -6,8 +6,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.method.LinkMovementMethod;
@@ -33,6 +35,12 @@ public class DataActivity extends Activity {
 
 		((TextView) findViewById(R.id.full_guide)).setMovementMethod(LinkMovementMethod.getInstance());
 		((TextView) findViewById(R.id.online_guide)).setMovementMethod(LinkMovementMethod.getInstance());
+
+		boolean isTelevision = getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK);
+		if (isTelevision) {
+			findViewById(R.id.gamepad_text).setVisibility(View.VISIBLE);
+			findViewById(R.id.gamepad_icon).setVisibility(View.VISIBLE);
+		}
 	}
 
 	protected void onResume() {
@@ -122,6 +130,11 @@ public class DataActivity extends Activity {
 				(!fileManager.hasFile("spawn.mpq") || isDownloadingSpawn);
 	}
 
+	public void importData(View view) {
+		Intent intent = new Intent(this, ImportActivity.class);
+		startActivity(intent);
+	}
+
 	/**
 	 * Start downloading the shareware
 	 */
@@ -145,13 +158,20 @@ public class DataActivity extends Activity {
 				.setDescription(description)
 				.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
 
-		File file = fileManager.getFile(fileName);
+		// Download to a temp file which will be renamed later
+		// See: https://stackoverflow.com/a/48128014
+		File file = fileManager.getFile(fileName + "~");
 		Uri destination = Uri.fromFile(file);
 		request.setDestinationUri(destination);
 
 		if (mReceiver == null) {
 			mReceiver = new DownloadReceiver();
-			registerReceiver(mReceiver, new IntentFilter("android.intent.action.DOWNLOAD_COMPLETE"));
+			IntentFilter filter = new IntentFilter("android.intent.action.DOWNLOAD_COMPLETE");
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				registerReceiver(mReceiver, filter, Context.RECEIVER_EXPORTED);
+			} else {
+				registerReceiver(mReceiver, filter);
+			}
 		}
 
 		DownloadManager downloadManager = (DownloadManager)this.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -171,12 +191,21 @@ public class DataActivity extends Activity {
 			DownloadManager.Query query = new DownloadManager.Query();
 			query.setFilterById(receivedID);
 			Cursor cur = mgr.query(query);
-			int index = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
+			int statusIndex = cur.getColumnIndex(DownloadManager.COLUMN_STATUS);
 			if (cur.moveToFirst()) {
-				if (cur.getInt(index) == DownloadManager.STATUS_SUCCESSFUL) {
+				int status = cur.getInt(statusIndex);
+				if (status == DownloadManager.STATUS_SUCCESSFUL) {
+					// Rename temp file by removing the tilde
+					// See: https://stackoverflow.com/a/48128014
+					int titleIndex = cur.getColumnIndex(DownloadManager.COLUMN_TITLE);
+					String fileName = cur.getString(titleIndex);
+					File temp = fileManager.getFile(fileName + "~");
+					File file = fileManager.getFile(fileName);
+					temp.renameTo(file);
+
 					pendingDownloads--;
 				}
-				if (cur.getInt(index) == DownloadManager.STATUS_FAILED) {
+				if (status == DownloadManager.STATUS_FAILED) {
 					isDownloadingSpawn = false;
 					isDownloadingFonts = false;
 					isDownloadingTranslation = false;

@@ -14,6 +14,8 @@
 #include "engine/clx_sprite.hpp"
 #include "engine/load_clx.hpp"
 #include "engine/render/clx_render.hpp"
+#include "engine/render/primitive_render.hpp"
+#include "game_mode.hpp"
 #include "options.h"
 #include "utils/language.h"
 #include "utils/str_cat.hpp"
@@ -27,11 +29,23 @@ OptionalOwnedClxSpriteList health;
 OptionalOwnedClxSpriteList healthBlue;
 OptionalOwnedClxSpriteList playerExpTags;
 
+void OptionEnemyHealthBarChanged()
+{
+	if (!gbRunGame)
+		return;
+	if (*GetOptions().Gameplay.enemyHealthBar)
+		InitMonsterHealthBar();
+	else
+		FreeMonsterHealthBar();
+}
+
+const auto OptionChangeHandler = (GetOptions().Gameplay.enemyHealthBar.SetValueChangedCallback(OptionEnemyHealthBarChanged), true);
+
 } // namespace
 
 void InitMonsterHealthBar()
 {
-	if (!*sgOptions.Gameplay.enemyHealthBar)
+	if (!*GetOptions().Gameplay.enemyHealthBar)
 		return;
 
 	healthBox = LoadClx("data\\healthbox.clx");
@@ -58,7 +72,7 @@ void FreeMonsterHealthBar()
 
 void DrawMonsterHealthBar(const Surface &out)
 {
-	if (!*sgOptions.Gameplay.enemyHealthBar)
+	if (!*GetOptions().Gameplay.enemyHealthBar)
 		return;
 
 	if (leveltype == DTYPE_TOWN)
@@ -96,7 +110,7 @@ void DrawMonsterHealthBar(const Surface &out)
 
 	RenderClxSprite(out, (*healthBox)[0], position);
 	DrawHalfTransparentRectTo(out, position.x + border, position.y + border, width - (border * 2), height - (border * 2));
-	int barProgress = (barWidth * currLife) / monster.maxHitPoints;
+	const int barProgress = (barWidth * currLife) / monster.maxHitPoints;
 	if (barProgress != 0) {
 		RenderClxSprite(
 		    out.subregion(position.x + border + 1, position.y + border + 1, barProgress, height - (border * 2) - 2),
@@ -119,31 +133,34 @@ void DrawMonsterHealthBar(const Surface &out)
 		}
 	};
 
-	if (*sgOptions.Gameplay.showMonsterType) {
-		Uint8 borderColor = GetBorderColor(monster.data().monsterClass);
-		int borderWidth = width - (border * 2);
+	if (*GetOptions().Gameplay.showMonsterType) {
+		const Uint8 borderColor = GetBorderColor(monster.data().monsterClass);
+		const int borderWidth = width - (border * 2);
 		UnsafeDrawHorizontalLine(out, { position.x + border, position.y + border }, borderWidth, borderColor);
 		UnsafeDrawHorizontalLine(out, { position.x + border, position.y + height - border - 1 }, borderWidth, borderColor);
-		int borderHeight = height - (border * 2) - 2;
+		const int borderHeight = height - (border * 2) - 2;
 		UnsafeDrawVerticalLine(out, { position.x + border, position.y + border + 1 }, borderHeight, borderColor);
 		UnsafeDrawVerticalLine(out, { position.x + width - border - 1, position.y + border + 1 }, borderHeight, borderColor);
 	}
 
 	UiFlags style = UiFlags::AlignCenter | UiFlags::VerticalCenter;
-	DrawString(out, monster.name(), { position + Displacement { -1, 1 }, { width, height } }, style | UiFlags::ColorBlack);
+	DrawString(out, monster.name(), { position + Displacement { -1, 1 }, { width, height } },
+	    { .flags = style | UiFlags::ColorBlack });
 	if (monster.isUnique())
 		style |= UiFlags::ColorWhitegold;
 	else if (monster.leader != Monster::NoLeader)
 		style |= UiFlags::ColorBlue;
 	else
 		style |= UiFlags::ColorWhite;
-	DrawString(out, monster.name(), { position, { width, height } }, style);
+	DrawString(out, monster.name(), { position, { width, height } },
+	    { .flags = style });
 
 	if (multiplier > 0)
-		DrawString(out, StrCat("x", multiplier), { position, { width - 2, height } }, UiFlags::ColorWhite | UiFlags::AlignRight | UiFlags::VerticalCenter);
+		DrawString(out, StrCat("x", multiplier), { position, { width - 2, height } },
+		    { .flags = UiFlags::ColorWhite | UiFlags::AlignRight | UiFlags::VerticalCenter });
 	if (monster.isUnique() || MonsterKillCounts[monster.type().type] >= 15) {
-		monster_resistance immunes[] = { IMMUNE_MAGIC, IMMUNE_FIRE, IMMUNE_LIGHTNING };
-		monster_resistance resists[] = { RESIST_MAGIC, RESIST_FIRE, RESIST_LIGHTNING };
+		const monster_resistance immunes[] = { IMMUNE_MAGIC, IMMUNE_FIRE, IMMUNE_LIGHTNING };
+		const monster_resistance resists[] = { RESIST_MAGIC, RESIST_FIRE, RESIST_LIGHTNING };
 
 		int resOffset = 5;
 		for (size_t i = 0; i < 3; i++) {

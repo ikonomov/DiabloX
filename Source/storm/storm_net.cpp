@@ -13,7 +13,9 @@
 
 #include "dvlnet/abstract_net.h"
 #include "engine/demomode.h"
+#include "headless_mode.hpp"
 #include "menu.h"
+#include "multi.h"
 #include "options.h"
 #include "utils/stubs.h"
 #include "utils/utf8.hpp"
@@ -23,36 +25,21 @@ namespace devilution {
 namespace {
 std::unique_ptr<net::abstract_net> dvlnet_inst;
 bool GameIsPublic = {};
-thread_local uint32_t dwLastError = 0;
 
 #ifndef NONET
 SdlMutex storm_net_mutex;
 #endif
 } // namespace
 
-uint32_t SErrGetLastError()
-{
-	return dwLastError;
-}
-
-void SErrSetLastError(uint32_t dwErrCode)
-{
-	dwLastError = dwErrCode;
-}
-
-bool SNetReceiveMessage(uint8_t *senderplayerid, void **data, uint32_t *databytes)
+bool SNetReceiveMessage(uint8_t *senderplayerid, void **data, size_t *databytes)
 {
 #ifndef NONET
 	std::lock_guard<SdlMutex> lg(storm_net_mutex);
 #endif
-	if (!dvlnet_inst->SNetReceiveMessage(senderplayerid, data, databytes)) {
-		SErrSetLastError(STORM_ERROR_NO_MESSAGES_WAITING);
-		return false;
-	}
-	return true;
+	return dvlnet_inst->SNetReceiveMessage(senderplayerid, data, databytes);
 }
 
-bool SNetSendMessage(int playerID, void *data, unsigned int databytes)
+bool SNetSendMessage(uint8_t playerID, void *data, size_t databytes)
 {
 #ifndef NONET
 	std::lock_guard<SdlMutex> lg(storm_net_mutex);
@@ -67,14 +54,10 @@ bool SNetReceiveTurns(int arraysize, char **arraydata, size_t *arraydatabytes, u
 #endif
 	if (arraysize != MAX_PLRS)
 		UNIMPLEMENTED();
-	if (!dvlnet_inst->SNetReceiveTurns(arraydata, arraydatabytes, arrayplayerstatus)) {
-		SErrSetLastError(STORM_ERROR_NO_MESSAGES_WAITING);
-		return false;
-	}
-	return true;
+	return dvlnet_inst->SNetReceiveTurns(arraydata, arraydatabytes, arrayplayerstatus);
 }
 
-bool SNetSendTurn(char *data, unsigned int databytes)
+bool SNetSendTurn(char *data, size_t databytes)
 {
 #ifndef NONET
 	std::lock_guard<SdlMutex> lg(storm_net_mutex);
@@ -117,7 +100,7 @@ bool SNetDestroy()
 	return true;
 }
 
-bool SNetDropPlayer(int playerid, uint32_t flags)
+bool SNetDropPlayer(uint8_t playerid, uint32_t flags)
 {
 #ifndef NONET
 	std::lock_guard<SdlMutex> lg(storm_net_mutex);
@@ -254,6 +237,11 @@ void DvlNet_ClearPassword()
 bool DvlNet_IsPublicGame()
 {
 	return GameIsPublic;
+}
+
+DvlNetLatencies DvlNet_GetLatencies(uint8_t playerId)
+{
+	return dvlnet_inst->get_latencies(playerId);
 }
 
 } // namespace devilution

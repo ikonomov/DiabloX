@@ -9,10 +9,16 @@
 #include <memory>
 #include <string>
 
+#include <expected.hpp>
+
 #include "levels/gendung.h"
 #include "utils/attributes.h"
 
 #ifndef NOSOUND
+#ifdef USE_SDL3
+#include <SDL3/SDL_audio.h>
+#endif
+
 #include "utils/soundsample.h"
 #endif
 
@@ -51,11 +57,16 @@ struct TSnd {
 };
 
 extern bool gbSndInited;
+#ifdef USE_SDL3
+extern SDL_AudioDeviceID CurrentAudioDeviceId;
+#endif
+
 extern _music_id sgnMusicTrack;
 
 void ClearDuplicateSounds();
 void snd_play_snd(TSnd *pSnd, int lVolume, int lPan);
 std::unique_ptr<TSnd> sound_file_load(const char *path, bool stream = false);
+tl::expected<std::unique_ptr<TSnd>, std::string> SoundFileLoadWithStatus(const char *path, bool stream = false);
 void snd_init();
 void snd_deinit();
 _music_id GetLevelMusic(dungeon_type dungeonType);

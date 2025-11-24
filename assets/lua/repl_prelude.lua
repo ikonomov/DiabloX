@@ -1,0 +1,10 @@
+events = require('devilutionx.events')
+i18n = require('devilutionx.i18n')
+log = require('devilutionx.log')
+audio = require('devilutionx.audio')
+player = require('devilutionx.player')
+render = require('devilutionx.render')
+towners = require('devilutionx.towners')
+message = require('devilutionx.message')
+if _DEBUG then dev = require('devilutionx.dev') end
+inspect = require('inspect')

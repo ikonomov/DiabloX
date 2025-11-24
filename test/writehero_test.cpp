@@ -4,13 +4,18 @@
 #include <cstdio>
 #include <vector>
 
-#include <SDL_endian.h>
 #include <gtest/gtest.h>
 #include <picosha2.h>
 
+#include "cursor.h"
+#include "engine/assets.hpp"
+#include "game_mode.hpp"
+#include "init.hpp"
 #include "loadsave.h"
 #include "pack.h"
 #include "pfile.h"
+#include "playerdat.hpp"
+#include "utils/endian_swap.hpp"
 #include "utils/file_util.h"
 #include "utils/paths.h"
 
@@ -25,24 +30,24 @@ constexpr int SpellDatVanilla[] = {
 
 void SwapLE(ItemPack &pack)
 {
-	pack.iSeed = SDL_SwapLE32(pack.iSeed);
-	pack.iCreateInfo = SDL_SwapLE16(pack.iCreateInfo);
-	pack.idx = SDL_SwapLE16(pack.idx);
-	pack.wValue = SDL_SwapLE16(pack.wValue);
-	pack.dwBuff = SDL_SwapLE32(pack.dwBuff);
+	pack.iSeed = Swap32LE(pack.iSeed);
+	pack.iCreateInfo = Swap16LE(pack.iCreateInfo);
+	pack.idx = Swap16LE(pack.idx);
+	pack.wValue = Swap16LE(pack.wValue);
+	pack.dwBuff = Swap32LE(pack.dwBuff);
 }
 
 void SwapLE(PlayerPack &player)
 {
-	player.dwLowDateTime = SDL_SwapLE32(player.dwLowDateTime);
-	player.dwHighDateTime = SDL_SwapLE32(player.dwHighDateTime);
-	player.pExperience = SDL_SwapLE32(player.pExperience);
-	player.pGold = SDL_SwapLE32(player.pGold);
-	player.pHPBase = SDL_SwapLE32(player.pHPBase);
-	player.pMaxHPBase = SDL_SwapLE32(player.pMaxHPBase);
-	player.pManaBase = SDL_SwapLE32(player.pManaBase);
-	player.pMaxManaBase = SDL_SwapLE32(player.pMaxManaBase);
-	player.pMemSpells = SDL_SwapLE64(player.pMemSpells);
+	player.dwLowDateTime = Swap32LE(player.dwLowDateTime);
+	player.dwHighDateTime = Swap32LE(player.dwHighDateTime);
+	player.pExperience = Swap32LE(player.pExperience);
+	player.pGold = Swap32LE(player.pGold);
+	player.pHPBase = Swap32LE(player.pHPBase);
+	player.pMaxHPBase = Swap32LE(player.pMaxHPBase);
+	player.pManaBase = Swap32LE(player.pManaBase);
+	player.pMaxManaBase = Swap32LE(player.pMaxManaBase);
+	player.pMemSpells = Swap64LE(player.pMemSpells);
 	for (ItemPack &item : player.InvBody) {
 		SwapLE(item);
 	}
@@ -52,10 +57,10 @@ void SwapLE(PlayerPack &player)
 	for (ItemPack &item : player.SpdList) {
 		SwapLE(item);
 	}
-	player.wReflections = SDL_SwapLE16(player.wReflections);
-	player.pDiabloKillLevel = SDL_SwapLE32(player.pDiabloKillLevel);
-	player.pDifficulty = SDL_SwapLE32(player.pDifficulty);
-	player.pDamAcFlags = SDL_SwapLE32(player.pDamAcFlags);
+	player.wReflections = Swap16LE(player.wReflections);
+	player.pDiabloKillLevel = Swap32LE(player.pDiabloKillLevel);
+	player.pDifficulty = Swap32LE(player.pDifficulty);
+	player.pDamAcFlags = Swap32LE(player.pDamAcFlags);
 }
 
 void PackItemUnique(ItemPack *id, int idx)
@@ -278,13 +283,13 @@ void AssertPlayer(Player &player)
 	ASSERT_EQ(player._pDexterity, 281);
 	ASSERT_EQ(player._pBaseVit, 80);
 	ASSERT_EQ(player._pVitality, 90);
-	ASSERT_EQ(player._pLevel, 50);
+	ASSERT_EQ(player.getCharacterLevel(), 50);
 	ASSERT_EQ(player._pStatPts, 0);
 	ASSERT_EQ(player._pExperience, 1583495809);
 	ASSERT_EQ(player._pGold, 0);
 	ASSERT_EQ(player._pMaxHPBase, 12864);
 	ASSERT_EQ(player._pHPBase, 12864);
-	ASSERT_EQ(player._pBaseToBlk, 20);
+	ASSERT_EQ(player.getBaseToBlock(), 20);
 	ASSERT_EQ(player._pMaxManaBase, 11104);
 	ASSERT_EQ(player._pManaBase, 11104);
 	ASSERT_EQ(player._pMemSpells, 66309357295);
@@ -299,7 +304,7 @@ void AssertPlayer(Player &player)
 	ASSERT_EQ(player.pDamAcFlags, ItemSpecialEffectHf::None);
 
 	ASSERT_EQ(player._pmode, 0);
-	ASSERT_EQ(Count8(player.walkpath, MaxPathLength), 25);
+	ASSERT_EQ(Count8(player.walkpath, MaxPathLengthPlayer), MaxPathLengthPlayer);
 	ASSERT_EQ(player._pgfxnum, 36);
 	ASSERT_EQ(player.AnimInfo.ticksPerFrame, 4);
 	ASSERT_EQ(player.AnimInfo.tickCounterOfCurrentFrame, 1);
@@ -323,7 +328,7 @@ void AssertPlayer(Player &player)
 	ASSERT_EQ(player._pMaxHP, 16640);
 	ASSERT_EQ(player._pMana, 14624);
 	ASSERT_EQ(player._pMaxMana, 14624);
-	ASSERT_EQ(player._pNextExper, 1310707109);
+	ASSERT_EQ(player.getNextExperienceThreshold(), 1583495809);
 	ASSERT_EQ(player._pMagResist, 75);
 	ASSERT_EQ(player._pFireResist, 16);
 	ASSERT_EQ(player._pLghtResist, 75);
@@ -359,11 +364,21 @@ void AssertPlayer(Player &player)
 
 TEST(Writehero, pfile_write_hero)
 {
-	paths::SetPrefPath(".");
-	std::remove("multi_0.sv");
+	LoadCoreArchives();
+	LoadGameArchives();
+
+	// The tests need spawn.mpq or diabdat.mpq
+	if (!HaveMainData()) {
+		GTEST_SKIP() << "MPQ assets (spawn.mpq or DIABDAT.MPQ) not found - skipping test";
+	}
+
+	const std::string savePath = paths::BasePath() + "multi_0.sv";
+	paths::SetPrefPath(paths::BasePath());
+	RemoveFile(savePath.c_str());
 
 	gbVanilla = true;
 	gbIsHellfire = false;
+	gbIsSpawn = false;
 	gbIsMultiplayer = true;
 	gbIsHellfireSaveGame = false;
 	leveltype = DTYPE_TOWN;
@@ -373,6 +388,10 @@ TEST(Writehero, pfile_write_hero)
 	MyPlayerId = 0;
 	MyPlayer = &Players[MyPlayerId];
 
+	LoadSpellData();
+	LoadPlayerDataFiles();
+	LoadMonsterData();
+	LoadItemData();
 	_uiheroinfo info {};
 	info.heroclass = HeroClass::Rogue;
 	pfile_ui_save_create(&info);
@@ -382,12 +401,12 @@ TEST(Writehero, pfile_write_hero)
 	AssertPlayer(Players[0]);
 	pfile_write_hero();
 
-	const char *path = "multi_0.sv";
-	uintmax_t size;
-	ASSERT_TRUE(GetFileSize(path, &size));
-	FILE *f = std::fopen(path, "rb");
+	uintmax_t fileSize;
+	ASSERT_TRUE(GetFileSize(savePath.c_str(), &fileSize));
+	const size_t size = static_cast<size_t>(fileSize);
+	FILE *f = OpenFile(savePath.c_str(), "rb");
 	ASSERT_TRUE(f != nullptr);
-	std::unique_ptr<char[]> data { new char[size] };
+	const std::unique_ptr<char[]> data { new char[size] };
 	ASSERT_EQ(std::fread(data.get(), size, 1, f), 1);
 	std::fclose(f);
 

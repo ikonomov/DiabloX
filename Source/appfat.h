@@ -5,10 +5,9 @@
  */
 #pragma once
 
-#include <SDL.h>
+#include <string_view>
 
 #include "utils/attributes.h"
-#include "utils/stdcompat/string_view.hpp"
 
 namespace devilution {
 
@@ -24,9 +23,16 @@ namespace devilution {
 
 /**
  * @brief Terminates the game and displays an error message box.
+ * @param str Message box title.
  * @param str Error message.
  */
-[[noreturn]] void app_fatal(string_view str);
+[[noreturn]] void DisplayFatalErrorAndExit(std::string_view title, std::string_view body);
+
+/**
+ * @brief Terminates the game and displays an error message box.
+ * @param str Error message.
+ */
+[[noreturn]] void app_fatal(std::string_view str);
 
 #ifdef _DEBUG
 /**
@@ -40,16 +46,16 @@ namespace devilution {
 /**
  * @brief Terminates the game and displays an error dialog box based on the given dialog_id.
  */
-[[noreturn]] void ErrDlg(const char *title, string_view error, string_view logFilePath, int logLineNr);
+[[noreturn]] void ErrDlg(const char *title, std::string_view error, std::string_view logFilePath, int logLineNr);
 
 /**
  * @brief Terminates the game with an insert CD error dialog.
  */
-[[noreturn]] void InsertCDDlg(string_view archiveName);
+[[noreturn]] void InsertCDDlg(std::string_view archiveName);
 
 /**
  * @brief Terminates the game with a read-only directory error dialog.
  */
-[[noreturn]] void DirErrorDlg(string_view error);
+[[noreturn]] void DirErrorDlg(std::string_view error);
 
 } // namespace devilution

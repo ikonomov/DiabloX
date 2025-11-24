@@ -6,12 +6,12 @@
 
 #include "animationinfo.h"
 
+#include <algorithm>
 #include <cstdint>
 
 #include "appfat.h"
 #include "nthread.h"
 #include "utils/log.hpp"
-#include "utils/stdcompat/algorithm.hpp"
 
 namespace devilution {
 
@@ -20,7 +20,7 @@ int8_t AnimationInfo::getFrameToUseForRendering() const
 	// Normal logic is used,
 	// - if no frame-skipping is required and so we have exactly one Animationframe per game tick
 	// or
-	// - if we load from a savegame where the new variables are not stored (we don't want to break savegame compatiblity because of smoother rendering of one animation)
+	// - if we load from a savegame where the new variables are not stored (we don't want to break savegame compatibility because of smoother rendering of one animation)
 	if (relevantFramesForDistributing_ <= 0)
 		return std::max<int8_t>(0, currentFrame);
 
@@ -34,7 +34,7 @@ int8_t AnimationInfo::getFrameToUseForRendering() const
 	}
 
 	// we don't use the processed game ticks alone but also the fraction of the next game tick (if a rendering happens between game ticks). This helps to smooth the animations.
-	int32_t totalTicksForCurrentAnimationSequence = getProgressToNextGameTick() + ticksSinceSequenceStarted;
+	const int32_t totalTicksForCurrentAnimationSequence = getProgressToNextGameTick() + ticksSinceSequenceStarted;
 
 	int8_t absoluteAnimationFrame = static_cast<int8_t>(totalTicksForCurrentAnimationSequence * tickModifier_ / baseValueFraction / baseValueFraction);
 	if (skippedFramesFromPreviousAnimation_ > 0) {
@@ -65,15 +65,19 @@ uint8_t AnimationInfo::getAnimationProgress() const
 	int32_t tickModifier = tickModifier_;
 
 	if (relevantFramesForDistributing_ <= 0) {
+		if (ticksPerFrame <= 0) {
+			Log("getAnimationProgress: Invalid ticksPerFrame {}", ticksPerFrame);
+			return 0;
+		}
 		// This logic is used if animation distribution is not active (see getFrameToUseForRendering).
 		// In this case the variables calculated with animation distribution are not initialized and we have to calculate them on the fly with the given information.
 		ticksSinceSequenceStarted = ((currentFrame * ticksPerFrame) + tickCounterOfCurrentFrame) * baseValueFraction;
 		tickModifier = baseValueFraction / ticksPerFrame;
 	}
 
-	int32_t totalTicksForCurrentAnimationSequence = getProgressToNextGameTick() + ticksSinceSequenceStarted;
-	int32_t progressInAnimationFrames = totalTicksForCurrentAnimationSequence * tickModifier;
-	int32_t animationFraction = progressInAnimationFrames / numberOfFrames / baseValueFraction;
+	const int32_t totalTicksForCurrentAnimationSequence = getProgressToNextGameTick() + ticksSinceSequenceStarted;
+	const int32_t progressInAnimationFrames = totalTicksForCurrentAnimationSequence * tickModifier;
+	const int32_t animationFraction = progressInAnimationFrames / numberOfFrames / baseValueFraction;
 	assert(animationFraction <= baseValueFraction);
 	return static_cast<uint8_t>(animationFraction);
 }
@@ -128,7 +132,7 @@ void AnimationInfo::setNewAnimation(OptionalClxSpriteList celSprite, int8_t numb
 			relevantAnimationTicksWithSkipping -= 1;
 			// The Animation Distribution Logic needs to account how many game ticks passed since the Animation started.
 			// Because processAnimation will increase this later (in same game tick as setNewAnimation), we correct this upfront.
-			// This also means Rendering should never hapen with ticksSinceSequenceStarted_ < 0.
+			// This also means Rendering should never happen with ticksSinceSequenceStarted_ < 0.
 			ticksSinceSequenceStarted_ = -baseValueFraction;
 		}
 
@@ -148,7 +152,7 @@ void AnimationInfo::setNewAnimation(OptionalClxSpriteList celSprite, int8_t numb
 			// 5			-			-
 			// in game tick 5 ProcessPlayer sees Frame = 3 and stops the animation.
 			// But Frame 3 is only shown 1 game tick and all other Frames are shown 2 game ticks.
-			// Thats why we need to remove the Delay of the last Frame from the time (game ticks) the Animation is shown
+			// That's why we need to remove the Delay of the last Frame from the time (game ticks) the Animation is shown
 			relevantAnimationTicksWithSkipping -= (ticksPerFrame - 1);
 		}
 
@@ -180,9 +184,9 @@ void AnimationInfo::setNewAnimation(OptionalClxSpriteList celSprite, int8_t numb
 void AnimationInfo::changeAnimationData(OptionalClxSpriteList celSprite, int8_t numberOfFrames, int8_t ticksPerFrame)
 {
 	if (numberOfFrames != this->numberOfFrames || ticksPerFrame != this->ticksPerFrame) {
-		// Ensure that the currentFrame is still valid and that we disable ADL cause the calculcated values (for example tickModifier_) could be wrong
+		// Ensure that the currentFrame is still valid and that we disable ADL because the calculated values (for example tickModifier_) could be wrong
 		if (numberOfFrames >= 1)
-			currentFrame = clamp<int8_t>(currentFrame, 0, numberOfFrames - 1);
+			currentFrame = std::clamp<int8_t>(currentFrame, 0, numberOfFrames - 1);
 		else
 			currentFrame = -1;
 

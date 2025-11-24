@@ -1,18 +1,38 @@
 #include "levels/gendung.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <stack>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include <ankerl/unordered_dense.h>
+#include <expected.hpp>
+#include <magic_enum/magic_enum.hpp>
+
+#include "engine/clx_sprite.hpp"
 #include "engine/load_file.hpp"
 #include "engine/random.hpp"
-#include "init.h"
+#include "engine/world_tile.hpp"
+#include "game_mode.hpp"
+#include "items.h"
 #include "levels/drlg_l1.h"
 #include "levels/drlg_l2.h"
 #include "levels/drlg_l3.h"
 #include "levels/drlg_l4.h"
+#include "levels/reencode_dun_cels.hpp"
 #include "levels/town.h"
 #include "lighting.h"
-#include "options.h"
+#include "monster.h"
+#include "objects.h"
+#include "utils/algorithm/container.hpp"
+#include "utils/bitset2d.hpp"
+#include "utils/endian_swap.hpp"
+#include "utils/is_of.hpp"
+#include "utils/log.hpp"
+#include "utils/status_macros.hpp"
 
 namespace devilution {
 
@@ -22,11 +42,10 @@ uint8_t pdungeon[DMAXX][DMAXY];
 Bitset2d<DMAXX, DMAXY> Protected;
 WorldTileRectangle SetPieceRoom;
 WorldTileRectangle SetPiece;
-std::unique_ptr<uint16_t[]> pSetPiece;
 OptionalOwnedClxSpriteList pSpecialCels;
 std::unique_ptr<MegaTile[]> pMegaTiles;
-std::unique_ptr<byte[]> pDungeonCels;
-std::array<TileProperties, MAXTILES> SOLData;
+std::unique_ptr<std::byte[]> pDungeonCels;
+TileProperties SOLData[MAXTILES];
 WorldTilePosition dminPosition;
 WorldTilePosition dmaxPosition;
 dungeon_type leveltype;
@@ -57,10 +76,14 @@ namespace {
 std::unique_ptr<uint16_t[]> LoadMinData(size_t &tileCount)
 {
 	switch (leveltype) {
-	case DTYPE_TOWN:
-		if (gbIsHellfire)
-			return LoadFileInMem<uint16_t>("nlevels\\towndata\\town.min", &tileCount);
-		return LoadFileInMem<uint16_t>("levels\\towndata\\town.min", &tileCount);
+	case DTYPE_TOWN: {
+		auto min = LoadFileInMemWithStatus<uint16_t>("nlevels\\towndata\\town.min", &tileCount);
+		if (!min.has_value()) {
+			return LoadFileInMem<uint16_t>("levels\\towndata\\town.min", &tileCount);
+		} else {
+			return std::move(*min);
+		}
+	}
 	case DTYPE_CATHEDRAL:
 		return LoadFileInMem<uint16_t>("levels\\l1data\\l1.min", &tileCount);
 	case DTYPE_CATACOMBS:
@@ -209,13 +232,13 @@ void CreateThemeRoom(int themeIndex)
 	}
 	if (leveltype == DTYPE_HELL) {
 		if (FlipCoin()) {
-			int yy = (ly + hy) / 2;
+			const int yy = (ly + hy) / 2;
 			dungeon[hx - 1][yy - 1] = 53;
 			dungeon[hx - 1][yy] = 6;
 			dungeon[hx - 1][yy + 1] = 52;
 			dungeon[hx - 2][yy - 1] = 54;
 		} else {
-			int xx = (lx + hx) / 2;
+			const int xx = (lx + hx) / 2;
 			dungeon[xx - 1][hy - 1] = 57;
 			dungeon[xx][hy - 1] = 6;
 			dungeon[xx + 1][hy - 1] = 56;
@@ -227,8 +250,8 @@ void CreateThemeRoom(int themeIndex)
 
 bool IsFloor(Point p, uint8_t floorID)
 {
-	int i = (p.x - 16) / 2;
-	int j = (p.y - 16) / 2;
+	const int i = (p.x - 16) / 2;
+	const int j = (p.y - 16) / 2;
 	if (i < 0 || i >= DMAXX)
 		return false;
 	if (j < 0 || j >= DMAXY)
@@ -238,7 +261,7 @@ bool IsFloor(Point p, uint8_t floorID)
 
 void FillTransparencyValues(Point floor, uint8_t floorID)
 {
-	Direction allDirections[] = {
+	const Direction allDirections[] = {
 		Direction::North,
 		Direction::South,
 		Direction::East,
@@ -251,8 +274,8 @@ void FillTransparencyValues(Point floor, uint8_t floorID)
 
 	// We only fill in the surrounding tiles if they are not floor tiles
 	// because they would otherwise not be visited by the span filling algorithm
-	for (Direction dir : allDirections) {
-		Point adjacent = floor + dir;
+	for (const Direction dir : allDirections) {
+		const Point adjacent = floor + dir;
 		if (!IsFloor(adjacent, floorID))
 			dTransVal[adjacent.x][adjacent.y] = TransVal;
 	}
@@ -265,37 +288,41 @@ void FindTransparencyValues(Point floor, uint8_t floorID)
 	// Algorithm adapted from https://en.wikipedia.org/wiki/Flood_fill#Span_Filling
 	// Modified to include diagonally adjacent tiles that would otherwise not be visited
 	// Also, Wikipedia's selection for the initial seed is incorrect
-	using Seed = std::tuple<int, int, int, int>;
-	std::stack<Seed> seedStack;
-	seedStack.push(std::make_tuple(floor.x, floor.x + 1, floor.y, 1));
+	struct Seed {
+		int scanStart;
+		int scanEnd;
+		int y;
+		int dy;
+	};
+	std::stack<Seed, std::vector<Seed>> seedStack;
+	seedStack.push({ floor.x, floor.x + 1, floor.y, 1 });
 
-	const auto isInside = [&](int x, int y) {
+	const auto isInside = [floorID](int x, int y) {
 		if (dTransVal[x][y] != 0)
 			return false;
 		return IsFloor({ x, y }, floorID);
 	};
 
-	const auto set = [&](int x, int y) {
+	const auto set = [floorID](int x, int y) {
 		FillTransparencyValues({ x, y }, floorID);
 	};
 
 	const Displacement left = { -1, 0 };
 	const Displacement right = { 1, 0 };
 	const auto checkDiagonals = [&](Point p, Displacement direction) {
-		Point up = p + Displacement { 0, -1 };
-		Point upOver = up + direction;
+		const Point up = p + Displacement { 0, -1 };
+		const Point upOver = up + direction;
 		if (!isInside(up.x, up.y) && isInside(upOver.x, upOver.y))
-			seedStack.push(std::make_tuple(upOver.x, upOver.x + 1, upOver.y, -1));
+			seedStack.push({ upOver.x, upOver.x + 1, upOver.y, -1 });
 
-		Point down = p + Displacement { 0, 1 };
-		Point downOver = down + direction;
+		const Point down = p + Displacement { 0, 1 };
+		const Point downOver = down + direction;
 		if (!isInside(down.x, down.y) && isInside(downOver.x, downOver.y))
-			seedStack.push(std::make_tuple(downOver.x, downOver.x + 1, downOver.y, 1));
+			seedStack.push(Seed { downOver.x, downOver.x + 1, downOver.y, 1 });
 	};
 
 	while (!seedStack.empty()) {
-		int scanStart, scanEnd, y, dy;
-		std::tie(scanStart, scanEnd, y, dy) = seedStack.top();
+		const auto [scanStart, scanEnd, y, dy] = seedStack.top();
 		seedStack.pop();
 
 		int scanLeft = scanStart;
@@ -307,7 +334,7 @@ void FindTransparencyValues(Point floor, uint8_t floorID)
 			checkDiagonals({ scanLeft, y }, left);
 		}
 		if (scanLeft < scanStart)
-			seedStack.push(std::make_tuple(scanLeft, scanStart - 1, y - dy, -dy));
+			seedStack.push(Seed { scanLeft, scanStart - 1, y - dy, -dy });
 
 		int scanRight = scanStart;
 		while (scanRight < scanEnd) {
@@ -315,9 +342,9 @@ void FindTransparencyValues(Point floor, uint8_t floorID)
 				set(scanRight, y);
 				scanRight++;
 			}
-			seedStack.push(std::make_tuple(scanLeft, scanRight - 1, y + dy, dy));
+			seedStack.push(Seed { scanLeft, scanRight - 1, y + dy, dy });
 			if (scanRight - 1 > scanEnd)
-				seedStack.push(std::make_tuple(scanEnd + 1, scanRight - 1, y - dy, -dy));
+				seedStack.push(Seed { scanEnd + 1, scanRight - 1, y - dy, -dy });
 			if (scanLeft < scanRight)
 				checkDiagonals({ scanRight - 1, y }, right);
 
@@ -412,22 +439,16 @@ void CreateDungeon(uint32_t rseed, lvl_entry entry)
 	Make_SetPC(SetPiece);
 }
 
-bool TileHasAny(int tileId, TileProperties property)
-{
-	return HasAnyOf(SOLData[tileId], property);
-}
-
-void LoadLevelSOLData()
+tl::expected<void, std::string> LoadLevelSOLData()
 {
 	switch (leveltype) {
 	case DTYPE_TOWN:
-		if (gbIsHellfire)
-			LoadFileInMem("nlevels\\towndata\\town.sol", SOLData);
-		else
-			LoadFileInMem("levels\\towndata\\town.sol", SOLData);
+		if (!LoadFileInMemWithStatus("nlevels\\towndata\\town.sol", SOLData).has_value()) {
+			RETURN_IF_ERROR(LoadFileInMemWithStatus("levels\\towndata\\town.sol", SOLData));
+		}
 		break;
 	case DTYPE_CATHEDRAL:
-		LoadFileInMem("levels\\l1data\\l1.sol", SOLData);
+		RETURN_IF_ERROR(LoadFileInMemWithStatus("levels\\l1data\\l1.sol", SOLData));
 		// Fix incorrectly marked arched tiles
 		SOLData[9] |= TileProperties::BlockLight | TileProperties::BlockMissile;
 		SOLData[15] |= TileProperties::BlockLight | TileProperties::BlockMissile;
@@ -455,46 +476,85 @@ void LoadLevelSOLData()
 		SOLData[450] |= TileProperties::BlockLight | TileProperties::BlockMissile;
 		break;
 	case DTYPE_CATACOMBS:
-		LoadFileInMem("levels\\l2data\\l2.sol", SOLData);
+		RETURN_IF_ERROR(LoadFileInMemWithStatus("levels\\l2data\\l2.sol", SOLData));
 		break;
 	case DTYPE_CAVES:
-		LoadFileInMem("levels\\l3data\\l3.sol", SOLData);
+		RETURN_IF_ERROR(LoadFileInMemWithStatus("levels\\l3data\\l3.sol", SOLData));
+		// The graphics for tile 48 sub-tile 171 frame 461 are partly incorrect, as they
+		// have a few pixels that should belong to the solid tile 49 instead.
+		// Marks the sub-tile as "BlockMissile" to avoid treating it as a floor during rendering.
+		SOLData[170] |= TileProperties::BlockMissile;
+		// Fence sub-tiles 481 and 487 are substitutes for solid sub-tiles 473 and 479
+		// but are not marked as solid.
+		SOLData[481] |= TileProperties::Solid;
+		SOLData[487] |= TileProperties::Solid;
 		break;
 	case DTYPE_HELL:
-		LoadFileInMem("levels\\l4data\\l4.sol", SOLData);
+		RETURN_IF_ERROR(LoadFileInMemWithStatus("levels\\l4data\\l4.sol", SOLData));
 		SOLData[210] = TileProperties::None; // Tile is incorrectly marked as being solid
 		break;
 	case DTYPE_NEST:
-		LoadFileInMem("nlevels\\l6data\\l6.sol", SOLData);
+		RETURN_IF_ERROR(LoadFileInMemWithStatus("nlevels\\l6data\\l6.sol", SOLData));
 		break;
 	case DTYPE_CRYPT:
-		LoadFileInMem("nlevels\\l5data\\l5.sol", SOLData);
+		RETURN_IF_ERROR(LoadFileInMemWithStatus("nlevels\\l5data\\l5.sol", SOLData));
+		SOLData[142] = TileProperties::None; // Tile is incorrectly marked as being solid
 		break;
 	default:
-		app_fatal("LoadLevelSOLData");
+		return tl::make_unexpected("LoadLevelSOLData");
 	}
+	return {};
 }
 
-void SetDungeonMicros()
+void SetDungeonMicros(std::unique_ptr<std::byte[]> &dungeonCels, uint_fast8_t &microTileLen)
 {
-	MicroTileLen = 10;
+	microTileLen = 10;
 	size_t blocks = 10;
 
 	if (leveltype == DTYPE_TOWN) {
-		MicroTileLen = 16;
+		microTileLen = 16;
 		blocks = 16;
 	} else if (leveltype == DTYPE_HELL) {
-		MicroTileLen = 12;
+		microTileLen = 12;
 		blocks = 16;
 	}
 
 	size_t tileCount;
-	std::unique_ptr<uint16_t[]> levelPieces = LoadMinData(tileCount);
+	const std::unique_ptr<uint16_t[]> levelPieces = LoadMinData(tileCount);
 
-	for (size_t i = 0; i < tileCount / blocks; i++) {
-		uint16_t *pieces = &levelPieces[blocks * i];
-		for (size_t block = 0; block < blocks; block++) {
-			DPieceMicros[i].mt[block] = SDL_SwapLE16(pieces[blocks - 2 + (block & 1) - (block & 0xE)]);
+	ankerl::unordered_dense::map<uint16_t, DunFrameInfo> frameToTypeMap;
+	frameToTypeMap.reserve(4096);
+	for (size_t levelPieceId = 0; levelPieceId < tileCount / blocks; levelPieceId++) {
+		uint16_t *pieces = &levelPieces[blocks * levelPieceId];
+		for (uint32_t block = 0; block < blocks; block++) {
+			const LevelCelBlock levelCelBlock { Swap16LE(pieces[blocks - 2 + (block & 1) - (block & 0xE)]) };
+			DPieceMicros[levelPieceId].mt[block] = levelCelBlock;
+			if (levelCelBlock.hasValue()) {
+				if (const auto it = frameToTypeMap.find(levelCelBlock.frame()); it == frameToTypeMap.end()) {
+					frameToTypeMap.emplace_hint(it, levelCelBlock.frame(),
+					    DunFrameInfo { static_cast<uint8_t>(block), levelCelBlock.type(), SOLData[levelPieceId] });
+				}
+			}
+		}
+	}
+	std::vector<std::pair<uint16_t, DunFrameInfo>> frameToTypeList = std::move(frameToTypeMap).extract();
+	c_sort(frameToTypeList, [](const std::pair<uint16_t, DunFrameInfo> &a, const std::pair<uint16_t, DunFrameInfo> &b) {
+		return a.first < b.first;
+	});
+	ReencodeDungeonCels(dungeonCels, frameToTypeList);
+
+	std::vector<std::pair<uint16_t, uint16_t>> celBlockAdjustments = ComputeCelBlockAdjustments(frameToTypeList);
+	if (celBlockAdjustments.size() == 0) return;
+	for (size_t levelPieceId = 0; levelPieceId < tileCount / blocks; levelPieceId++) {
+		for (uint32_t block = 0; block < blocks; block++) {
+			LevelCelBlock &levelCelBlock = DPieceMicros[levelPieceId].mt[block];
+			const uint16_t frame = levelCelBlock.frame();
+			const auto pair = std::make_pair(frame, frame);
+			const auto it = std::upper_bound(celBlockAdjustments.begin(), celBlockAdjustments.end(), pair,
+			    [](std::pair<uint16_t, uint16_t> p1, std::pair<uint16_t, uint16_t> p2) { return p1.first < p2.first; });
+			if (it != celBlockAdjustments.end()) {
+				levelCelBlock.data -= it->second;
+			}
 		}
 	}
 }
@@ -508,8 +568,8 @@ void DRLG_InitTrans()
 
 void DRLG_RectTrans(WorldTileRectangle area)
 {
-	WorldTilePosition position = area.position;
-	WorldTileSize size = area.size;
+	const WorldTilePosition position = area.position;
+	const WorldTileSize size = area.size;
 
 	for (int j = position.y; j <= position.y + size.height; j++) {
 		for (int i = position.x; i <= position.x + size.width; i++) {
@@ -537,20 +597,18 @@ void DRLG_CopyTrans(int sx, int sy, int dx, int dy)
 
 void LoadTransparency(const uint16_t *dunData)
 {
-	int width = SDL_SwapLE16(dunData[0]);
-	int height = SDL_SwapLE16(dunData[1]);
+	WorldTileSize size = GetDunSize(dunData);
 
-	int layer2Offset = 2 + width * height;
+	const int layer2Offset = 2 + size.width * size.height;
 
 	// The rest of the layers are at dPiece scale
-	width *= 2;
-	height *= 2;
+	size *= static_cast<WorldTileCoord>(2);
 
-	const uint16_t *transparentLayer = &dunData[layer2Offset + width * height * 3];
+	const uint16_t *transparentLayer = &dunData[layer2Offset + size.width * size.height * 3];
 
-	for (int j = 0; j < height; j++) {
-		for (int i = 0; i < width; i++) {
-			dTransVal[16 + i][16 + j] = SDL_SwapLE16(*transparentLayer);
+	for (WorldTileCoord j = 0; j < size.height; j++) {
+		for (WorldTileCoord i = 0; i < size.width; i++) {
+			dTransVal[16 + i][16 + j] = static_cast<int8_t>(Swap16LE(*transparentLayer));
 			transparentLayer++;
 		}
 	}
@@ -569,13 +627,14 @@ void LoadDungeonBase(const char *path, Point spawn, int floorId, int dirtId)
 	LoadTransparency(dunData.get());
 
 	SetMapMonsters(dunData.get(), Point(0, 0).megaToWorld());
+	InitAllMonsterGFX();
 	SetMapObjects(dunData.get(), 0, 0);
 }
 
 void Make_SetPC(WorldTileRectangle area)
 {
-	WorldTilePosition position = area.position.megaToWorld();
-	WorldTileSize size = area.size * 2;
+	const WorldTilePosition position = area.position.megaToWorld();
+	const WorldTileSize size = area.size * 2;
 
 	for (unsigned j = 0; j < size.height; j++) {
 		for (unsigned i = 0; i < size.width; i++) {
@@ -586,8 +645,8 @@ void Make_SetPC(WorldTileRectangle area)
 
 std::optional<Point> PlaceMiniSet(const Miniset &miniset, int tries, bool drlg1Quirk)
 {
-	int sw = miniset.size.width;
-	int sh = miniset.size.height;
+	const int sw = miniset.size.width;
+	const int sh = miniset.size.height;
 	Point position { GenerateRnd(DMAXX - sw), GenerateRnd(DMAXY - sh) };
 
 	for (int i = 0; i < tries; i++, position.x++) {
@@ -630,14 +689,13 @@ std::optional<Point> PlaceMiniSet(const Miniset &miniset, int tries, bool drlg1Q
 
 void PlaceDunTiles(const uint16_t *dunData, Point position, int floorId)
 {
-	int width = SDL_SwapLE16(dunData[0]);
-	int height = SDL_SwapLE16(dunData[1]);
+	const WorldTileSize size = GetDunSize(dunData);
 
 	const uint16_t *tileLayer = &dunData[2];
 
-	for (int j = 0; j < height; j++) {
-		for (int i = 0; i < width; i++) {
-			auto tileId = static_cast<uint8_t>(SDL_SwapLE16(tileLayer[j * width + i]));
+	for (WorldTileCoord j = 0; j < size.height; j++) {
+		for (WorldTileCoord i = 0; i < size.width; i++) {
+			auto tileId = static_cast<uint8_t>(Swap16LE(tileLayer[j * size.width + i]));
 			if (tileId != 0) {
 				dungeon[position.x + i][position.y + j] = tileId;
 				Protected.set(position.x + i, position.y + j);
@@ -661,8 +719,8 @@ void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, bool rn
 					continue;
 
 				if (rndSize) {
-					int min = minSize - 2;
-					int max = maxSize - 2;
+					const int min = minSize - 2;
+					const int max = maxSize - 2;
 					themeSize->width = min + GenerateRnd(GenerateRnd(themeSize->width - min + 1));
 					if (themeSize->width < min || themeSize->width > max)
 						themeSize->width = min;
@@ -691,8 +749,8 @@ void DRLG_HoldThemeRooms()
 	for (int i = 0; i < themeCount; i++) {
 		for (int y = themeLoc[i].room.position.y; y < themeLoc[i].room.position.y + themeLoc[i].room.size.height - 1; y++) {
 			for (int x = themeLoc[i].room.position.x; x < themeLoc[i].room.position.x + themeLoc[i].room.size.width - 1; x++) {
-				int xx = 2 * x + 16;
-				int yy = 2 * y + 16;
+				const int xx = 2 * x + 16;
+				const int yy = 2 * y + 16;
 				dFlags[xx][yy] |= DungeonFlag::Populated;
 				dFlags[xx + 1][yy] |= DungeonFlag::Populated;
 				dFlags[xx][yy + 1] |= DungeonFlag::Populated;
@@ -702,28 +760,19 @@ void DRLG_HoldThemeRooms()
 	}
 }
 
-void SetSetPieceRoom(WorldTilePosition position, int floorId)
+WorldTileSize GetDunSize(const uint16_t *dunData)
 {
-	if (pSetPiece == nullptr)
-		return;
-
-	PlaceDunTiles(pSetPiece.get(), position, floorId);
-	SetPiece = { position, WorldTileSize(SDL_SwapLE16(pSetPiece[0]), SDL_SwapLE16(pSetPiece[1])) };
-}
-
-void FreeQuestSetPieces()
-{
-	pSetPiece = nullptr;
+	return WorldTileSize(static_cast<WorldTileCoord>(Swap16LE(dunData[0])), static_cast<WorldTileCoord>(Swap16LE(dunData[1])));
 }
 
 void DRLG_LPass3(int lv)
 {
 	{
-		MegaTile mega = pMegaTiles[lv];
-		int v1 = SDL_SwapLE16(mega.micro1);
-		int v2 = SDL_SwapLE16(mega.micro2);
-		int v3 = SDL_SwapLE16(mega.micro3);
-		int v4 = SDL_SwapLE16(mega.micro4);
+		const MegaTile mega = pMegaTiles[lv];
+		const int v1 = Swap16LE(mega.micro1);
+		const int v2 = Swap16LE(mega.micro2);
+		const int v3 = Swap16LE(mega.micro3);
+		const int v4 = Swap16LE(mega.micro4);
 
 		for (int j = 0; j < MAXDUNY; j += 2) {
 			for (int i = 0; i < MAXDUNX; i += 2) {
@@ -739,12 +788,12 @@ void DRLG_LPass3(int lv)
 	for (int j = 0; j < DMAXY; j++) {
 		int xx = 16;
 		for (int i = 0; i < DMAXX; i++) { // NOLINT(modernize-loop-convert)
-			int tileId = dungeon[i][j] - 1;
-			MegaTile mega = pMegaTiles[tileId];
-			dPiece[xx + 0][yy + 0] = SDL_SwapLE16(mega.micro1);
-			dPiece[xx + 1][yy + 0] = SDL_SwapLE16(mega.micro2);
-			dPiece[xx + 0][yy + 1] = SDL_SwapLE16(mega.micro3);
-			dPiece[xx + 1][yy + 1] = SDL_SwapLE16(mega.micro4);
+			const int tileId = dungeon[i][j] - 1;
+			const MegaTile mega = pMegaTiles[tileId];
+			dPiece[xx + 0][yy + 0] = Swap16LE(mega.micro1);
+			dPiece[xx + 1][yy + 0] = Swap16LE(mega.micro2);
+			dPiece[xx + 0][yy + 1] = Swap16LE(mega.micro3);
+			dPiece[xx + 1][yy + 1] = Swap16LE(mega.micro4);
 			xx += 2;
 		}
 		yy += 2;
@@ -782,6 +831,28 @@ void FloodTransparencyValues(uint8_t floorID)
 		}
 		yy += 2;
 	}
+}
+
+tl::expected<dungeon_type, std::string> ParseDungeonType(std::string_view value)
+{
+	if (value.empty()) return DTYPE_NONE;
+	if (value == "DTYPE_TOWN") return DTYPE_TOWN;
+	if (value == "DTYPE_CATHEDRAL") return DTYPE_CATHEDRAL;
+	if (value == "DTYPE_CATACOMBS") return DTYPE_CATACOMBS;
+	if (value == "DTYPE_CAVES") return DTYPE_CAVES;
+	if (value == "DTYPE_HELL") return DTYPE_HELL;
+	if (value == "DTYPE_NEST") return DTYPE_NEST;
+	if (value == "DTYPE_CRYPT") return DTYPE_CRYPT;
+	return tl::make_unexpected("Unknown enum value");
+}
+
+tl::expected<_setlevels, std::string> ParseSetLevel(std::string_view value)
+{
+	const std::optional<_setlevels> enumValueOpt = magic_enum::enum_cast<_setlevels>(value);
+	if (enumValueOpt.has_value()) {
+		return enumValueOpt.value();
+	}
+	return tl::make_unexpected("Unknown enum value");
 }
 
 } // namespace devilution

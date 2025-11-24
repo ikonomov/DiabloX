@@ -161,6 +161,9 @@ ipch/
 # Visual Studio Trace Files
 *.e2e
 
+# Visual Studio Edit & Continue
+enc_temp_folder
+
 # TFS 2012 Local Workspace
 $tf/
 
@@ -262,6 +265,8 @@ _pkginfo.txt
 *.[Cc]ache
 # but keep track of directories ending in .cache
 !*.[Cc]ache/
+# except for a top-level .cache directory (clangd uses /.cache/clangd for temporary files)
+/.cache/
 
 # Others
 ClientBin/
@@ -435,7 +440,7 @@ DerivedData/
 
 # End of https://www.gitignore.io/api/xcode
 
-# Don't accidently commit the diabdat.mpq
+# Don't accidently commit the diabdat.mpq or any other MPQ files
 *.mpq
 
 ### Nintendo Switch ###
@@ -443,9 +448,6 @@ exefs/main
 /out/isenseconfig/CPI-Debug
 
 /docs/html/
-
-# MPQ files
-*.mpq
 
 # ddraw wrapper configuration file
 ddraw_settings.ini
@@ -463,3 +465,6 @@ uwp-project/Assets/gendata
 uwp-project/Assets/ui_art
 !uwp-project/devilutionX_TemporaryKey.pfx
 /.s390x-ccache/
+
+# Temporary directory for prep scripts and other purposes.
+/tmp/

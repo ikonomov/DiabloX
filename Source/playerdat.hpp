@@ -5,18 +5,56 @@
  */
 #pragma once
 
+#include <array>
 #include <cstdint>
 
-#include "player.h"
-#include "textdat.h"
+#include "effects.h"
+#include "itemdat.h"
+#include "spelldat.h"
 
 namespace devilution {
 
+enum class HeroClass : uint8_t {
+	Warrior,
+	Rogue,
+	Sorcerer,
+	Monk,
+	Bard,
+	Barbarian,
+
+	NUM_MAX_CLASSES = std::numeric_limits<uint8_t>::max(),
+
+	LAST = Barbarian,
+};
+
+enum class PlayerClassFlag : uint8_t {
+	// clang-format off
+	None = 0,
+	CriticalStrike = 1 << 0,
+	DualWield = 1 << 1,
+	IronSkin = 1 << 2,
+	NaturalResistance = 1 << 3,
+	TrapSense = 1 << 4,
+
+	Last = TrapSense
+	// clang-format on
+};
+use_enum_as_flags(PlayerClassFlag);
+
 struct PlayerData {
 	/* Class Name */
-	const char *className;
-	/* Class Directory Path */
-	const char *classPath;
+	std::string className;
+	/* Class Folder Name */
+	std::string folderName;
+	/* Class Portrait Index */
+	uint8_t portrait;
+	/* Class Inventory UI File */
+	std::string inv;
+};
+
+struct ClassAttributes {
+	/* Class Flags */
+	PlayerClassFlag classFlags;
 	/* Class Starting Strength Stat */
 	uint8_t baseStr;
 	/* Class Starting Magic Stat */
@@ -33,8 +71,6 @@ struct PlayerData {
 	uint8_t maxDex;
 	/* Class Maximum Vitality Stat */
 	uint8_t maxVit;
-	/* Class Block Bonus % */
-	uint8_t blockBonus;
 	/* Class Life Adjustment */
 	int16_t adjLife;
 	/* Class Mana Adjustment */
@@ -51,11 +87,52 @@ struct PlayerData {
 	int16_t itmLife;
 	/* Mana from item bonus Magic */
 	int16_t itmMana;
+};
+
+const ClassAttributes &GetClassAttributes(HeroClass playerClass);
+
+struct PlayerCombatData {
+	/* Class starting chance to Block (used as a %) */
+	uint8_t baseToBlock;
+	/* Class starting chance to hit when using melee attacks (used as a %) */
+	uint8_t baseMeleeToHit;
+	/* Class starting chance to hit when using ranged weapons (used as a %) */
+	uint8_t baseRangedToHit;
+	/* Class starting chance to hit when using spells (used as a %) */
+	uint8_t baseMagicToHit;
+};
+
+/**
+ * @brief Data used to set known skills and provide initial equipment when starting a new game
+ *
+ * Items will be created in order starting with item 1, 2, etc. If the item can be equipped it
+ * will be placed in the first available slot, otherwise if it fits on the belt it will be
+ * placed in the first free space, finally being placed in the first free inventory position.
+ *
+ * The active game mode at the time we're creating a new character controls the choice of item
+ * type. ItemType.hellfire is used if we're in Hellfire mode, ItemType.diablo otherwise.
+ */
+struct PlayerStartingLoadoutData {
 	/* Class Skill */
 	SpellID skill;
+	/* Starting Spell (if any) */
+	SpellID spell;
+	/* Initial level of the starting spell */
+	uint8_t spellLevel;
+
+	std::array<_item_indexes, 5> items;
+
+	/* Initial gold amount, up to a single stack (5000 gold) */
+	uint16_t gold;
 };
 
 struct PlayerSpriteData {
+	/* Class Directory Path */
+	std::string classPath;
+	/* Class letter used in graphic files */
+	char classChar;
+	/* Class TRN file */
+	std::string trn;
 	/* Sprite width: Stand */
 	uint8_t stand;
 	/* Sprite width: Walk */
@@ -135,10 +212,26 @@ struct PlayerAnimData {
 	int8_t castingActionFrame;
 };
 
-extern const _sfx_id herosounds[enum_size<HeroClass>::value][enum_size<HeroSpeech>::value];
-extern const uint32_t ExpLvlsTbl[MaxCharacterLevel];
-extern const PlayerData PlayersData[];
-extern const PlayerSpriteData PlayersSpriteData[];
-extern const PlayerAnimData PlayersAnimData[];
+/**
+ * @brief Attempts to load data values from external files.
+ */
+void LoadClassDatFromFile(DataFile &dataFile, const std::string_view filename);
+void LoadPlayerDataFiles();
+
+SfxID GetHeroSound(HeroClass clazz, HeroSpeech speech);
+uint32_t GetNextExperienceThresholdForLevel(unsigned level);
+uint8_t GetMaximumCharacterLevel();
+size_t GetNumPlayerClasses();
+const PlayerData &GetPlayerDataForClass(HeroClass clazz);
+const PlayerCombatData &GetPlayerCombatDataForClass(HeroClass clazz);
+const PlayerStartingLoadoutData &GetPlayerStartingLoadoutForClass(HeroClass clazz);
+const PlayerSpriteData &GetPlayerSpriteDataForClass(HeroClass clazz);
+const PlayerAnimData &GetPlayerAnimDataForClass(HeroClass clazz);
 
 } // namespace devilution
+
+template <>
+struct magic_enum::customize::enum_range<devilution::PlayerClassFlag> {
+	static constexpr uint8_t min = static_cast<uint64_t>(devilution::PlayerClassFlag::None);
+	static constexpr uint8_t max = static_cast<uint64_t>(devilution::PlayerClassFlag::Last);
+};

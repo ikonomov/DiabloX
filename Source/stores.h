@@ -6,20 +6,34 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 
 #include "DiabloUI/ui_flags.hpp"
 #include "control.h"
-#include "engine.h"
 #include "engine/clx_sprite.hpp"
+#include "engine/surface.hpp"
+#include "game_mode.hpp"
 #include "utils/attributes.h"
-#include "utils/stdcompat/optional.hpp"
+#include "utils/static_vector.hpp"
 
 namespace devilution {
 
-#define WITCH_ITEMS 25
-#define SMITH_ITEMS 25
-#define SMITH_PREMIUM_ITEMS 15
-#define STORE_LINES 104
+constexpr int NumSmithBasicItems = 19;
+constexpr int NumSmithBasicItemsHf = 24;
+
+constexpr int NumSmithItems = 6;
+constexpr int NumSmithItemsHf = 15;
+
+constexpr int NumHealerItems = 17;
+constexpr int NumHealerItemsHf = 19;
+constexpr int NumHealerPinnedItems = 2;
+constexpr int NumHealerPinnedItemsMp = 3;
+
+constexpr int NumWitchItems = 17;
+constexpr int NumWitchItemsHf = 24;
+constexpr int NumWitchPinnedItems = 3;
+
+constexpr int NumStoreLines = 104;
 
 enum class TalkID : uint8_t {
 	None,
@@ -49,34 +63,34 @@ enum class TalkID : uint8_t {
 };
 
 /** Currently active store */
-extern TalkID stextflag;
+extern TalkID ActiveStore;
 
-/** Current index into storehidx/storehold */
-extern DVL_API_FOR_TEST int storenumh;
+/** Current index into PlayerItemIndexes/PlayerItems */
+extern DVL_API_FOR_TEST int CurrentItemIndex;
 /** Map of inventory items being presented in the store */
-extern int8_t storehidx[48];
+extern int8_t PlayerItemIndexes[48];
 /** Copies of the players items as presented in the store */
-extern DVL_API_FOR_TEST Item storehold[48];
+extern DVL_API_FOR_TEST Item PlayerItems[48];
 
 /** Items sold by Griswold */
-extern Item smithitem[SMITH_ITEMS];
+extern DVL_API_FOR_TEST StaticVector<Item, NumSmithBasicItemsHf> SmithItems;
 /** Number of premium items for sale by Griswold */
-extern int numpremium;
+extern DVL_API_FOR_TEST int PremiumItemCount;
 /** Base level of current premium items sold by Griswold */
-extern int premiumlevel;
+extern DVL_API_FOR_TEST int PremiumItemLevel;
 /** Premium items sold by Griswold */
-extern Item premiumitems[SMITH_PREMIUM_ITEMS];
+extern DVL_API_FOR_TEST StaticVector<Item, NumSmithItemsHf> PremiumItems;
 
 /** Items sold by Pepin */
-extern Item healitem[20];
+extern DVL_API_FOR_TEST StaticVector<Item, NumHealerItemsHf> HealerItems;
 
 /** Items sold by Adria */
-extern Item witchitem[WITCH_ITEMS];
+extern DVL_API_FOR_TEST StaticVector<Item, NumWitchItemsHf> WitchItems;
 
 /** Current level of the item sold by Wirt */
-extern int boylevel;
+extern int BoyItemLevel;
 /** Current item sold by Wirt */
-extern Item boyitem;
+extern Item BoyItem;
 
 void AddStoreHoldRepair(Item *itm, int8_t i);
 
@@ -88,7 +102,7 @@ void SetupTownStores();
 
 void FreeStoreMem();
 
-void PrintSString(const Surface &out, int margin, int line, string_view text, UiFlags flags, int price = 0, int cursId = -1, bool cursIndent = false);
+void PrintSString(const Surface &out, int margin, int line, std::string_view text, UiFlags flags, int price = 0, int cursId = -1, bool cursIndent = false);
 void DrawSLine(const Surface &out, int sy);
 void DrawSTextHelp();
 void ClearSText(int s, int e);
@@ -103,5 +117,6 @@ void TakePlrsMoney(int cost);
 void StoreEnter();
 void CheckStoreBtn();
 void ReleaseStoreBtn();
+bool IsPlayerInStore();
 
 } // namespace devilution

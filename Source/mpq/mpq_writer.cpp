@@ -6,10 +6,11 @@
 #include <memory>
 #include <type_traits>
 
+#include <libmpq/mpq.h>
+
 #include "appfat.h"
 #include "encrypt.h"
-#include "engine.h"
-#include "utils/endian.hpp"
+#include "utils/endian_swap.hpp"
 #include "utils/file_util.h"
 #include "utils/language.h"
 #include "utils/log.hpp"
@@ -62,15 +63,15 @@ constexpr uint32_t MinBlockSize = 1024;
 
 void ByteSwapHdr(MpqFileHeader *hdr)
 {
-	hdr->signature = SDL_SwapLE32(hdr->signature);
-	hdr->headerSize = SDL_SwapLE32(hdr->headerSize);
-	hdr->fileSize = SDL_SwapLE32(hdr->fileSize);
-	hdr->version = SDL_SwapLE16(hdr->version);
-	hdr->blockSizeFactor = SDL_SwapLE16(hdr->blockSizeFactor);
-	hdr->hashEntriesOffset = SDL_SwapLE32(hdr->hashEntriesOffset);
-	hdr->blockEntriesOffset = SDL_SwapLE32(hdr->blockEntriesOffset);
-	hdr->hashEntriesCount = SDL_SwapLE32(hdr->hashEntriesCount);
-	hdr->blockEntriesCount = SDL_SwapLE32(hdr->blockEntriesCount);
+	hdr->signature = Swap32LE(hdr->signature);
+	hdr->headerSize = Swap32LE(hdr->headerSize);
+	hdr->fileSize = Swap32LE(hdr->fileSize);
+	hdr->version = Swap16LE(hdr->version);
+	hdr->blockSizeFactor = Swap16LE(hdr->blockSizeFactor);
+	hdr->hashEntriesOffset = Swap32LE(hdr->hashEntriesOffset);
+	hdr->blockEntriesOffset = Swap32LE(hdr->blockEntriesOffset);
+	hdr->hashEntriesCount = Swap32LE(hdr->hashEntriesCount);
+	hdr->blockEntriesCount = Swap32LE(hdr->blockEntriesCount);
 }
 
 bool IsAllocatedUnusedBlock(const MpqBlockEntry *block)
@@ -88,21 +89,35 @@ bool IsUnallocatedBlock(const MpqBlockEntry *block)
 MpqWriter::MpqWriter(const char *path)
 {
 	const std::string dir = std::string(Dirname(path));
-	RecursivelyCreateDir(dir.c_str());
-	LogVerbose("Opening {}", path);
-	std::string error;
-	bool exists = FileExists(path);
-	const char *mode = "wb";
-	if (exists) {
-		mode = "r+b";
-		if (!GetFileSize(path, &size_)) {
-			error = R"(GetFileSize failed: "{}")";
-			LogError(error, path, std::strerror(errno));
-			goto on_error;
-		}
-		LogVerbose("GetFileSize(\"{}\") = {}", path, size_);
+	if (!dir.empty()) {
+		RecursivelyCreateDir(dir.c_str());
 	}
-	if (!stream_.Open(path, mode)) {
+	LogVerbose("Opening {}", path);
+	bool isNewFile = false;
+	std::string error;
+	if (!FileExists(path)) {
+		// FileExists() may return false in the case of an error
+		// so we use "ab" instead of "wb" to avoid accidentally
+		// truncating an existing file
+		stream_.Open(path, "ab");
+
+		// However, we cannot actually use a file handle that was
+		// opened in "ab" mode because we need to be able to seek
+		// and write to the middle of the file
+		stream_.Close();
+	}
+
+	std::uintmax_t fileSize;
+	if (!GetFileSize(path, &fileSize)) {
+		error = R"(GetFileSize failed: "{}")";
+		LogError(error, path, std::strerror(errno));
+		goto on_error;
+	}
+	size_ = static_cast<uint32_t>(fileSize);
+	isNewFile = size_ == 0;
+	LogVerbose("GetFileSize(\"{}\") = {}", path, size_);
+
+	if (!stream_.Open(path, "r+b")) {
 		stream_.Close();
 		error = "Failed to open file";
 		goto on_error;
@@ -112,7 +127,7 @@ MpqWriter::MpqWriter(const char *path)
 
 	if (blockTable_ == nullptr || hashTable_ == nullptr) {
 		MpqFileHeader fhdr;
-		if (!exists) {
+		if (isNewFile) {
 			InitDefaultMpqHeader(&fhdr);
 		} else if (!ReadMPQHeader(&fhdr)) {
 			error = "Failed to read MPQ header";
@@ -125,8 +140,7 @@ MpqWriter::MpqWriter(const char *path)
 				error = "Failed to read block table";
 				goto on_error;
 			}
-			uint32_t key = Hash("(block table)", 3);
-			Decrypt(reinterpret_cast<uint32_t *>(blockTable_.get()), fhdr.blockEntriesCount * sizeof(MpqBlockEntry), key);
+			libmpq__decrypt_block(reinterpret_cast<uint32_t *>(blockTable_.get()), fhdr.blockEntriesCount * sizeof(MpqBlockEntry), LIBMPQ_BLOCK_TABLE_HASH_KEY);
 		}
 		hashTable_ = std::make_unique<MpqHashEntry[]>(HashEntriesCount);
 
@@ -138,8 +152,7 @@ MpqWriter::MpqWriter(const char *path)
 				error = "Failed to read hash entries";
 				goto on_error;
 			}
-			uint32_t key = Hash("(hash table)", 3);
-			Decrypt(reinterpret_cast<uint32_t *>(hashTable_.get()), fhdr.hashEntriesCount * sizeof(MpqHashEntry), key);
+			libmpq__decrypt_block(reinterpret_cast<uint32_t *>(hashTable_.get()), fhdr.hashEntriesCount * sizeof(MpqHashEntry), LIBMPQ_HASH_TABLE_HASH_KEY);
 		}
 
 #ifndef CAN_SEEKP_BEYOND_EOF
@@ -152,7 +165,7 @@ MpqWriter::MpqWriter(const char *path)
 
 		// Write garbage header and tables because some platforms cannot `Seekp` beyond EOF.
 		// The data is incorrect at this point, it will be overwritten on Close.
-		if (!exists)
+		if (isNewFile)
 			WriteHeaderAndTables();
 #endif
 	}
@@ -179,9 +192,9 @@ MpqWriter::~MpqWriter()
 		LogVerbose("Closing failed {}", name_);
 }
 
-uint32_t MpqWriter::FetchHandle(const char *filename) const
+uint32_t MpqWriter::FetchHandle(std::string_view filename) const
 {
-	return GetHashIndex(Hash(filename, 0), Hash(filename, 1), Hash(filename, 2));
+	return GetHashIndex(CalculateMpqFileHash(filename));
 }
 
 void MpqWriter::InitDefaultMpqHeader(MpqFileHeader *hdr)
@@ -305,15 +318,15 @@ uint32_t MpqWriter::FindFreeBlock(uint32_t size)
 	return result;
 }
 
-uint32_t MpqWriter::GetHashIndex(uint32_t index, uint32_t hashA, uint32_t hashB) const // NOLINT(bugprone-easily-swappable-parameters)
+uint32_t MpqWriter::GetHashIndex(MpqFileHash fileHash) const // NOLINT(bugprone-easily-swappable-parameters)
 {
 	uint32_t i = HashEntriesCount;
-	for (unsigned idx = index & 0x7FF; hashTable_[idx].block != MpqHashEntry::NullBlock; idx = (idx + 1) & 0x7FF) {
+	for (unsigned idx = fileHash[0] & 0x7FF; hashTable_[idx].block != MpqHashEntry::NullBlock; idx = (idx + 1) & 0x7FF) {
 		if (i-- == 0)
 			break;
-		if (hashTable_[idx].hashA != hashA)
+		if (hashTable_[idx].hashA != fileHash[1])
 			continue;
-		if (hashTable_[idx].hashB != hashB)
+		if (hashTable_[idx].hashB != fileHash[2])
 			continue;
 		if (hashTable_[idx].block == MpqHashEntry::DeletedBlock)
 			continue;
@@ -329,14 +342,12 @@ bool MpqWriter::WriteHeaderAndTables()
 	return WriteHeader() && WriteBlockTable() && WriteHashTable();
 }
 
-MpqBlockEntry *MpqWriter::AddFile(const char *filename, MpqBlockEntry *block, uint32_t blockIndex)
+MpqBlockEntry *MpqWriter::AddFile(std::string_view filename, MpqBlockEntry *block, uint32_t blockIndex)
 {
-	uint32_t h1 = Hash(filename, 0);
-	uint32_t h2 = Hash(filename, 1);
-	uint32_t h3 = Hash(filename, 2);
-	if (GetHashIndex(h1, h2, h3) != HashEntryNotFound)
+	const MpqFileHash fileHash = CalculateMpqFileHash(filename);
+	if (GetHashIndex(fileHash) != HashEntryNotFound)
 		app_fatal(StrCat("Hash collision between \"", filename, "\" and existing file\n"));
-	unsigned int hIdx = h1 & 0x7FF;
+	unsigned int hIdx = fileHash[0] & 0x7FF;
 
 	bool hasSpace = false;
 	for (unsigned i = 0; i < HashEntriesCount; ++i) {
@@ -353,8 +364,8 @@ MpqBlockEntry *MpqWriter::AddFile(const char *filename, MpqBlockEntry *block, ui
 		block = NewBlock(&blockIndex);
 
 	MpqHashEntry &entry = hashTable_[hIdx];
-	entry.hashA = h2;
-	entry.hashB = h3;
+	entry.hashA = fileHash[1];
+	entry.hashB = fileHash[2];
 	entry.locale = 0;
 	entry.platform = 0;
 	entry.block = blockIndex;
@@ -362,15 +373,8 @@ MpqBlockEntry *MpqWriter::AddFile(const char *filename, MpqBlockEntry *block, ui
 	return block;
 }
 
-bool MpqWriter::WriteFileContents(const char *filename, const byte *fileData, size_t fileSize, MpqBlockEntry *block)
+bool MpqWriter::WriteFileContents(const std::byte *fileData, uint32_t fileSize, MpqBlockEntry *block)
 {
-	const char *tmp;
-	while ((tmp = strchr(filename, ':')) != nullptr)
-		filename = tmp + 1;
-	while ((tmp = strchr(filename, '\\')) != nullptr)
-		filename = tmp + 1;
-	Hash(filename, 3);
-
 	const uint32_t numSectors = (fileSize + (BlockSize - 1)) / BlockSize;
 	const uint32_t offsetTableByteSize = sizeof(uint32_t) * (numSectors + 1);
 	block->offset = FindFreeBlock(fileSize + offsetTableByteSize);
@@ -382,7 +386,7 @@ bool MpqWriter::WriteFileContents(const char *filename, const byte *fileData, si
 	// We populate the table of sector offsets while we write the data.
 	// We can't pre-populate it because we don't know the compressed sector sizes yet.
 	// First offset is the start of the first sector, last offset is the end of the last sector.
-	std::unique_ptr<uint32_t[]> offsetTable { new uint32_t[numSectors + 1] };
+	const std::unique_ptr<uint32_t[]> offsetTable { new uint32_t[numSectors + 1] };
 
 #ifdef CAN_SEEKP_BEYOND_EOF
 	if (!stream_.Seekp(block->offset + offsetTableByteSize, SEEK_SET))
@@ -408,7 +412,7 @@ bool MpqWriter::WriteFileContents(const char *filename, const byte *fileData, si
 #endif
 
 	uint32_t destSize = offsetTableByteSize;
-	byte mpqBuf[BlockSize];
+	std::byte mpqBuf[BlockSize];
 	size_t curSector = 0;
 	while (true) {
 		uint32_t len = std::min<uint32_t>(fileSize, BlockSize);
@@ -417,7 +421,7 @@ bool MpqWriter::WriteFileContents(const char *filename, const byte *fileData, si
 		len = PkwareCompress(mpqBuf, len);
 		if (!stream_.Write(reinterpret_cast<const char *>(&mpqBuf[0]), len))
 			return false;
-		offsetTable[curSector++] = SDL_SwapLE32(destSize);
+		offsetTable[curSector++] = Swap32LE(destSize);
 		destSize += len; // compressed length
 		if (fileSize <= BlockSize)
 			break;
@@ -425,7 +429,7 @@ bool MpqWriter::WriteFileContents(const char *filename, const byte *fileData, si
 		fileSize -= BlockSize;
 	}
 
-	offsetTable[numSectors] = SDL_SwapLE32(destSize);
+	offsetTable[numSectors] = Swap32LE(destSize);
 	if (!stream_.Seekp(block->offset, SEEK_SET))
 		return false;
 	if (!stream_.Write(reinterpret_cast<const char *>(offsetTable.get()), offsetTableByteSize))
@@ -451,7 +455,7 @@ bool MpqWriter::WriteHeader()
 	memset(&fhdr, 0, sizeof(fhdr));
 	fhdr.signature = MpqFileHeader::DiabloSignature;
 	fhdr.headerSize = MpqFileHeader::DiabloSize;
-	fhdr.fileSize = static_cast<uint32_t>(size_);
+	fhdr.fileSize = size_;
 	fhdr.version = 0;
 	fhdr.blockSizeFactor = BlockSizeFactor;
 	fhdr.hashEntriesOffset = MpqHashEntryOffset;
@@ -465,23 +469,23 @@ bool MpqWriter::WriteHeader()
 
 bool MpqWriter::WriteBlockTable()
 {
-	Encrypt(reinterpret_cast<uint32_t *>(blockTable_.get()), BlockEntrySize, Hash("(block table)", 3));
+	libmpq__encrypt_block(reinterpret_cast<uint32_t *>(blockTable_.get()), BlockEntrySize, LIBMPQ_BLOCK_TABLE_HASH_KEY);
 	const bool success = stream_.Write(reinterpret_cast<const char *>(blockTable_.get()), BlockEntrySize);
-	Decrypt(reinterpret_cast<uint32_t *>(blockTable_.get()), BlockEntrySize, Hash("(block table)", 3));
+	libmpq__decrypt_block(reinterpret_cast<uint32_t *>(blockTable_.get()), BlockEntrySize, LIBMPQ_BLOCK_TABLE_HASH_KEY);
 	return success;
 }
 
 bool MpqWriter::WriteHashTable()
 {
-	Encrypt(reinterpret_cast<uint32_t *>(hashTable_.get()), HashEntrySize, Hash("(hash table)", 3));
+	libmpq__encrypt_block(reinterpret_cast<uint32_t *>(hashTable_.get()), HashEntrySize, LIBMPQ_HASH_TABLE_HASH_KEY);
 	const bool success = stream_.Write(reinterpret_cast<const char *>(hashTable_.get()), HashEntrySize);
-	Decrypt(reinterpret_cast<uint32_t *>(hashTable_.get()), HashEntrySize, Hash("(hash table)", 3));
+	libmpq__decrypt_block(reinterpret_cast<uint32_t *>(hashTable_.get()), HashEntrySize, LIBMPQ_HASH_TABLE_HASH_KEY);
 	return success;
 }
 
-void MpqWriter::RemoveHashEntry(const char *filename)
+void MpqWriter::RemoveHashEntry(std::string_view filename)
 {
-	uint32_t hIdx = FetchHandle(filename);
+	const uint32_t hIdx = FetchHandle(filename);
 	if (hIdx == HashEntryNotFound) {
 		return;
 	}
@@ -504,34 +508,34 @@ void MpqWriter::RemoveHashEntries(bool (*fnGetName)(uint8_t, char *))
 	}
 }
 
-bool MpqWriter::WriteFile(const char *filename, const byte *data, size_t size)
+bool MpqWriter::WriteFile(std::string_view filename, const std::byte *data, size_t size)
 {
 	MpqBlockEntry *blockEntry;
 
 	RemoveHashEntry(filename);
 	blockEntry = AddFile(filename, nullptr, 0);
-	if (!WriteFileContents(filename, data, size, blockEntry)) {
+	if (!WriteFileContents(data, static_cast<uint32_t>(size), blockEntry)) {
 		RemoveHashEntry(filename);
 		return false;
 	}
 	return true;
 }
 
-void MpqWriter::RenameFile(const char *name, const char *newName) // NOLINT(bugprone-easily-swappable-parameters)
+void MpqWriter::RenameFile(std::string_view name, std::string_view newName) // NOLINT(bugprone-easily-swappable-parameters)
 {
-	uint32_t index = FetchHandle(name);
+	const uint32_t index = FetchHandle(name);
 	if (index == HashEntryNotFound) {
 		return;
 	}
 
 	MpqHashEntry *hashEntry = &hashTable_[index];
-	uint32_t block = hashEntry->block;
+	const uint32_t block = hashEntry->block;
 	MpqBlockEntry *blockEntry = &blockTable_[block];
 	hashEntry->block = MpqHashEntry::DeletedBlock;
 	AddFile(newName, blockEntry, block);
 }
 
-bool MpqWriter::HasFile(const char *name) const
+bool MpqWriter::HasFile(std::string_view name) const
 {
 	return FetchHandle(name) != HashEntryNotFound;
 }

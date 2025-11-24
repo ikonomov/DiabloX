@@ -6,14 +6,14 @@ if(NOT TARGET BZip2::BZip2)
   find_package(BZip2 REQUIRED)
 endif()
 
-include(functions/FetchContent_MakeAvailableExcludeFromAll)
+include(functions/FetchContent_ExcludeFromAll_backport)
 
 include(FetchContent)
-FetchContent_Declare(libmpq
-    URL https://github.com/diasurgical/libmpq/archive/b78d66c6fee6a501cc9b95d8556a129c68841b05.tar.gz
-    URL_HASH MD5=da531a1a6f719e89798a26e679ffc329
+FetchContent_Declare_ExcludeFromAll(libmpq
+    URL https://github.com/diasurgical/libmpq/archive/7c2924d4553513eba1a70bbdb558198dd8c2726a.tar.gz
+    URL_HASH MD5=315c88c02b45851cdfee8460322de044
 )
-FetchContent_MakeAvailableExcludeFromAll(libmpq)
+FetchContent_MakeAvailable_ExcludeFromAll(libmpq)
 
 add_library(libmpq STATIC
   ${libmpq_SOURCE_DIR}/libmpq/common.c
@@ -31,4 +31,8 @@ target_link_libraries(libmpq PRIVATE ZLIB::ZLIB BZip2::BZip2)
 
 if(LIBMPQ_FILE_BUFFER_SIZE)
   target_compile_definitions(libmpq PRIVATE "LIBMPQ_FILE_BUFFER_SIZE=${LIBMPQ_FILE_BUFFER_SIZE}")
+endif()
+
+if(DEVILUTIONX_WINDOWS_NO_WCHAR)
+  target_compile_definitions(libmpq PRIVATE LIBMPQ_WINDOWS_NO_WCHAR)
 endif()

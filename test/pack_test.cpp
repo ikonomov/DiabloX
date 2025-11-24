@@ -2,19 +2,51 @@
 
 #include <gtest/gtest.h>
 
+#include "cursor.h"
+#include "engine/assets.hpp"
+#include "game_mode.hpp"
+#include "monstdat.h"
 #include "pack.h"
+#include "playerdat.hpp"
+#include "utils/endian_swap.hpp"
+#include "utils/is_of.hpp"
 #include "utils/paths.h"
 
 namespace devilution {
 namespace {
 
+constexpr const char MissingMpqAssetsSkipReason[] = "MPQ assets (spawn.mpq or DIABDAT.MPQ) not found - skipping test suite";
+
 void SwapLE(ItemPack &pack)
 {
-	pack.iSeed = SDL_SwapLE32(pack.iSeed);
-	pack.iCreateInfo = SDL_SwapLE16(pack.iCreateInfo);
-	pack.idx = SDL_SwapLE16(pack.idx);
-	pack.wValue = SDL_SwapLE16(pack.wValue);
-	pack.dwBuff = SDL_SwapLE32(pack.dwBuff);
+	pack.iSeed = Swap32LE(pack.iSeed);
+	pack.iCreateInfo = Swap16LE(pack.iCreateInfo);
+	pack.idx = Swap16LE(pack.idx);
+	pack.wValue = Swap16LE(pack.wValue);
+	pack.dwBuff = Swap32LE(pack.dwBuff);
+}
+
+void SwapLE(PlayerPack &pack)
+{
+	pack.dwLowDateTime = Swap32LE(pack.dwLowDateTime);
+	pack.dwHighDateTime = Swap32LE(pack.dwHighDateTime);
+	pack.pExperience = Swap32LE(pack.pExperience);
+	pack.pGold = Swap32LE(pack.pGold);
+	pack.pHPBase = Swap32LE(pack.pHPBase);
+	pack.pMaxHPBase = Swap32LE(pack.pMaxHPBase);
+	pack.pManaBase = Swap32LE(pack.pManaBase);
+	pack.pMaxManaBase = Swap32LE(pack.pMaxManaBase);
+	pack.pMemSpells = Swap64LE(pack.pMemSpells);
+	for (ItemPack &item : pack.InvBody)
+		SwapLE(item);
+	for (ItemPack &item : pack.InvList)
+		SwapLE(item);
+	for (ItemPack &item : pack.SpdList)
+		SwapLE(item);
+	pack.wReflections = Swap16LE(pack.wReflections);
+	pack.pDiabloKillLevel = Swap32LE(pack.pDiabloKillLevel);
+	pack.pDifficulty = Swap32LE(pack.pDifficulty);
+	pack.pDamAcFlags = Swap32LE(pack.pDamAcFlags);
 }
 
 ItemPack SwappedLE(const ItemPack &pack)
@@ -22,6 +54,17 @@ ItemPack SwappedLE(const ItemPack &pack)
 	ItemPack swapped = pack;
 	SwapLE(swapped);
 	return swapped;
+}
+
+void SetHellfireState(bool enable)
+{
+	gbIsHellfire = enable;
+	UnloadModArchives();
+	if (enable) {
+		LoadModArchives({ { "Hellfire" } });
+	}
+	LoadItemData();
+	LoadSpellData();
 }
 
 void ComparePackedItems(const ItemPack &item1LE, const ItemPack &item2LE)
@@ -66,7 +109,7 @@ void ComparePackedItems(const ItemPack &item1LE, const ItemPack &item2LE)
 	}
 }
 typedef struct TestItemStruct {
-	char _iIName[64];
+	char _iIName[ItemNameLength];
 	ItemType _itype;
 	int _iClass;
 	int _iCurs;
@@ -112,7 +155,7 @@ typedef struct TestItemStruct {
 
 static void TestItemNameGeneration(const Item &item)
 {
-	bool allowIdentified = (item._iMiscId != IMISC_EAR); // Ears can't be identified. Item::getName() doesn't handle it, so don't test it.
+	const bool allowIdentified = (item._iMiscId != IMISC_EAR); // Ears can't be identified. Item::getName() doesn't handle it, so don't test it.
 	ASSERT_EQ(allowIdentified & item._iIdentified, item._iIdentified);
 
 	Item testItem = item;
@@ -125,7 +168,7 @@ static void TestItemNameGeneration(const Item &item)
 
 		// Check that UpdateHellfireFlag ensures that dwBuff is updated to get the correct name
 		if (item._iMagical == ITEM_QUALITY_MAGIC) {
-			bool isHellfireItem = (testItem.dwBuff & CF_HELLFIRE);
+			const bool isHellfireItem = (testItem.dwBuff & CF_HELLFIRE);
 			testItem.dwBuff = 0;
 			UpdateHellfireFlag(testItem, testItem._iIName);
 
@@ -281,6 +324,7 @@ const ItemPack PackedDiabloItems[] = {
 
 constexpr ItemSpecialEffect EmpyreanBandSpecialEffect = ItemSpecialEffect::FastHitRecovery | ItemSpecialEffect::HalfTrapDamage;
 constexpr ItemSpecialEffect GrisworldEdgeSpecialEffect = ItemSpecialEffect::FireDamage | ItemSpecialEffect::Knockback | ItemSpecialEffect::FastAttack;
+constexpr ItemSpecialEffect FireArrows = ItemSpecialEffect::FireArrows | ItemSpecialEffect::FireDamage;
 
 const TestItemStruct DiabloItems[] = {
 	// clang-format off
@@ -317,7 +361,7 @@ const TestItemStruct DiabloItems[] = {
 	{ "Falchion",                     ItemType::Sword,              1,      62,       250,         4,         8,     0, ItemSpecialEffect::None,                        0, SpellID::Null,                 0,             0,            10,        20,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          -1,        30,         0,         0,    120 },
 	{ "Long Sword of vim",            ItemType::Sword,              1,      60,      4400,         2,        10,     0, ItemSpecialEffect::None,                        0, SpellID::Null,                 0,             0,            18,        40,        0,          0,       0,        0,        0,        0,       15,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          25,        30,         0,        30,    125 },
 	{ "Frog's Staff of Holy Bolt",    ItemType::Staff,              1,     109,         1,         2,         4,     0, ItemSpecialEffect::None,                       23, SpellID::HolyBolt,            60,            60,            10,        25,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,      -384,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          34,          -1,         0,        20,         0,    151 },
-	{ "Short Staff of Charged Bolt",  ItemType::Staff,              1,     109,       520,         2,         4,     0, ItemSpecialEffect::None,                       23, SpellID::ChargedBolt,          9,            40,            25,        25,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          -1,         0,        20,         0,    166 },
+	{ "Short Staff of Charged Bolt",  ItemType::Staff,              1,     109,       470,         2,         4,     0, ItemSpecialEffect::None,                       23, SpellID::ChargedBolt,          9,            40,            25,        25,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          -1,         0,        25,         0,    166 },
 	{ "Short Staff of Charged Bolt",  ItemType::Staff,              1,     109,         1,         2,         4,     0, ItemSpecialEffect::None,                       23, SpellID::ChargedBolt,         50,            50,            18,        25,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          -1,         0,        25,         0,    151 },
 	{ "Cap of the mind",              ItemType::Helm,               2,      91,      1845,         0,         0,     2, ItemSpecialEffect::None,                        0, SpellID::Null,                 0,             0,            12,        15,        0,          0,       0,        0,        9,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          21,         0,         0,         0,     48 },
 	{ "Quilted Armor of protection",  ItemType::LightArmor,         2,     129,      1200,         0,         0,     7, ItemSpecialEffect::None,                        0, SpellID::Null,                 0,             0,            30,        30,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,          -2,          0,            0,      0,          0,          0,          0,          0,          -1,          30,         0,         0,         0,     58 },
@@ -375,7 +419,7 @@ const TestItemStruct DiabloItems[] = {
 	{ "Soldier's Sword of vigor",     ItemType::Sword,              1,      57,     31600,         6,        15,     0, ItemSpecialEffect::None,                        0, SpellID::Null,                 0,             0,            60,        60,       66,         19,       0,        0,        0,        0,       20,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,           4,          25,        50,         0,         0,    127 },
 	{ "Fine Long Bow of the pit",     ItemType::Bow,                1,     102,      2152,         1,         6,     0, ItemSpecialEffect::None,                        0, SpellID::Null,                 0,             0,            35,        35,       49,         10,       0,       -2,       -2,       -2,       -2,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,           4,          28,        25,         0,        30,    145 },
 	{ "Sharp Sword of atrophy",       ItemType::Sword,              1,      60,      1958,         2,        10,     0, ItemSpecialEffect::None,                        0, SpellID::Null,                 0,             0,            24,        40,       34,          4,       0,        0,        0,       -1,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,           4,          24,        30,         0,        30,    125 },
-	{ "Emerald Bow of burning",       ItemType::Bow,                1,     120,    107000,         1,        14,     0, ItemSpecialEffect::FireArrows,                  0, SpellID::Null,                 0,             0,            60,        60,        0,          0,       0,        0,        0,        0,        0,      50,      50,      50,         0,       0,           0,           0,          0,            0,      0,          1,         16,          0,          0,          11,          42,        45,         0,        80,    150 },
+	{ "Emerald Bow of burning",       ItemType::Bow,                1,     120,    107000,         1,        14,     0, FireArrows,                                     0, SpellID::Null,                 0,             0,            60,        60,        0,          0,       0,        0,        0,        0,        0,      50,      50,      50,         0,       0,           0,           0,          0,            0,      0,          1,         16,          0,          0,          11,          42,        45,         0,        80,    150 },
 	// clang-format on
 };
 
@@ -386,6 +430,12 @@ public:
 		Players.resize(1);
 		MyPlayer = &Players[0];
 	}
+
+	static void SetUpTestSuite()
+	{
+		LoadSpellData();
+		LoadItemData();
+	}
 };
 
 TEST_F(PackTest, UnPackItem_diablo)
@@ -393,7 +443,7 @@ TEST_F(PackTest, UnPackItem_diablo)
 	Item id;
 	ItemPack is;
 
-	gbIsHellfire = false;
+	SetHellfireState(false);
 	gbIsMultiplayer = false;
 	gbIsSpawn = false;
 
@@ -416,7 +466,7 @@ TEST_F(PackTest, UnPackItem_diablo_unique_bug)
 	const auto pkItemBug = SwappedLE(ItemPack { 6, 15 | CF_UPER1 | CF_UPER15 | CF_UNIQUE, 14, 5, 60, 60, 0, 0, 0, 0 }); // Veil of Steel - with morph bug
 	const auto pkItem = SwappedLE(ItemPack { 6, 15 | CF_UPER15 | CF_UNIQUE, 14, 5, 60, 60, 0, 0, 0, 0 });               // Veil of Steel - fixed
 
-	gbIsHellfire = false;
+	SetHellfireState(false);
 	gbIsMultiplayer = false;
 	gbIsSpawn = false;
 
@@ -466,7 +516,7 @@ TEST_F(PackTest, UnPackItem_spawn)
 	Item id;
 	ItemPack is;
 
-	gbIsHellfire = false;
+	SetHellfireState(false);
 	gbIsMultiplayer = false;
 	gbIsSpawn = true;
 
@@ -511,7 +561,7 @@ TEST_F(PackTest, UnPackItem_diablo_multiplayer)
 	Item id;
 	ItemPack is;
 
-	gbIsHellfire = false;
+	SetHellfireState(false);
 	gbIsMultiplayer = true;
 	gbIsSpawn = false;
 
@@ -628,6 +678,7 @@ const ItemPack PackedHellfireItems[] = {
 constexpr ItemSpecialEffect GnatStingSpecialEffect = ItemSpecialEffect::MultipleArrows | ItemSpecialEffect::QuickAttack;
 constexpr ItemSpecialEffect ThunderclapSpecialEffect = ItemSpecialEffect::FireDamage | ItemSpecialEffect::LightningDamage;
 constexpr ItemSpecialEffect ExplosiveArrows = ItemSpecialEffect::FireArrows | ItemSpecialEffect::LightningArrows;
+constexpr ItemSpecialEffect LightningArrows = ItemSpecialEffect::LightningArrows | ItemSpecialEffect::LightningDamage;
 
 const TestItemStruct HellfireItems[] = {
 	// clang-format off
@@ -641,7 +692,7 @@ const TestItemStruct HellfireItems[] = {
 	{ "Messerschmidt's Reaver",         ItemType::Axe,                1,     163,     58000,        12,        30,     0, ItemSpecialEffect::FireDamage,                0, SpellID::Null,                 0,             0,            75,        75,      200,          0,       0,        5,        5,        5,        5,       0,       0,       0,         0,   -3200,          15,           0,          0,            0,     44,          2,         12,          0,          0,          -1,          -1,        80,         0,         0,    135 },
 	{ "Vicious Maul of structure",      ItemType::Mace,               1,     122,     10489,         6,        20,     0, ItemSpecialEffect::None,                      0, SpellID::Null,                 0,             0,           127,       128,       72,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,           2,          35,        55,         0,         0,    142 },
 	{ "Short Sword",                    ItemType::Sword,              1,      64,       120,         2,         6,     0, ItemSpecialEffect::None,                      0, SpellID::Null,                 0,             0,            15,        24,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          -1,        18,         0,         0,    119 },
-	{ "Long Battle Bow of shock",       ItemType::Bow,                1,     119,      8000,         1,        10,     0, ItemSpecialEffect::LightningArrows,           0, SpellID::Null,                 0,             0,            18,        50,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          1,          6,          -1,          43,        30,         0,        60,    148 },
+	{ "Long Battle Bow of shock",       ItemType::Bow,                1,     119,      8000,         1,        10,     0, LightningArrows,                              0, SpellID::Null,                 0,             0,            18,        50,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          1,          6,          -1,          43,        30,         0,        60,    148 },
 	{ "Short Bow of magic",             ItemType::Bow,                1,     118,       400,         1,         4,     0, ItemSpecialEffect::None,                      0, SpellID::Null,                 0,             0,            30,        30,        0,          0,       0,        0,        1,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          21,         0,         0,         0,    143 },
 	{ "Red Long Staff of Healing",      ItemType::Staff,              1,     123,      1360,         4,         8,     0, ItemSpecialEffect::None,                     23, SpellID::Healing,             22,            33,            35,        35,        0,          0,       0,        0,        0,        0,        0,      10,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,           8,          -1,         0,        17,         0,    152 },
 	{ "Buckler",                        ItemType::Shield,             2,      83,        30,         0,         0,     5, ItemSpecialEffect::None,                      0, SpellID::Null,                 0,             0,             6,        16,        0,          0,       0,        0,        0,        0,        0,       0,       0,       0,         0,       0,           0,           0,          0,            0,      0,          0,          0,          0,          0,          -1,          -1,         0,         0,         0,     71 },
@@ -730,7 +781,7 @@ TEST_F(PackTest, UnPackItem_hellfire)
 	Item id;
 	ItemPack is;
 
-	gbIsHellfire = true;
+	SetHellfireState(true);
 	gbIsMultiplayer = false;
 	gbIsSpawn = false;
 
@@ -754,7 +805,7 @@ TEST_F(PackTest, UnPackItem_diablo_strip_hellfire_items)
 	const auto is = SwappedLE(ItemPack { 1478792102, 3 | CF_UPER1, 92, 0, 0, 0, 0, 0, 0, 0 }); // Scroll of Search
 	Item id;
 
-	gbIsHellfire = false;
+	SetHellfireState(false);
 	gbIsMultiplayer = false;
 	gbIsSpawn = false;
 
@@ -786,7 +837,7 @@ TEST_F(PackTest, PackItem_empty)
 
 	// Copy the value out before comparing to avoid loading a misaligned address.
 	const auto idx = is.idx;
-	ASSERT_EQ(SDL_SwapLE16(idx), 0xFFFF);
+	ASSERT_EQ(Swap16LE(idx), 0xFFFF);
 	TestItemNameGeneration(id);
 }
 
@@ -797,7 +848,7 @@ static void compareGold(const ItemPack &is, int iCurs)
 	ASSERT_EQ(id._iCurs, iCurs);
 	ASSERT_EQ(id.IDidx, IDI_GOLD);
 	// Copy the value out before comparing to avoid loading a misaligned address.
-	const auto wvalue = SDL_SwapLE16(is.wValue);
+	const auto wvalue = Swap16LE(is.wValue);
 	ASSERT_EQ(id._ivalue, wvalue);
 	ASSERT_EQ(id._itype, ItemType::Gold);
 	ASSERT_EQ(id._iClass, ICLASS_GOLD);
@@ -839,6 +890,569 @@ TEST_F(PackTest, UnPackItem_ear)
 	ItemPack is2;
 	PackItem(is2, id, gbIsHellfire);
 	ComparePackedItems(is, is2);
+}
+
+class NetPackTest : public ::testing::Test {
+public:
+	void SetUp() override
+	{
+		if (missingMpqAssets_) {
+			GTEST_SKIP() << MissingMpqAssetsSkipReason;
+		}
+
+		Players.resize(2);
+		MyPlayer = &Players[0];
+		gbIsMultiplayer = true;
+		gbIsSpawn = false;
+
+		PlayerPack testPack {
+			0, 0, -1, 9, 0, 2, 61, 24, 0, 0, "MP-Warrior", 0, 120, 25, 60, 60, 37, 0, 85670061, 3921, 13568, 13568, 3904, 3904,
+			{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },
+			1610612737,
+			{ { 3160997530, 798, 52, 5, 40, 40, 0, 0, 0, 0 },
+			    { 1911837482, 286, 152, 3, 0, 0, 0, 0, 0, 0 },
+			    { 1262914017, 286, 151, 3, 0, 0, 0, 0, 0, 0 },
+			    { 3846694361, 286, 155, 3, 0, 0, 0, 0, 0, 0 },
+			    { 3454746195, 2077, 122, 3, 60, 60, 0, 0, 0, 0 },
+			    { 1560055601, 4117, 75, 3, 50, 50, 0, 0, 0, 0 },
+			    { 3097669048, 286, 70, 3, 66, 90, 0, 0, 0, 0 } },
+			{ { 423576018, 16400, 82, 0, 0, 0, 0, 0, 0, 0 },
+			    { 543375803, 16400, 81, 0, 0, 0, 0, 0, 0, 0 },
+			    { 1802859062, 8208, 147, 3, 35, 35, 34, 34, 0, 0 },
+			    { 368922902, 0, 0, 0, 0, 0, 0, 0, 3921, 0 },
+			    { 1424628865, 8208, 111, 1, 0, 0, 0, 0, 0, 0 },
+			    { 1128267486, 1, 25, 0, 0, 0, 0, 0, 0, 0 },
+			    { 885129636, 1, 25, 0, 0, 0, 0, 0, 0, 0 },
+			    { 1954673116, 260, 93, 0, 0, 0, 0, 0, 0, 0 },
+			    { 379449999, 260, 93, 0, 0, 0, 0, 0, 0, 0 },
+			    { 1684106752, 24937, 23, 0, 0, 0, 0, 0, 65, 0 },
+			    { 1924887070, 385, 24, 0, 0, 0, 0, 0, 0, 0 },
+			    { 813588879, 194, 56, 2, 6, 18, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+			{ -3, -3, -12, -12, 0, 0, 0, 0, -5, -5, -3, -3, -12, -12, 0, 0, 0, 0, 5, -5, 3, -3, 12, -12, 0, 0, 0, 0, 0, 0, 2, 1, 6, 7, 8, 9, 10, 11, 4, 0 },
+			12,
+			{ { 112017676, 16, 24, 0, 0, 0, 0, 0, 0, 0 },
+			    { 367533949, 16, 24, 0, 0, 0, 0, 0, 0, 0 },
+			    { 778528030, 16, 24, 0, 0, 0, 0, 0, 0, 0 },
+			    { 960294091, 16, 24, 0, 0, 0, 0, 0, 0, 0 },
+			    { 1948311560, 16, 29, 0, 0, 0, 0, 0, 0, 0 },
+			    { 639577687, 16, 29, 0, 0, 0, 0, 0, 0, 0 },
+			    { 103356930, 16, 29, 0, 0, 0, 0, 0, 0, 0 },
+			    { 215810455, 16, 29, 0, 0, 0, 0, 0, 0, 0 } },
+			0, 0, 0, 0, 0, 0, 0, 0, 0,
+			{ 0, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			0, 0, 0, 0,
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+		};
+
+		SwapLE(testPack);
+		UnPackPlayer(testPack, *MyPlayer);
+	}
+
+	static void SetUpTestSuite()
+	{
+		LoadCoreArchives();
+		LoadGameArchives();
+
+		missingMpqAssets_ = !HaveMainData();
+		if (missingMpqAssets_) {
+			return;
+		}
+
+		SetHellfireState(false);
+		InitCursor();
+		LoadSpellData();
+		LoadPlayerDataFiles();
+		LoadMonsterData();
+		LoadItemData();
+	}
+
+private:
+	static bool missingMpqAssets_;
+};
+
+bool NetPackTest::missingMpqAssets_ = false;
+
+bool TestNetPackValidation()
+{
+	PlayerNetPack packed;
+	PackNetPlayer(packed, *MyPlayer);
+	return UnPackNetPlayer(packed, Players[1]);
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_valid)
+{
+	ASSERT_TRUE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_class)
+{
+	PlayerNetPack packed;
+	PackNetPlayer(packed, *MyPlayer);
+	packed.pClass = std::numeric_limits<uint8_t>::max();
+	ASSERT_FALSE(UnPackNetPlayer(packed, Players[1]));
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_oob)
+{
+	const WorldTilePosition position = MyPlayer->position.tile;
+
+	MyPlayer->position.tile.x = MAXDUNX + 1;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	MyPlayer->position.tile = position;
+	MyPlayer->position.tile.y = MAXDUNY + 1;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_plrlevel)
+{
+	MyPlayer->plrlevel = NUMLEVELS;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_hpBase)
+{
+	MyPlayer->_pHPBase = -64;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	MyPlayer->_pHPBase = MyPlayer->_pMaxHPBase + 64;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_manaBase)
+{
+	MyPlayer->_pManaBase = MyPlayer->_pMaxManaBase + 64;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_baseStr)
+{
+	MyPlayer->_pBaseStr = MyPlayer->GetMaximumAttributeValue(CharacterAttribute::Strength) + 1;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_baseMag)
+{
+	MyPlayer->_pBaseMag = MyPlayer->GetMaximumAttributeValue(CharacterAttribute::Magic) + 1;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_baseDex)
+{
+	MyPlayer->_pBaseDex = MyPlayer->GetMaximumAttributeValue(CharacterAttribute::Dexterity) + 1;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_baseVit)
+{
+	MyPlayer->_pBaseVit = MyPlayer->GetMaximumAttributeValue(CharacterAttribute::Vitality) + 1;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_numInv)
+{
+	MyPlayer->_pNumInv = InventoryGridCells + 1;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_strength)
+{
+	MyPlayer->_pStrength++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_magic)
+{
+	MyPlayer->_pMagic++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_dexterity)
+{
+	MyPlayer->_pDexterity++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_vitality)
+{
+	MyPlayer->_pVitality++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_hitPoints)
+{
+	MyPlayer->_pHitPoints++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_maxHP)
+{
+	MyPlayer->_pMaxHP++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_mana)
+{
+	MyPlayer->_pMana++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_maxMana)
+{
+	MyPlayer->_pMaxMana++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_damageMod)
+{
+	MyPlayer->_pDamageMod++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_baseToBlk)
+{
+	PlayerNetPack packed;
+	PackNetPlayer(packed, *MyPlayer);
+	packed.pBaseToBlk++;
+	ASSERT_FALSE(UnPackNetPlayer(packed, Players[1]));
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iMinDam)
+{
+	MyPlayer->_pIMinDam++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iMinDam++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iMaxDam)
+{
+	MyPlayer->_pIMaxDam++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iMaxDam++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iAC)
+{
+	MyPlayer->_pIAC++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_CHEST]._iAC++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iBonusDam)
+{
+	MyPlayer->_pIBonusDam++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iPLDam++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iBonusToHit)
+{
+	MyPlayer->_pIBonusToHit++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iPLToHit++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iBonusAC)
+{
+	MyPlayer->_pIBonusAC++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_CHEST]._iPLAC++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iBonusDamMod)
+{
+	MyPlayer->_pIBonusDamMod++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iPLDamMod++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iGetHit)
+{
+	MyPlayer->_pIGetHit++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_CHEST]._iPLGetHit++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iEnAc)
+{
+	MyPlayer->_pIEnAc++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_CHEST]._iPLEnAc++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iFMinDam)
+{
+	MyPlayer->_pIFMinDam++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iFMinDam++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iFMaxDam)
+{
+	MyPlayer->_pIFMaxDam++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iFMaxDam++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iLMinDam)
+{
+	MyPlayer->_pILMinDam++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iLMinDam++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_iLMaxDam)
+{
+	MyPlayer->_pILMaxDam++;
+	ASSERT_FALSE(TestNetPackValidation());
+
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_TRUE(TestNetPackValidation());
+
+	MyPlayer->InvBody[INVLOC_HAND_LEFT]._iLMaxDam++;
+	CalcPlrItemVals(*MyPlayer, false);
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_maxHPBase)
+{
+	MyPlayer->_pMaxHPBase++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_maxManaBase)
+{
+	MyPlayer->_pMaxManaBase++;
+	ASSERT_FALSE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_pregenItemFlags)
+{
+	size_t count = 0;
+	for (Item &item : MyPlayer->InvList) {
+		if (item.isEmpty())
+			continue;
+		if (IsAnyOf(item.IDidx, IDI_GOLD, IDI_EAR))
+			continue;
+		const uint16_t createInfo = item._iCreateInfo;
+		item._iCreateInfo |= CF_PREGEN;
+		ASSERT_FALSE(TestNetPackValidation());
+		item._iCreateInfo = createInfo;
+		count++;
+	}
+	ASSERT_GT(count, 0);
+	ASSERT_TRUE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_usefulItemFlags)
+{
+	size_t count = 0;
+	for (Item &item : MyPlayer->InvList) {
+		if (item.isEmpty())
+			continue;
+		if (IsAnyOf(item.IDidx, IDI_GOLD, IDI_EAR))
+			continue;
+		if ((item._iCreateInfo & CF_USEFUL) != CF_USEFUL)
+			continue;
+		const uint16_t createInfo = item._iCreateInfo;
+		item._iCreateInfo |= CF_ONLYGOOD;
+		ASSERT_FALSE(TestNetPackValidation());
+		item._iCreateInfo = createInfo;
+		count++;
+	}
+	ASSERT_GT(count, 0);
+	ASSERT_TRUE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_townItemFlags)
+{
+	size_t count = 0;
+	for (Item &item : MyPlayer->InvList) {
+		if (item.isEmpty())
+			continue;
+		if (IsAnyOf(item.IDidx, IDI_GOLD, IDI_EAR))
+			continue;
+		if ((item._iCreateInfo & CF_TOWN) == 0)
+			continue;
+		const uint16_t createInfo = item._iCreateInfo;
+		item._iCreateInfo |= CF_ONLYGOOD;
+		ASSERT_FALSE(TestNetPackValidation());
+		item._iCreateInfo = createInfo;
+		count++;
+	}
+	ASSERT_GT(count, 0);
+	ASSERT_TRUE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_townItemLevel)
+{
+	size_t boyCount = 0;
+	size_t otherCount = 0;
+	for (Item &item : MyPlayer->InvBody) {
+		if (item.isEmpty())
+			continue;
+		if (IsAnyOf(item.IDidx, IDI_GOLD, IDI_EAR))
+			continue;
+		if ((item._iCreateInfo & CF_TOWN) == 0)
+			continue;
+		const uint16_t createInfo = item._iCreateInfo;
+		const bool BoyItem = (item._iCreateInfo & CF_BOY) != 0;
+		item._iCreateInfo &= ~CF_LEVEL;
+		item._iCreateInfo |= BoyItem ? MyPlayer->getMaxCharacterLevel() + 1 : 31;
+		ASSERT_FALSE(TestNetPackValidation());
+		item._iCreateInfo = createInfo;
+
+		size_t &count = BoyItem ? boyCount : otherCount;
+		count++;
+	}
+	ASSERT_GT(boyCount, 0);
+	ASSERT_GT(otherCount, 0);
+	ASSERT_TRUE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_uniqueMonsterItemLevel)
+{
+	size_t count = 0;
+	for (Item &item : MyPlayer->InvList) {
+		if (item.isEmpty())
+			continue;
+		if (IsAnyOf(item.IDidx, IDI_GOLD, IDI_EAR))
+			continue;
+		if ((item._iCreateInfo & CF_USEFUL) != CF_UPER15)
+			continue;
+		const uint16_t createInfo = item._iCreateInfo;
+		item._iCreateInfo &= ~CF_LEVEL;
+		item._iCreateInfo |= 31;
+		ASSERT_FALSE(TestNetPackValidation());
+		item._iCreateInfo = createInfo;
+		count++;
+	}
+	ASSERT_GT(count, 0);
+	ASSERT_TRUE(TestNetPackValidation());
+}
+
+TEST_F(NetPackTest, UnPackNetPlayer_invalid_monsterItemLevel)
+{
+	size_t count = 0;
+	for (Item &item : MyPlayer->InvBody) {
+		if (item.isEmpty())
+			continue;
+		if (IsAnyOf(item.IDidx, IDI_GOLD, IDI_EAR))
+			continue;
+		if ((item._iCreateInfo & CF_TOWN) != 0)
+			continue;
+		if ((item._iCreateInfo & CF_USEFUL) == CF_UPER15)
+			continue;
+		const uint16_t createInfo = item._iCreateInfo;
+		item._iCreateInfo &= ~CF_LEVEL;
+		item._iCreateInfo |= 31;
+		ASSERT_FALSE(TestNetPackValidation());
+		item._iCreateInfo = createInfo;
+		count++;
+	}
+	ASSERT_GT(count, 0);
+	ASSERT_TRUE(TestNetPackValidation());
 }
 
 } // namespace

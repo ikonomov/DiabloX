@@ -1968,4 +1968,3 @@ void AutomapZoomReset()
 }
 
 } // namespace devilution
-

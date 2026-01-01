@@ -187,7 +187,7 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Griswold: 32 [30]
       * Wirt: 2×clvl+1 [2×clvl]
 #### Shrines:
-   * Fascinating, Ornate and Sacred reduce magic by -2% (-1 minimum) [-10% mana].
+   * Fascinating, Ornate and Sacred reduce magic by 5% (1 minimum, 5 maximum) [10% mana].
    * Abandoned, Creepy, Eerie and Quiet increase attributes by 1 [2].
    * Hidden increases durability of items to a maximum of 250 [255].
 #### Monsters:

@@ -2646,7 +2646,7 @@ void OperateShrineCostOfWisdom(Player &player, SpellID spellId, diablo_message m
 		}
 	}
 
-	int magicLoss = clamp(player.GetBaseAttributeValue(CharacterAttribute::Magic) / 20, 1, 5);
+	int magicLoss = (player.GetBaseAttributeValue(CharacterAttribute::Magic) * 5 + 95) / 100;
 	ModifyPlrMag(player, -magicLoss);
 
 	RedrawEverything();

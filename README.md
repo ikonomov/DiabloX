@@ -62,8 +62,8 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Civerb's Cudgel: +150%
    * Damage is applied 1 to 7 times for Lightning and 1 to 9 times for Fire affixes.
    * Maximum armor class:
-      *Full Plate Mail: 60
-      * Tower Shield: 18      * 
+      * Full Plate Mail: 60
+      * Tower Shield: 18
    * Unique items having affixes with a range of values are set to their maximum values.
    * Burgundy affix has been renamed to Russet.
    * All unique items are findable.

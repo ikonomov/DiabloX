@@ -62,10 +62,10 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Civerb's Cudgel: +150%
    * Damage is applied 1 to 7 times for Lightning and 1 to 9 times for Fire affixes.
    * Maximum armor class:
-      * Full Plate Mail: 60
-      * Tower Shield: 18
-   * Unique items having affixes with a range of values are set to their maximum values.
+      * Full Plate Mail: 60 [75]
+      * Tower Shield: 18 [20]
    * Burgundy affix has been renamed to Russet.
+   * Unique items having affixes with a range of values are set to their maximum values.
    * All unique items are findable.
    * Town portal scrolls dropped as special items (from chests and barrels, replacing Mana or Healing potions) can be found on levels 2-8 [2-15].
    * Maximum base item ilvl for dungeon drops (not from monsters): +15 in Nightmare difficulty; +30 in Hell

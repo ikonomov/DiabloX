@@ -790,6 +790,15 @@ bool PlrHitPlr(Player &attacker, Player &target)
 			dam *= 2;
 		}
 	}
+
+	if (HasAnyOf(attacker._pIFlags, ItemSpecialEffect::TripleDemonDamage)) {
+		if (attacker.InvBody[INVLOC_HAND_LEFT]._itype == ItemType::Axe || attacker.InvBody[INVLOC_HAND_RIGHT]._itype == ItemType::Axe) {
+			dam *= 3;
+		} else {
+			dam += dam * 3 / 2;
+		}
+	}
+
 	int skdam = dam << 6;
 	if (HasAnyOf(attacker._pIFlags, ItemSpecialEffect::RandomStealLife)) {
 		int tac = GenerateRnd(skdam / 8);

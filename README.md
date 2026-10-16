@@ -57,7 +57,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 #### Items:
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Helm of Spirits applies life regeneration magical effect of 5 hit points per second.
-   * Damage versus demons affix [+200%]:
+   * Damage versus demons affix [+200%] applies the additional damage to both humans and demons:
       * Deadly Hunter: +50%
       * Civerb's Cudgel: +150%
    * Damage is applied 1 to 7 times for Lightning and 1 to 9 times for Fire affixes.

@@ -364,9 +364,7 @@ bool Plr2PlrMHit(const Player &player, int p, int mindam, int maxdam, int dist, 
 		if (!shift)
 			dam <<= 6;
 	}
-	dam /= 2;
-	if (HasAnyOf(player._pIFlags, ItemSpecialEffect::TripleDemonDamage))
-		dam += dam / 2;
+	dam -= dam / 3;
 	if (resper > 0) {
 		dam -= (dam * resper) / 100;
 		if (&player == MyPlayer)

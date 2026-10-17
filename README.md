@@ -40,7 +40,7 @@ Note: You'll need access to the data from the original game. If you don't have a
       * Warrior's strength: 150 [250]
       * Rogue's dexterity: 150 [250]
       * Sorcerer's magic: 150 [250]
-   * The 1/2 spell damage modifier in player versus player is applied to all missiles.
+   * All missiles receive a 2/3 damage modifier in player versus player [1/2 to spell damage].
 #### Spells:
    * Chain Lightning creates a maximum of 3+slvl/5 number of bolts.
    * Guardian, Elemental, Fireball and Flash do 1/2 of the original damage.
@@ -57,7 +57,7 @@ Note: You'll need access to the data from the original game. If you don't have a
 #### Items:
    * Effects of drinking Spectral Elixir: +1 to one attribute [+3 to all attributes].
    * Helm of Spirits applies life regeneration magical effect of 5 hit points per second.
-   * Damage versus demons affix [+200%] applies the additional damage to both humans and demons:
+   * Total damage versus demons affix [+200%]:
       * Deadly Hunter: +50%
       * Civerb's Cudgel: +150%
    * Damage is applied 1 to 7 times for Lightning and 1 to 9 times for Fire affixes.

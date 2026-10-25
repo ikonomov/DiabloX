@@ -1033,7 +1033,7 @@ GameplayOptions::GameplayOptions()
     , testBard("Test Bard", OptionEntryFlags::Invisible, N_("Test Bard"), N_("Force the Bard character type to appear in the hero selection menu."), false)
     , testBarbarian("Test Barbarian", OptionEntryFlags::Invisible, N_("Test Barbarian"), N_("Force the Barbarian character type to appear in the hero selection menu."), false)
     , experienceBar("Experience Bar", OptionEntryFlags::None, N_("Experience Bar"), N_("Experience Bar is added to the UI at the bottom of the screen."), true)
-    , showItemGraphicsInStores("Show Item Graphics in Stores", OptionEntryFlags::Invisible, N_("Show Item Graphics in Stores"), N_("Show item graphics to the left of item descriptions in store menus."), true)
+    , showItemGraphicsInStores("Show Item Graphics in Stores", OptionEntryFlags::None, N_("Show Item Graphics in Stores"), N_("Show item graphics to the left of item descriptions in store menus."), true)
     , showHealthValues("Show health values", OptionEntryFlags::None, N_("Show health values"), N_("Displays current / max health value on health globe."), false)
     , showManaValues("Show mana values", OptionEntryFlags::None, N_("Show mana values"), N_("Displays current / max mana value on mana globe."), false)
     , enemyHealthBar("Enemy Health Bar", OptionEntryFlags::None, N_("Enemy Health Bar"), N_("Enemy Health Bar is displayed at the top of the screen."), true)
@@ -1074,6 +1074,7 @@ std::vector<OptionEntryBase *> GameplayOptions::GetEntries()
 {
 	return {
 		&experienceBar,
+		&showItemGraphicsInStores,
 		&showHealthValues,
 		&showManaValues,
 		&enemyHealthBar,
